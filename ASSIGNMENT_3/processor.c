@@ -102,10 +102,10 @@ static int branch_taken(uint8_t op) {
     switch (op) {
         case 0x10: return Z;			// EQ
         case 0x11: return !Z;			// NE
-        case 0x12: return N == V;		// CS
-        case 0x13: return N != V;		// CC
-        case 0x14: return (!Z) && (N == V);	// MI
-        case 0x15: return Z || (N != V);	// PL
+        case 0x12: return N == V;		// GE
+        case 0x13: return N != V;		// LT
+        case 0x14: return (!Z) && (N == V);	// GT
+        case 0x15: return Z || (N != V);	// LE
         case 0x1E: return 1;			// AL
         default:   return 0;
     }

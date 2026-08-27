@@ -1,0 +1,58 @@
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_4$ make
+gcc -Wall -Wextra -std=c11 -O2   -c -o main.o main.c
+gcc -Wall -Wextra -std=c11 -O2   -c -o compiler.o compiler.c
+gcc -Wall -Wextra -std=c11 -O2   -c -o processor.o processor.c
+gcc -Wall -Wextra -std=c11 -O2   -c -o memory.o memory.c
+gcc -Wall -Wextra -std=c11 -O2   -c -o os.o os.c
+In file included from /usr/include/string.h:535,
+                 from os.c:4:
+In function ‘strncpy’,
+    inlined from ‘create_task.isra’ at os.c:106:5:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:10: warning: ‘__builtin_strncpy’ output may be truncated copying 255 bytes from a string of length 255 [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+In function ‘strncpy’,
+    inlined from ‘create_task.isra’ at os.c:108:5:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:10: warning: ‘__builtin_strncpy’ output may be truncated copying 255 bytes from a string of length 255 [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+In function ‘strncpy’,
+    inlined from ‘create_task.isra’ at os.c:106:5:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:10: warning: ‘__builtin_strncpy’ output may be truncated copying 255 bytes from a string of length 255 [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+In function ‘strncpy’,
+    inlined from ‘create_task.isra’ at os.c:108:5:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:10: warning: ‘__builtin_strncpy’ output may be truncated copying 255 bytes from a string of length 255 [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+gcc -Wall -Wextra -std=c11 -O2 -o simulator main.o compiler.o processor.o memory.o os.o
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_4$ printf "tests/p1.txt\ntests/p2.txt\ntests/p3.txt\ntests/p4.txt\ntests/p5.txt\n
+exit\n" | ./simulator
+Mini OS started with 4 processors.
+$ [Compiler] compiling tests/p1.txt
+[OS] PID 1 loaded on processor 0
+$ [Compiler] compiling tests/p2.txt
+[OS] PID 2 loaded on processor 1
+$ [Compiler] compiling tests/p3.txt
+[OS] PID 3 loaded on processor 2
+$ [Compiler] compiling tests/p4.txt
+[OS] PID 4 loaded on processor 3
+$ [Compiler] compiling tests/p5.txt
+[OS] PID 5 placed in waiting queue
+$ [Shell] exiting; existing tasks will continue
+[OS] PID 1 finished on processor 0
+[OS] PID 5 dispatched to processor 0
+[OS] PID 2 finished on processor 1
+[OS] PID 3 finished on processor 2
+[OS] PID 4 finished on processor 3
+[OS] PID 5 finished on processor 0
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_4$

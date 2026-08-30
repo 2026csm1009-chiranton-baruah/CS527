@@ -9,10 +9,20 @@
 
 /*
  * ============================================================
- * Physical memory
+ * PHYSICAL MEMORY
  * ============================================================
  *
- * 8192 bytes / 512 bytes per frame = 16 frames.
+ * Physical memory:
+ *
+ *     8192 bytes
+ *
+ * Page/frame size:
+ *
+ *     512 bytes
+ *
+ * Number of physical frames:
+ *
+ *     8192 / 512 = 16
  *
  * Frame 0 is reserved.
  * ============================================================
@@ -23,19 +33,20 @@ uint8_t memory[MEMSIZE];
 
 /*
  * ============================================================
- * Page tables
+ * PAGE TABLES
  * ============================================================
  *
- * Each processor/process has:
+ * Each process has 10 logical pages:
  *
- *     2 instruction pages
- *   + 8 data pages
- *   = 10 logical pages
+ *     Page 0 - 1 : instruction memory
+ *     Page 2 - 9 : data memory
  *
- * pageTable[proc_id][logical_page] contains the physical
- * frame number.
+ * Value:
  *
- * -1 means the logical page is not mapped.
+ *     >= 1 : physical frame number
+ *     -1   : page not mapped
+ *
+ * Physical frame 0 is reserved.
  * ============================================================
  */
 
@@ -44,15 +55,13 @@ int pageTable[NP][NUM_LOGICAL_PAGES];
 
 /*
  * ============================================================
- * Physical-frame allocation table
+ * PHYSICAL FRAME ALLOCATION TABLE
  * ============================================================
- *
- * freePages[frame]:
  *
  *     0 = free
  *     1 = allocated
  *
- * Frame 0 is permanently marked allocated/reserved.
+ * Frame 0 is permanently reserved.
  * ============================================================
  */
 
@@ -61,7 +70,7 @@ int freePages[NUM_PHYSICAL_PAGES];
 
 /*
  * ============================================================
- * Validation helpers
+ * VALIDATION HELPERS
  * ============================================================
  */
 
@@ -87,7 +96,7 @@ static int valid_logical_page(int page)
 
 /*
  * ============================================================
- * Clear one process's page table
+ * CLEAR ONE PROCESS PAGE TABLE
  * ============================================================
  */
 
@@ -96,6 +105,10 @@ static void clear_page_table(int proc_id)
     if (!valid_proc(proc_id))
         return;
 
+    /*
+     * NUM_LOGICAL_PAGES is fixed at 10.
+     * Therefore this loop is always bounded.
+     */
     for (int page = 0;
          page < NUM_LOGICAL_PAGES;
          page++) {
@@ -107,16 +120,23 @@ static void clear_page_table(int proc_id)
 
 /*
  * ============================================================
- * Initialize global physical memory state
+ * INITIALIZE PHYSICAL MEMORY
  * ============================================================
  */
 
 static void initialize_physical_memory(void)
 {
+    /*
+     * Clear all physical memory.
+     */
     memset(memory,
            0,
            sizeof(memory));
 
+
+    /*
+     * Initially all frames are free.
+     */
     for (int frame = 0;
          frame < NUM_PHYSICAL_PAGES;
          frame++) {
@@ -124,11 +144,16 @@ static void initialize_physical_memory(void)
         freePages[frame] = 0;
     }
 
+
     /*
-     * Frame 0 is reserved forever.
+     * Frame 0 is reserved by the OS.
      */
     freePages[0] = 1;
 
+
+    /*
+     * Clear every process page table.
+     */
     for (int proc = 0;
          proc < NP;
          proc++) {
@@ -140,19 +165,37 @@ static void initialize_physical_memory(void)
 
 /*
  * ============================================================
- * Read byte-oriented hexadecimal file
+ * GLOBAL MEMORY INITIALIZATION
  * ============================================================
  *
- * The bytecode/data files contain hexadecimal bytes.
+ * Called by os.c:
+ *
+ *     initialize_memory();
+ * ============================================================
+ */
+
+void initialize_memory(void)
+{
+    initialize_physical_memory();
+}
+
+
+/*
+ * ============================================================
+ * LOAD HEXADECIMAL BYTE FILE
+ * ============================================================
+ *
+ * Reads hexadecimal byte values from a file.
  *
  * Example:
  *
- *     FF FF FF FF
+ *     FF 01 0A 20
  *
- * is four bytes.
+ * Each value must be between 00 and FF.
  *
- * max_bytes prevents the loader from exceeding the logical
- * memory region.
+ * max_bytes provides a hard upper bound, so this routine
+ * cannot continue indefinitely even if the input file is
+ * unexpectedly large.
  * ============================================================
  */
 
@@ -161,43 +204,55 @@ static int load_hex_file(const char *filename,
                          int max_bytes,
                          int *bytes_loaded)
 {
-    if (filename == NULL ||
-        destination == NULL ||
-        bytes_loaded == NULL)
+    if (filename == NULL)
+        return -1;
+
+    if (destination == NULL)
+        return -1;
+
+    if (bytes_loaded == NULL)
         return -1;
 
     if (max_bytes < 0)
         return -1;
+
 
     FILE *fp = fopen(filename, "r");
 
     if (fp == NULL)
         return -1;
 
+
     int count = 0;
     unsigned int value;
 
+
     /*
-     * Every iteration consumes one hexadecimal byte.
-     *
-     * The count is explicitly bounded by max_bytes.
+     * Maximum iterations = max_bytes.
      */
     while (count < max_bytes) {
 
         int result =
             fscanf(fp, "%x", &value);
 
+
+        /*
+         * EOF or malformed input.
+         */
         if (result != 1)
             break;
 
+
         /*
-         * Byte files must contain values in the range 0..255.
+         * A byte cannot exceed FF.
          */
         if (value > 0xFF) {
 
             fclose(fp);
+
             return -1;
         }
+
 
         destination[count] =
             (uint8_t)value;
@@ -205,33 +260,44 @@ static int load_hex_file(const char *filename,
         count++;
     }
 
+
     /*
-     * If fscanf stopped because of malformed non-whitespace
-     * input, reject the file.
+     * If fscanf stopped before EOF, determine whether the
+     * remaining character is merely whitespace or malformed
+     * input.
      */
     if (!feof(fp)) {
 
-        /*
-         * Try to consume whitespace. If another character
-         * remains, the file is malformed.
-         */
         int c;
 
+
+        /*
+         * This loop consumes whitespace only.
+         * A finite input file guarantees termination.
+         */
         do {
             c = fgetc(fp);
-        } while (c == ' ' ||
-                 c == '\t' ||
-                 c == '\n' ||
-                 c == '\r');
+        }
+        while (c == ' ' ||
+               c == '\t' ||
+               c == '\n' ||
+               c == '\r');
 
+
+        /*
+         * Anything other than EOF means malformed input.
+         */
         if (c != EOF) {
 
             fclose(fp);
+
             return -1;
         }
     }
 
+
     fclose(fp);
+
 
     *bytes_loaded = count;
 
@@ -241,10 +307,18 @@ static int load_hex_file(const char *filename,
 
 /*
  * ============================================================
- * Get number of pages required
+ * CALCULATE REQUIRED NUMBER OF PAGES
  * ============================================================
  *
- * ceil(bytes / PAGESIZE)
+ * Returns:
+ *
+ *     ceil(bytes / PAGESIZE)
+ *
+ * Examples:
+ *
+ *     1 byte   -> 1 page
+ *     512      -> 1 page
+ *     513      -> 2 pages
  * ============================================================
  */
 
@@ -259,15 +333,18 @@ static int pages_required(int bytes)
 
 /*
  * ============================================================
- * Allocate a physical frame
+ * GET FREE PHYSICAL PAGE
  * ============================================================
  *
- * Lab requirement:
+ * Searches physical frames 1 through 15.
  *
- *     iterate through free-frame list
- *     return first available frame
+ * Frame 0 is reserved.
  *
- * Frame 0 is skipped because it is reserved.
+ * Maximum number of iterations:
+ *
+ *     15
+ *
+ * Therefore this function cannot enter an infinite loop.
  * ============================================================
  */
 
@@ -279,26 +356,31 @@ int getFreePage(void)
 
         if (freePages[frame] == 0) {
 
+            /*
+             * Mark frame as allocated.
+             */
             freePages[frame] = 1;
 
+
             /*
-             * Clear the frame before assigning it.
+             * Clear the frame before giving it to a process.
              */
             memset(&memory[frame * PAGESIZE],
                    0,
                    PAGESIZE);
 
+
             return frame;
         }
     }
 
+
     /*
-     * No physical frame remains.
-     *
-     * Do not loop or retry indefinitely.
+     * All usable frames are occupied.
      */
     fprintf(stderr,
-            "ERROR: no free physical page/frame available\n");
+            "ERROR: no free physical page available\n");
+
 
     return -1;
 }
@@ -306,24 +388,39 @@ int getFreePage(void)
 
 /*
  * ============================================================
- * Free physical frame
+ * FREE PHYSICAL PAGE
  * ============================================================
  */
 
 void freePage(int frame)
 {
     /*
-     * Frame 0 is reserved and cannot be released.
+     * Frame 0 is reserved.
      */
-    if (frame <= 0 ||
-        frame >= NUM_PHYSICAL_PAGES)
+    if (frame <= 0)
         return;
 
+
+    if (frame >= NUM_PHYSICAL_PAGES)
+        return;
+
+
+    /*
+     * Already-free frame.
+     */
     if (freePages[frame] == 0)
         return;
 
+
+    /*
+     * Mark the frame free.
+     */
     freePages[frame] = 0;
 
+
+    /*
+     * Clear its contents.
+     */
     memset(&memory[frame * PAGESIZE],
            0,
            PAGESIZE);
@@ -332,29 +429,25 @@ void freePage(int frame)
 
 /*
  * ============================================================
- * Translate logical address -> physical address
+ * LOGICAL -> PHYSICAL ADDRESS TRANSLATION
  * ============================================================
  *
- * This follows the exact structure specified by Lab 5:
+ * Instruction access:
  *
- *     Index = (isFetch)
- *           ? address / PAGESIZE
- *           : address / PAGESIZE + 1024 / PAGESIZE
+ *     logical_page = address / PAGESIZE
  *
- *     Physical address =
- *         physical page number * PAGESIZE
- *         + address % PAGESIZE
  *
- * Instruction memory:
+ * Data access:
  *
- *     logical 0 .. 1023
+ *     logical_page =
+ *         address / PAGESIZE
+ *         + INSTRUCTION_SIZE / PAGESIZE
  *
- * Data memory:
  *
- *     logical 0 .. 4095
+ * Physical address:
  *
- * isFetch determines which logical region the address belongs
- * to.
+ *     frame * PAGESIZE + offset
+ *
  * ============================================================
  */
 
@@ -362,9 +455,16 @@ int getPhysicallAddress(int proc_id,
                         int isFetch,
                         int address)
 {
+    /*
+     * Validate process.
+     */
     if (!valid_proc(proc_id))
         return -1;
 
+
+    /*
+     * Negative logical addresses are invalid.
+     */
     if (address < 0)
         return -1;
 
@@ -375,77 +475,94 @@ int getPhysicallAddress(int proc_id,
 
     /*
      * --------------------------------------------------------
-     * Instruction access
+     * INSTRUCTION ACCESS
      * --------------------------------------------------------
      *
-     * Instruction logical addresses are 0..1023.
+     * Instruction memory:
+     *
+     *     0 .. 1023
      */
     if (isFetch) {
 
         if (address >= INSTRUCTION_SIZE)
             return -1;
 
+
         logical_page =
             address / PAGESIZE;
 
+
         offset =
             address % PAGESIZE;
-
     }
 
 
     /*
      * --------------------------------------------------------
-     * Data access
+     * DATA ACCESS
      * --------------------------------------------------------
      *
-     * Data logical addresses are independently based at zero.
+     * Data memory:
      *
-     * Page-table indices are shifted by two pages because
-     * instruction memory occupies:
+     *     0 .. 4095
      *
-     *     1024 / 512 = 2 pages
+     * Page-table indices begin at page 2 because instruction
+     * memory occupies two pages.
      */
     else {
 
         if (address >= DATA_SIZE)
             return -1;
 
+
         logical_page =
             address / PAGESIZE
             + INSTRUCTION_SIZE / PAGESIZE;
+
 
         offset =
             address % PAGESIZE;
     }
 
 
+    /*
+     * Validate logical page number.
+     */
     if (!valid_logical_page(logical_page))
         return -1;
 
 
     /*
-     * Retrieve physical frame from page table.
+     * Look up physical frame.
      */
     int physical_frame =
         pageTable[proc_id][logical_page];
 
+
+    /*
+     * -1 means page is unmapped.
+     */
     if (!valid_frame(physical_frame))
         return -1;
 
+
     /*
-     * Frame 0 must never be used for a process.
+     * Frame 0 is reserved.
      */
     if (physical_frame == 0)
         return -1;
 
+
     /*
-     * A frame that isn't allocated cannot be accessed.
+     * Frame must currently be allocated.
      */
     if (freePages[physical_frame] == 0)
         return -1;
 
 
+    /*
+     * Calculate physical address.
+     */
     int physical_address =
         physical_frame * PAGESIZE + offset;
 
@@ -457,13 +574,14 @@ int getPhysicallAddress(int proc_id,
         physical_address >= MEMSIZE)
         return -1;
 
+
     return physical_address;
 }
 
 
 /*
  * ============================================================
- * Allocate and map instruction pages
+ * ALLOCATE INSTRUCTION PAGES
  * ============================================================
  */
 
@@ -473,12 +591,21 @@ static int allocate_instruction_pages(int proc_id,
     if (!valid_proc(proc_id))
         return -1;
 
+
     int required =
         pages_required(bytes);
 
+
+    /*
+     * Instruction memory contains only two pages.
+     */
     if (required > INSTRUCTION_SIZE / PAGESIZE)
         return -1;
 
+
+    /*
+     * At most two iterations.
+     */
     for (int page = 0;
          page < required;
          page++) {
@@ -486,16 +613,22 @@ static int allocate_instruction_pages(int proc_id,
         int frame =
             getFreePage();
 
+
         if (frame < 0) {
 
+            /*
+             * Roll back pages allocated so far.
+             */
             release_process_memory(proc_id);
 
             return -1;
         }
 
+
         pageTable[proc_id][page] =
             frame;
     }
+
 
     return 0;
 }
@@ -503,7 +636,7 @@ static int allocate_instruction_pages(int proc_id,
 
 /*
  * ============================================================
- * Allocate and map data pages
+ * ALLOCATE DATA PAGES
  * ============================================================
  */
 
@@ -513,15 +646,28 @@ static int allocate_data_pages(int proc_id,
     if (!valid_proc(proc_id))
         return -1;
 
+
     int required =
         pages_required(bytes);
 
+
+    /*
+     * Data memory contains eight pages.
+     */
     if (required > DATA_SIZE / PAGESIZE)
         return -1;
 
+
+    /*
+     * Logical data pages begin at page 2.
+     */
     int first_data_page =
         INSTRUCTION_SIZE / PAGESIZE;
 
+
+    /*
+     * Maximum number of iterations = 8.
+     */
     for (int page = 0;
          page < required;
          page++) {
@@ -529,16 +675,23 @@ static int allocate_data_pages(int proc_id,
         int frame =
             getFreePage();
 
+
         if (frame < 0) {
 
+            /*
+             * Roll back all pages allocated for this process.
+             */
             release_process_memory(proc_id);
 
             return -1;
         }
 
-        pageTable[proc_id][first_data_page + page] =
+
+        pageTable[proc_id]
+                 [first_data_page + page] =
             frame;
     }
+
 
     return 0;
 }
@@ -546,7 +699,7 @@ static int allocate_data_pages(int proc_id,
 
 /*
  * ============================================================
- * Copy bytes into physical instruction pages
+ * COPY INSTRUCTION BYTES INTO PHYSICAL MEMORY
  * ============================================================
  */
 
@@ -554,27 +707,40 @@ static int copy_instruction_bytes(int proc_id,
                                   const uint8_t *bytes,
                                   int count)
 {
-    if (!valid_proc(proc_id) ||
-        bytes == NULL ||
-        count < 0 ||
+    if (!valid_proc(proc_id))
+        return -1;
+
+
+    if (bytes == NULL)
+        return -1;
+
+
+    if (count < 0 ||
         count > INSTRUCTION_SIZE)
         return -1;
 
-    for (int i = 0;
-         i < count;
-         i++) {
+
+    /*
+     * Maximum iterations = 1024.
+     */
+    for (int address = 0;
+         address < count;
+         address++) {
 
         int physical =
             getPhysicallAddress(proc_id,
                                 1,
-                                i);
+                                address);
+
 
         if (physical < 0)
             return -1;
 
+
         memory[physical] =
-            bytes[i];
+            bytes[address];
     }
+
 
     return 0;
 }
@@ -582,7 +748,7 @@ static int copy_instruction_bytes(int proc_id,
 
 /*
  * ============================================================
- * Copy bytes into physical data pages
+ * COPY DATA BYTES INTO PHYSICAL MEMORY
  * ============================================================
  */
 
@@ -590,27 +756,40 @@ static int copy_data_bytes(int proc_id,
                            const uint8_t *bytes,
                            int count)
 {
-    if (!valid_proc(proc_id) ||
-        bytes == NULL ||
-        count < 0 ||
+    if (!valid_proc(proc_id))
+        return -1;
+
+
+    if (bytes == NULL)
+        return -1;
+
+
+    if (count < 0 ||
         count > DATA_SIZE)
         return -1;
 
-    for (int i = 0;
-         i < count;
-         i++) {
+
+    /*
+     * Maximum iterations = 4096.
+     */
+    for (int address = 0;
+         address < count;
+         address++) {
 
         int physical =
             getPhysicallAddress(proc_id,
                                 0,
-                                i);
+                                address);
+
 
         if (physical < 0)
             return -1;
 
+
         memory[physical] =
-            bytes[i];
+            bytes[address];
     }
+
 
     return 0;
 }
@@ -618,51 +797,60 @@ static int copy_data_bytes(int proc_id,
 
 /*
  * ============================================================
- * Initialize process memory
+ * LOAD PROCESS MEMORY
  * ============================================================
  *
- * The lab specifies that initialization:
+ * This is the process-level loader used by os.c.
  *
- * 1. reads program.byte
- * 2. determines required instruction pages
- * 3. allocates physical frames
- * 4. updates the page table
- * 5. reads data.byte
- * 6. determines required data pages
- * 7. allocates physical frames
- * 8. updates the page table
+ * It:
  *
- * We perform the same process for the supplied filenames.
+ *     1. Clears any previous mapping
+ *     2. Loads program.byte
+ *     3. Allocates instruction pages
+ *     4. Loads data.byte if present
+ *     5. Allocates data pages
+ *     6. Copies everything into physical memory
+ *
+ * Returns:
+ *
+ *     0  = success
+ *    -1  = failure
  * ============================================================
  */
 
-void initialize_memory(int proc_id,
-                       const char *program_file,
-                       const char *data_file)
+int load_process_memory(int proc_id,
+                        const char *program_file,
+                        const char *data_file)
 {
     if (!valid_proc(proc_id))
-        return;
+        return -1;
+
 
     if (program_file == NULL)
-        return;
+        return -1;
 
 
     /*
-     * Start with a clean process address space.
+     * Make sure this process starts with no old mapping.
      */
     release_process_memory(proc_id);
 
 
     /*
-     * Temporary buffers contain the logical contents before
-     * those bytes are copied into their physical frames.
+     * Temporary logical images.
+     *
+     * They are bounded by the architecture's logical memory
+     * sizes.
      */
     uint8_t instruction_bytes[INSTRUCTION_SIZE];
+
     uint8_t data_bytes[DATA_SIZE];
+
 
     memset(instruction_bytes,
            0,
            sizeof(instruction_bytes));
+
 
     memset(data_bytes,
            0,
@@ -675,7 +863,7 @@ void initialize_memory(int proc_id,
 
     /*
      * --------------------------------------------------------
-     * Program
+     * LOAD PROGRAM
      * --------------------------------------------------------
      */
 
@@ -688,33 +876,40 @@ void initialize_memory(int proc_id,
                 "ERROR: cannot load program file %s\n",
                 program_file);
 
-        return;
+        return -1;
     }
 
 
     /*
-     * The program must fit within the two instruction pages.
+     * Program must fit inside 1024-byte instruction memory.
      */
     if (instruction_count > INSTRUCTION_SIZE) {
 
         fprintf(stderr,
                 "ERROR: program exceeds instruction memory\n");
 
-        return;
+        return -1;
     }
 
 
     /*
-     * At least one instruction page is useful for an empty
-     * or minimal program image.
+     * Determine number of instruction pages.
      */
     int instruction_pages =
         pages_required(instruction_count);
 
+
+    /*
+     * Keep one instruction page available for an empty/minimal
+     * program image.
+     */
     if (instruction_pages == 0)
         instruction_pages = 1;
 
 
+    /*
+     * Allocate the instruction pages.
+     */
     if (allocate_instruction_pages(proc_id,
                                    instruction_count) != 0) {
 
@@ -723,12 +918,12 @@ void initialize_memory(int proc_id,
 
         release_process_memory(proc_id);
 
-        return;
+        return -1;
     }
 
 
     /*
-     * Copy program bytes into their physical frames.
+     * Copy program into physical memory.
      */
     if (copy_instruction_bytes(proc_id,
                                instruction_bytes,
@@ -739,17 +934,18 @@ void initialize_memory(int proc_id,
 
         release_process_memory(proc_id);
 
-        return;
+        return -1;
     }
 
 
     /*
      * --------------------------------------------------------
-     * Data
+     * LOAD DATA
      * --------------------------------------------------------
      *
-     * data.byte is optional.
+     * data.byte may be absent.
      */
+
     if (data_file != NULL &&
         data_file[0] != '\0') {
 
@@ -764,18 +960,19 @@ void initialize_memory(int proc_id,
 
             release_process_memory(proc_id);
 
-            return;
+            return -1;
         }
     }
 
 
     /*
-     * Allocate enough physical frames for data.
-     *
-     * An empty data file needs no data frame.
+     * No data pages are required if data.byte is empty.
      */
     if (data_count > 0) {
 
+        /*
+         * Allocate physical pages for data.
+         */
         if (allocate_data_pages(proc_id,
                                 data_count) != 0) {
 
@@ -784,10 +981,13 @@ void initialize_memory(int proc_id,
 
             release_process_memory(proc_id);
 
-            return;
+            return -1;
         }
 
 
+        /*
+         * Copy data into physical memory.
+         */
         if (copy_data_bytes(proc_id,
                             data_bytes,
                             data_count) != 0) {
@@ -797,52 +997,87 @@ void initialize_memory(int proc_id,
 
             release_process_memory(proc_id);
 
-            return;
+            return -1;
         }
     }
+
+
+    return 0;
 }
 
 
 /*
  * ============================================================
- * Write logical data memory back to data.byte
+ * UNLOAD PROCESS MEMORY
  * ============================================================
  *
- * Data memory is always addressed logically from 0.
+ * This is the API currently expected by os.c.
+ * ============================================================
+ */
+
+void unload_process_memory(int proc_id)
+{
+    if (!valid_proc(proc_id))
+        return;
+
+
+    release_process_memory(proc_id);
+}
+
+
+/*
+ * ============================================================
+ * SAVE PROCESS DATA MEMORY
+ * ============================================================
  *
- * Only the mapped data pages are accessed.
+ * Writes the logical data address space to the specified
+ * data file.
  *
- * The output format remains four hexadecimal bytes per line,
- * matching the bytecode/data-file format in the lab.
+ * Four bytes are written per line.
+ *
+ * DATA_SIZE = 4096
+ *
+ * Therefore:
+ *
+ *     4096 / 4 = 1024 lines maximum.
  * ============================================================
  */
 
 static int save_data_file(int proc_id,
                           const char *data_file)
 {
-    if (!valid_proc(proc_id) ||
-        data_file == NULL)
+    if (!valid_proc(proc_id))
         return -1;
+
+
+    if (data_file == NULL)
+        return -1;
+
 
     FILE *fp =
         fopen(data_file, "w");
+
 
     if (fp == NULL)
         return -1;
 
 
     /*
-     * Data memory is 4096 bytes.
+     * Four bytes per line.
      *
-     * Iterate in groups of four because the lab's data-file
-     * format stores four bytes per line.
+     * Maximum iterations = 1024.
      */
     for (int address = 0;
          address < DATA_SIZE;
          address += 4) {
 
-        uint8_t bytes[4] = {0, 0, 0, 0};
+        uint8_t bytes[4] =
+            {0, 0, 0, 0};
 
+
+        /*
+         * Four bytes within the current line.
+         */
         for (int i = 0;
              i < 4;
              i++) {
@@ -850,28 +1085,27 @@ static int save_data_file(int proc_id,
             int logical_address =
                 address + i;
 
+
             if (logical_address >= DATA_SIZE)
                 break;
+
 
             int physical =
                 getPhysicallAddress(proc_id,
                                     0,
                                     logical_address);
 
-            if (physical < 0) {
 
-                /*
-                 * Unmapped portions of the logical data space
-                 * are represented as zeroes.
-                 */
-                bytes[i] = 0;
-
-            } else {
+            /*
+             * Unmapped pages are represented by zeroes.
+             */
+            if (physical >= 0) {
 
                 bytes[i] =
                     memory[physical];
             }
         }
+
 
         fprintf(fp,
                 "%02X %02X %02X %02X\n",
@@ -890,7 +1124,7 @@ static int save_data_file(int proc_id,
 
 /*
  * ============================================================
- * Release all physical pages belonging to a process
+ * RELEASE PROCESS MEMORY
  * ============================================================
  */
 
@@ -899,6 +1133,10 @@ void release_process_memory(int proc_id)
     if (!valid_proc(proc_id))
         return;
 
+
+    /*
+     * Exactly NUM_LOGICAL_PAGES entries are examined.
+     */
     for (int page = 0;
          page < NUM_LOGICAL_PAGES;
          page++) {
@@ -906,56 +1144,81 @@ void release_process_memory(int proc_id)
         int frame =
             pageTable[proc_id][page];
 
+
+        /*
+         * Release valid process-owned frames.
+         */
         if (frame > 0 &&
             frame < NUM_PHYSICAL_PAGES) {
 
             freePage(frame);
         }
 
-        pageTable[proc_id][page] = -1;
+
+        /*
+         * Remove mapping.
+         */
+        pageTable[proc_id][page] =
+            -1;
     }
 }
 
 
 /*
  * ============================================================
- * Finalize process memory
+ * GLOBAL MEMORY FINALIZATION
  * ============================================================
  *
- * The lab specifies that finalization writes data.byte and
- * releases the pages used by the task.
+ * Called by os.c:
+ *
+ *     finalize_memory();
  * ============================================================
  */
 
-void finalize_memory(int proc_id,
-                     const char *data_file)
+void finalize_memory(void)
 {
-    if (!valid_proc(proc_id))
-        return;
-
     /*
-     * Save the process's modified logical data memory before
-     * releasing its physical frames.
+     * Release every process.
+     *
+     * NP is finite.
      */
-    if (data_file != NULL &&
-        data_file[0] != '\0') {
+    for (int proc = 0;
+         proc < NP;
+         proc++) {
 
-        if (save_data_file(proc_id,
-                           data_file) != 0) {
-
-            fprintf(stderr,
-                    "WARNING: could not save data file %s\n",
-                    data_file);
-        }
+        release_process_memory(proc);
     }
 
-    release_process_memory(proc_id);
+
+    /*
+     * Clear physical memory.
+     */
+    memset(memory,
+           0,
+           sizeof(memory));
+
+
+    /*
+     * Reset frame allocation table.
+     */
+    for (int frame = 0;
+         frame < NUM_PHYSICAL_PAGES;
+         frame++) {
+
+        freePages[frame] = 0;
+    }
+
+
+    /*
+     * Frame 0 remains reserved.
+     */
+    freePages[0] = 1;
 }
 
 
 /*
  * ============================================================
- * Physical byte read
+ * READ PHYSICAL BYTE
  * ============================================================
  */
 
@@ -965,12 +1228,15 @@ int read_physical_byte(int physical_address,
     if (value == NULL)
         return -1;
 
+
     if (physical_address < 0 ||
         physical_address >= MEMSIZE)
         return -1;
 
+
     *value =
         memory[physical_address];
+
 
     return 0;
 }
@@ -978,7 +1244,7 @@ int read_physical_byte(int physical_address,
 
 /*
  * ============================================================
- * Physical byte write
+ * WRITE PHYSICAL BYTE
  * ============================================================
  */
 
@@ -989,8 +1255,10 @@ int write_physical_byte(int physical_address,
         physical_address >= MEMSIZE)
         return -1;
 
+
     memory[physical_address] =
         value;
+
 
     return 0;
 }
@@ -998,37 +1266,29 @@ int write_physical_byte(int physical_address,
 
 /*
  * ============================================================
- * Legacy compatibility initialize()
+ * COMPATIBILITY INITIALIZE
  * ============================================================
  *
- * The lab says initialize/finalize move into the OS layer.
- *
- * This wrapper is retained so older starter-code references
- * do not cause a linker error.
+ * Retained for older starter-code references.
  * ============================================================
  */
 
 void initialize(void)
 {
-    initialize_physical_memory();
-
-    /*
-     * Processor 0 receives the traditional files.
-     */
-    initialize_memory(0,
-                      "program.byte",
-                      "data.byte");
+    initialize_memory();
 }
 
 
 /*
  * ============================================================
- * Legacy compatibility finalize()
+ * COMPATIBILITY FINALIZE
+ * ============================================================
+ *
+ * Retained for older starter-code references.
  * ============================================================
  */
 
 void finalize(void)
 {
-    finalize_memory(0,
-                    "data.byte");
+    finalize_memory();
 }

@@ -2,40 +2,12 @@
 #define MEMORY_H
 
 #include <stdint.h>
+#include "processor.h"
+
 
 /*
  * ============================================================
- * Memory configuration from Lab 5
- * ============================================================
- *
- * Physical memory:
- *
- *     8192 bytes
- *
- * Page/frame size:
- *
- *     512 bytes
- *
- * Instruction memory:
- *
- *     1024 bytes
- *
- * Data memory:
- *
- *     4096 bytes
- *
- * Logical pages:
- *
- *     1024 / 512 + 4096 / 512
- *     = 2 + 8
- *     = 10 pages
- *
- * Physical frames:
- *
- *     8192 / 512
- *     = 16 frames
- *
- * Frame 0 is reserved.
+ * Physical memory configuration
  * ============================================================
  */
 
@@ -45,8 +17,8 @@
 #define INSTRUCTION_SIZE    1024
 #define DATA_SIZE           4096
 
-#define NUM_LOGICAL_PAGES   10
-#define NUM_PHYSICAL_PAGES  (MEMSIZE / PAGESIZE)
+#define NUM_LOGICAL_PAGES  10
+#define NUM_PHYSICAL_PAGES (MEMSIZE / PAGESIZE)
 
 
 /*
@@ -54,8 +26,9 @@
  * Physical memory
  * ============================================================
  *
- * All instruction and data accesses eventually reach this
- * physical memory.
+ * Physical memory consists of 16 frames of 512 bytes each.
+ *
+ * Frame 0 is reserved by the operating system.
  * ============================================================
  */
 
@@ -64,15 +37,15 @@ extern uint8_t memory[MEMSIZE];
 
 /*
  * ============================================================
- * Page tables
+ * Page table
  * ============================================================
  *
- * pageTable[process][logical_page]
+ * There are 10 logical pages per process:
  *
- * stores the physical frame number corresponding to a logical
- * page.
+ *     Pages 0-1 : instruction memory
+ *     Pages 2-9 : data memory
  *
- * -1 means that the logical page is not currently mapped.
+ * A value of -1 means that the logical page is not mapped.
  * ============================================================
  */
 
@@ -81,13 +54,11 @@ extern int pageTable[NP][NUM_LOGICAL_PAGES];
 
 /*
  * ============================================================
- * Free-frame table
+ * Physical-frame allocation table
  * ============================================================
  *
- * freePages[frame]:
- *
  *     0 = free
- *     1 = allocated
+ *     1 = allocated/reserved
  *
  * Frame 0 is permanently reserved.
  * ============================================================
@@ -98,49 +69,55 @@ extern int freePages[NUM_PHYSICAL_PAGES];
 
 /*
  * ============================================================
- * Memory initialization
+ * Global memory initialization/finalization
+ * ============================================================
+ *
+ * These are called by the OS.
  * ============================================================
  */
 
-void initialize_memory(int proc_id,
-                       const char *program_file,
-                       const char *data_file);
+void initialize_memory(void);
+
+void finalize_memory(void);
 
 
 /*
  * ============================================================
- * Memory finalization
+ * Process memory management
  * ============================================================
  *
- * Writes the process's data memory back to its data file and
- * releases its physical frames.
+ * load_process_memory()
+ *
+ *     Loads the program and data images belonging to a process
+ *     into physical memory and establishes its page table.
+ *
+ * Returns:
+ *
+ *     0  = success
+ *    -1  = failure
+ *
+ *
+ * unload_process_memory()
+ *
+ *     Releases all physical pages belonging to the process.
  * ============================================================
  */
 
-void finalize_memory(int proc_id,
-                     const char *data_file);
+int load_process_memory(int proc_id,
+                        const char *program_file,
+                        const char *data_file);
+
+void unload_process_memory(int proc_id);
 
 
 /*
  * ============================================================
  * Physical-frame allocation
  * ============================================================
- *
- * Returns:
- *
- *     physical frame number >= 1
- *     -1 if no frame is available
- *
- * Frame 0 is never returned.
- * ============================================================
  */
 
 int getFreePage(void);
 
-
-/*
- * Release a previously allocated physical frame.
- */
 void freePage(int frame);
 
 
@@ -162,18 +139,6 @@ void freePage(int frame);
  *
  *     physical byte address
  *     -1 on invalid/unmapped address
- *
- * Lab 5 specifies:
- *
- *     Instruction page =
- *         address / PAGESIZE
- *
- *     Data page =
- *         address / PAGESIZE + INSTRUCTION_SIZE / PAGESIZE
- *
- *     Physical address =
- *         physical_frame * PAGESIZE
- *         + address % PAGESIZE
  * ============================================================
  */
 
@@ -184,7 +149,7 @@ int getPhysicallAddress(int proc_id,
 
 /*
  * ============================================================
- * Physical-memory byte access
+ * Physical byte access
  * ============================================================
  */
 
@@ -197,7 +162,7 @@ int write_physical_byte(int physical_address,
 
 /*
  * ============================================================
- * Process cleanup
+ * Process memory cleanup
  * ============================================================
  */
 
@@ -206,18 +171,15 @@ void release_process_memory(int proc_id);
 
 /*
  * ============================================================
- * Compatibility interface
+ * Compatibility functions
  * ============================================================
  *
- * These are retained because the starter memory.c already
- * exposes initialize()/finalize().
- *
- * OS-level code should use initialize_memory() and
- * finalize_memory().
+ * Kept for compatibility with older starter-code references.
  * ============================================================
  */
 
 void initialize(void);
+
 void finalize(void);
 
 #endif

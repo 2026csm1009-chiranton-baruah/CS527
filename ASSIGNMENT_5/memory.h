@@ -4,11 +4,11 @@
 #include <stdint.h>
 
 /*
- * ------------------------------------------------------------
- * Physical memory
- * ------------------------------------------------------------
+ * ============================================================
+ * Memory configuration from Lab 5
+ * ============================================================
  *
- * Total physical memory:
+ * Physical memory:
  *
  *     8192 bytes
  *
@@ -16,196 +16,176 @@
  *
  *     512 bytes
  *
- * Therefore:
+ * Instruction memory:
  *
- *     8192 / 512 = 16 frames
+ *     1024 bytes
  *
- * Frame 0 is reserved by the operating system.
- * ------------------------------------------------------------
+ * Data memory:
+ *
+ *     4096 bytes
+ *
+ * Logical pages:
+ *
+ *     1024 / 512 + 4096 / 512
+ *     = 2 + 8
+ *     = 10 pages
+ *
+ * Physical frames:
+ *
+ *     8192 / 512
+ *     = 16 frames
+ *
+ * Frame 0 is reserved.
+ * ============================================================
  */
 
-#define MEMSIZE       8192
-#define PAGE_SIZE     512
-#define NUM_FRAMES    (MEMSIZE / PAGE_SIZE)
+#define MEMSIZE             8192
+#define PAGESIZE            512
 
-/*
- * The logical address space of each process is also divided
- * into 512-byte pages.
- *
- * A process therefore has:
- *
- *     4096 / 512 = 8 logical pages
- *
- * for the 4096-byte instruction/data address space used by
- * the starter implementation.
- */
-#define LOGICAL_MEMORY_SIZE 4096
-#define NUM_PAGES           (LOGICAL_MEMORY_SIZE / PAGE_SIZE)
+#define INSTRUCTION_SIZE    1024
+#define DATA_SIZE           4096
+
+#define NUM_LOGICAL_PAGES   10
+#define NUM_PHYSICAL_PAGES  (MEMSIZE / PAGESIZE)
 
 
 /*
- * ------------------------------------------------------------
- * Physical memory array
- * ------------------------------------------------------------
+ * ============================================================
+ * Physical memory
+ * ============================================================
  *
- * memory[0] ... memory[8191]
- *
- * is the actual simulated physical memory.
- * ------------------------------------------------------------
+ * All instruction and data accesses eventually reach this
+ * physical memory.
+ * ============================================================
  */
 
 extern uint8_t memory[MEMSIZE];
 
 
 /*
- * ------------------------------------------------------------
- * Page table
- * ------------------------------------------------------------
+ * ============================================================
+ * Page tables
+ * ============================================================
  *
- * page_table[process][virtual_page] = physical_frame
+ * pageTable[process][logical_page]
  *
- * A value of -1 means that the virtual page is currently
- * unmapped.
- * ------------------------------------------------------------
+ * stores the physical frame number corresponding to a logical
+ * page.
+ *
+ * -1 means that the logical page is not currently mapped.
+ * ============================================================
  */
 
-extern int page_table[NP][NUM_PAGES];
+extern int pageTable[NP][NUM_LOGICAL_PAGES];
 
 
 /*
- * ------------------------------------------------------------
- * Memory initialization/finalization
- * ------------------------------------------------------------
+ * ============================================================
+ * Free-frame table
+ * ============================================================
+ *
+ * freePages[frame]:
+ *
+ *     0 = free
+ *     1 = allocated
+ *
+ * Frame 0 is permanently reserved.
+ * ============================================================
  */
 
-void initialize_memory(void);
-void finalize_memory(void);
+extern int freePages[NUM_PHYSICAL_PAGES];
 
 
 /*
- * ------------------------------------------------------------
- * Physical-frame management
- * ------------------------------------------------------------
+ * ============================================================
+ * Memory initialization
+ * ============================================================
+ */
+
+void initialize_memory(int proc_id,
+                       const char *program_file,
+                       const char *data_file);
+
+
+/*
+ * ============================================================
+ * Memory finalization
+ * ============================================================
  *
- * getFreePage()
- *
- * Returns a free physical frame number.
- *
- * Frame 0 is reserved and must never be returned.
+ * Writes the process's data memory back to its data file and
+ * releases its physical frames.
+ * ============================================================
+ */
+
+void finalize_memory(int proc_id,
+                     const char *data_file);
+
+
+/*
+ * ============================================================
+ * Physical-frame allocation
+ * ============================================================
  *
  * Returns:
  *
- *     frame number >= 1   success
- *     -1                  no free frame
- * ------------------------------------------------------------
+ *     physical frame number >= 1
+ *     -1 if no frame is available
+ *
+ * Frame 0 is never returned.
+ * ============================================================
  */
 
 int getFreePage(void);
 
 
 /*
- * Release a physical frame.
+ * Release a previously allocated physical frame.
  */
 void freePage(int frame);
 
 
 /*
- * ------------------------------------------------------------
- * Page-table management
- * ------------------------------------------------------------
- */
-
-/*
- * Initialize all page tables.
- */
-void initialize_page_tables(void);
-
-
-/*
- * Release every physical frame belonging to a process.
- */
-void free_process_pages(int proc_id);
-
-
-/*
- * Map one logical page to a physical frame.
- *
- * Returns:
- *
- *     0   success
- *    -1   failure
- */
-int map_page(int proc_id,
-             int logical_page,
-             int physical_frame);
-
-
-/*
- * ------------------------------------------------------------
- * Address translation
- * ------------------------------------------------------------
- *
- * Translate:
- *
- *     logical address -> physical address
+ * ============================================================
+ * Logical -> physical address translation
+ * ============================================================
  *
  * isFetch:
  *
- *     1 = instruction access
- *     0 = data access
+ *     1 = instruction-memory access
+ *     0 = data-memory access
+ *
+ * address:
+ *
+ *     logical byte address
  *
  * Returns:
  *
- *     physical byte address >= 0
+ *     physical byte address
  *     -1 on invalid/unmapped address
  *
- * The intentionally unusual spelling
- * getPhysicallAddress()
- * is retained because that is the interface expected by the
- * existing processor code/starter architecture.
- * ------------------------------------------------------------
+ * Lab 5 specifies:
+ *
+ *     Instruction page =
+ *         address / PAGESIZE
+ *
+ *     Data page =
+ *         address / PAGESIZE + INSTRUCTION_SIZE / PAGESIZE
+ *
+ *     Physical address =
+ *         physical_frame * PAGESIZE
+ *         + address % PAGESIZE
+ * ============================================================
  */
 
 int getPhysicallAddress(int proc_id,
                         int isFetch,
-                        uint32_t logical_address);
+                        int address);
 
 
 /*
- * ------------------------------------------------------------
- * Program/data loading
- * ------------------------------------------------------------
- *
- * program_file:
- *     compiled program.byte
- *
- * data_file:
- *     optional data.byte
- *
- * The loader will allocate physical frames and establish the
- * process page-table mappings before copying the contents.
- * ------------------------------------------------------------
- */
-
-int load_process_memory(int proc_id,
-                        const char *program_file,
-                        const char *data_file);
-
-
-/*
- * Unload a process from physical memory.
- */
-void unload_process_memory(int proc_id);
-
-
-/*
- * ------------------------------------------------------------
- * Physical memory byte access
- * ------------------------------------------------------------
- *
- * These helpers are useful to processor/OS code that needs
- * controlled physical-memory access.
- * ------------------------------------------------------------
+ * ============================================================
+ * Physical-memory byte access
+ * ============================================================
  */
 
 int read_physical_byte(int physical_address,
@@ -213,5 +193,31 @@ int read_physical_byte(int physical_address,
 
 int write_physical_byte(int physical_address,
                         uint8_t value);
+
+
+/*
+ * ============================================================
+ * Process cleanup
+ * ============================================================
+ */
+
+void release_process_memory(int proc_id);
+
+
+/*
+ * ============================================================
+ * Compatibility interface
+ * ============================================================
+ *
+ * These are retained because the starter memory.c already
+ * exposes initialize()/finalize().
+ *
+ * OS-level code should use initialize_memory() and
+ * finalize_memory().
+ * ============================================================
+ */
+
+void initialize(void);
+void finalize(void);
 
 #endif

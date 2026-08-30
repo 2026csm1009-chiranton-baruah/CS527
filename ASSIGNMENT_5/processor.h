@@ -3,94 +3,140 @@
 
 #include <stdint.h>
 
+
 /*
- * Number of processors in the simulated system.
- * This is fixed at compile time as required by the lab.
+ * ============================================================
+ * Processor configuration
+ * ============================================================
+ *
+ * NP is the number of simulated processors and is expected to
+ * be supplied by the build/starter configuration.
+ *
+ * If it has not already been defined elsewhere, use the
+ * assignment's default processor count.
+ * ============================================================
  */
+
+#ifndef NP
 #define NP 4
+#endif
+
 
 /*
- * Integer register file:
- * x0 - x255
- */
-#define INT_REGS 256
-
-/*
- * Vector register file:
- * v0 - v31
+ * ============================================================
+ * Processor registers
+ * ============================================================
  *
- * Each vector register is 256 bits = 8 x 32-bit integers.
+ * One complete register set exists for every simulated
+ * processor.
+ * ============================================================
  */
-#define VEC_REGS 32
-#define VEC_LANES 8
 
 /*
- * Processor instruction-memory size.
+ * Program Counter
  *
- * Each instruction occupies four bytes.
- * 256 bytes therefore gives space for 64 instructions.
+ * Contains the logical instruction address of the next
+ * instruction.
  */
-#define INSTRUCTION_MEMORY_SIZE 256
+extern int PC[NP];
+
 
 /*
- * Processor functions.
- */
-void reset(int proc_id);
-void fetch(int proc_id);
-void decode(int proc_id);
-void execute(int proc_id);
-
-/*
- * Execute at most instruction_count instructions.
+ * Stack Pointer
  *
- * The scheduler uses this to implement the time slice.
+ * Addresses logical data memory.
  */
-void process_instructions(int proc_id, int instruction_count);
+extern int SP[NP];
+
 
 /*
- * Integer register file.
- */
-extern uint32_t RegisterFile[NP][INT_REGS];
-
-/*
- * Vector register file.
+ * Accumulator
  *
- * VectorRegisterFile[processor][vector register][lane]
+ * General-purpose arithmetic register.
  */
-extern uint32_t VectorRegisterFile[NP][VEC_REGS][VEC_LANES];
+extern int AC[NP];
+
 
 /*
- * Program counters.
+ * Instruction Register
  *
- * One PC for each simulated processor.
+ * Holds the currently fetched four-byte instruction.
  */
-extern uint32_t PC[NP];
+extern int IR[NP];
+
 
 /*
- * Current fetched instruction.
- */
-extern uint8_t opcode[NP];
-extern uint8_t dest[NP];
-extern uint8_t src1[NP];
-extern uint8_t src2[NP];
-
-/*
- * Arithmetic condition flags.
+ * Processor status.
  *
- * Z = Zero
- * N = Negative
- * C = Carry
- * V = Overflow
+ * 0 = running
+ * 1 = halted
+ * 2 = processor error
  */
-extern int N[NP];
-extern int Z[NP];
-extern int C[NP];
-extern int V[NP];
+extern int status[NP];
+
 
 /*
- * Set to 1 when a processor reaches the termination
- * instruction or is otherwise stopped safely.
+ * Base address/register retained for compatibility with the
+ * starter processor interface.
+ */
+extern int baseAddress[NP];
+
+
+/*
+ * Indicates that the current process has terminated and that
+ * the processor can be released by the OS.
+ *
+ * 0 = still executing
+ * 1 = process has stopped
  */
 extern int end_of_simulation[NP];
+
+
+/*
+ * ============================================================
+ * Processor lifecycle
+ * ============================================================
+ */
+
+/*
+ * Initialize all processor registers.
+ */
+void initialize_processor(void);
+
+
+/*
+ * Reset one processor before a process is dispatched to it.
+ */
+void reset(int proc_id);
+
+
+/*
+ * ============================================================
+ * Instruction execution
+ * ============================================================
+ *
+ * Execute at most instruction_count instructions.
+ *
+ * The function MUST return after instruction_count
+ * instructions even if the user program contains an infinite
+ * branch loop.
+ */
+void process_instructions(int proc_id,
+                          int instruction_count);
+
+
+/*
+ * ============================================================
+ * Processor termination
+ * ============================================================
+ *
+ * The processor implementation sets end_of_simulation[proc_id]
+ * when the currently running process executes its terminating
+ * instruction or encounters an unrecoverable execution error.
+ *
+ * The OS uses that flag to determine when the processor can be
+ * released.
+ * ============================================================
+ */
 
 #endif

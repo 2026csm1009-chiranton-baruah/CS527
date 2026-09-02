@@ -1,0 +1,19 @@
+Mini OS started with 4 processors.
+$ [Compiler] compiling a3.txt
+[MEM] proc=0: instruction=120 bytes (1 pages), data=2797 bytes (6 pages)
+[OS] PID 1 loaded on processor 0
+[Compiler] compiling f2.txt
+[MEM] proc=1: instruction=64 bytes (1 pages), data=2797 bytes (6 pages)
+[OS] PID 2 loaded on processor 1
+[Shell] exiting; existing tasks will continue
+528
+[OS] PID 2 finished on processor 1
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 1 finished on processor 0

@@ -1,3 +1,4 @@
+bumblebee@Chiranton:~/CS527$ printf "a3.txt data.byte\nf2.txt data.byte\nexit\n" | ./simulator
 Mini OS started with 4 processors.
 $ [Compiler] compiling a3.txt
 [MEM] proc=0: instruction=120 bytes (1 pages), data=2797 bytes (6 pages)
@@ -17,3 +18,4 @@ $ [Compiler] compiling a3.txt
 23
 25
 [OS] PID 1 finished on processor 0
+bumblebee@Chiranton:~/CS527$

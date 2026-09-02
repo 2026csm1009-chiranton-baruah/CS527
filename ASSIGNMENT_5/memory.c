@@ -963,11 +963,32 @@ int load_process_memory(int proc_id,
             return -1;
         }
     }
+    
+    /*
+ * Trim trailing zero bytes.
+ *
+ * save_data_file() writes the entire logical DATA_SIZE address
+ * space, including unmapped/unused locations as zero. Those
+ * trailing zeroes should not force allocation of all eight
+ * logical data pages when the file is loaded again.
+ */
+	while (data_count > 0 &&
+       		data_bytes[data_count - 1] == 0) {
+    			data_count--;
+	}
 
 
     /*
      * No data pages are required if data.byte is empty.
      */
+    printf("[MEM] proc=%d: instruction=%d bytes (%d pages), "
+       "data=%d bytes (%d pages)\n",
+       proc_id,
+       instruction_count,
+       pages_required(instruction_count),
+       data_count,
+       pages_required(data_count));
+
     if (data_count > 0) {
 
         /*

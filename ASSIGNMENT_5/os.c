@@ -805,6 +805,9 @@ static int input_ready(void)
 
 static void shell(void)
 {
+    if(shell_exit)
+	return;
+
     if (!input_ready())
         return;
 
@@ -1062,16 +1065,16 @@ void os_run(void)
          * Once exit has been entered, no new programs are
          * accepted. Existing tasks continue.
          */
-        if (shell_exit) {
+        if (shell_exit && !active_tasks_exist()) {
+            	// if (!active_tasks_exist())
+        	break;
 
-            if (!active_tasks_exist())
-                break;
-
-        } else {
+        }
+	/*else {
 
             printf("$ ");
             fflush(stdout);
-        }
+        }*/
 
         /*
          * Small delay required by the lab's real-time
@@ -1156,16 +1159,16 @@ void os_run_with_program(const char *program)
 
         shell();
 
-        if (shell_exit) {
+        if (shell_exit && !active_tasks_exist()) {
+            // if (!active_tasks_exist())
+        	break;
 
-            if (!active_tasks_exist())
-                break;
-
-        } else {
+        }
+	/*else {
 
             printf("$ ");
             fflush(stdout);
-        }
+        }*/
 
         usleep(10);
     }

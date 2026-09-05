@@ -1,0 +1,253 @@
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_5_5$ make test
+rm -f main.o compiler.o processor.o memory.o disk.o os.o simulator disk_test \
+      program.byte program_*.byte \
+      processor.log data_*.byte \
+      disk_test.img disk.img
+gcc -Wall -Wextra -std=c11 -O2 -c main.c
+gcc -Wall -Wextra -std=c11 -O2 -c compiler.c
+gcc -Wall -Wextra -std=c11 -O2 -c processor.c
+gcc -Wall -Wextra -std=c11 -O2 -c memory.c
+gcc -Wall -Wextra -std=c11 -O2 -c disk.c
+gcc -Wall -Wextra -std=c11 -O2 -c os.c
+In file included from /usr/include/string.h:535,
+                 from os.c:5:
+In function ‘strncpy’,
+    inlined from ‘create_task’ at os.c:380:5:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:10: warning: ‘__builtin_strncpy’ output may be truncated copying 255 bytes from a string of length 255 [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+In function ‘strncpy’,
+    inlined from ‘create_task’ at os.c:388:5:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:10: warning: ‘__builtin_strncpy’ output may be truncated copying 255 bytes from a string of length 255 [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+gcc -Wall -Wextra -std=c11 -O2 -o simulator main.o compiler.o processor.o memory.o disk.o os.o
+gcc -Wall -Wextra -std=c11 -O2 -I. -o disk_test \
+        tests/disk_tests.c \
+        tests/disk_test_main.c \
+        disk.c
+
+========================================
+ Mini OS Cumulative Test Suite
+========================================
+
+[1/2] Disk subsystem tests
+Starting disk subsystem tests...
+
+============================================================
+ SIMULATED DISK TEST SUITE
+============================================================
+Disk size       : 65536 bytes
+Block size      : 512 bytes
+Number of blocks: 128
+Disk image      : disk_test.img
+
+[PASS] initialize disk image
+[DISK] 128 blocks total, 1 used, 127 free
+
+-- Basic block I/O --
+[PASS] allocate a valid data block
+[PASS] write one complete block
+[PASS] read one complete block
+[PASS] read data matches written data
+[PASS] free allocated block
+[PASS] freed block is reported as free
+
+-- Reserved block --
+[PASS] block 0 is reserved
+[PASS] block 0 cannot be freed
+[PASS] reserved block remains readable
+
+-- Invalid access --
+[PASS] negative block number is rejected
+[PASS] block number beyond disk is rejected
+[PASS] negative block write is rejected
+[PASS] out-of-range block write is rejected
+[PASS] negative block free is rejected
+[PASS] out-of-range block free is rejected
+
+-- Block allocation --
+[PASS] allocator fills every usable block and leaves block 0 reserved
+[PASS] allocator reports DISK_FULL when no blocks remain
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] free every allocated block
+[PASS] allocator works again after blocks are freed
+
+-- Data pattern --
+[PASS] allocate block for pattern test
+[PASS] write non-trivial byte pattern
+[PASS] read non-trivial byte pattern
+[PASS] non-trivial pattern survives round trip
+[PASS] free pattern-test block
+[DISK] 128 blocks total, 2 used, 126 free
+
+============================================================
+ RESULT: 151/151 checks passed
+============================================================
+
+All disk tests passed.
+
+[2/2] Simulator integration test
+Mini OS started with 4 processors.
+$ [DISK] 128 blocks total, 1 used, 127 free
+PID     STATE           CPU     SOURCE
+-----------------------------------------------
+[Compiler] compiling a3.txt
+[MEM] proc=0: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 1 loaded on processor 0
+[Compiler] compiling f2.txt
+[MEM] proc=1: instruction=64 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 2 loaded on processor 1
+[Compiler] compiling cross.txt
+[MEM] proc=2: instruction=172 bytes (1 pages), data=21 bytes (1 pages) [disk-backed]
+[OS] PID 3 loaded on processor 2
+[Shell] exiting; existing tasks will continue
+-3
+6
+-3
+[OS] PID 3 finished on processor 2
+528
+[OS] PID 2 finished on processor 1
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 1 finished on processor 0
+
+========================================
+ ALL TESTS PASSED
+========================================
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_5_5$

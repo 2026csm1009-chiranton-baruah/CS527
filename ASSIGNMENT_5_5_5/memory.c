@@ -1,143 +1,242 @@
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "memory.h"
 #include "processor.h"
-#include "disk.h"
+#include "tlb.h"
+
+
+/*
+ * ============================================================
+ * Physical memory
+ * ============================================================
+ */
 
 uint8_t memory[MEMSIZE];
+
+
+/*
+ * ============================================================
+ * Page tables
+ * ============================================================
+ *
+ * pageTable[processor][logical_page]
+ *
+ * -1 = page not mapped
+ * >=0 = physical frame
+ */
+
 int pageTable[NP][NUM_LOGICAL_PAGES];
+
+
+/*
+ * ============================================================
+ * Physical frame allocation table
+ * ============================================================
+ *
+ * 0 = free
+ * 1 = allocated/reserved
+ *
+ * Frame 0 is permanently reserved.
+ */
+
 int freePages[NUM_PHYSICAL_PAGES];
 
-/* Disk block backing each logical page; -1 means no backing block. */
-static int diskPageTable[NP][NUM_LOGICAL_PAGES];
-static int pageDirty[NP][NUM_LOGICAL_PAGES];
 
-/* Reverse mapping for resident physical frames. */
-static int frameOwnerProc[NUM_PHYSICAL_PAGES];
-static int frameOwnerPage[NUM_PHYSICAL_PAGES];
-static unsigned long frameStamp[NUM_PHYSICAL_PAGES];
-static unsigned long nextStamp;
-
-static int valid_proc(int proc_id)
-{
-    return proc_id >= 0 && proc_id < NP;
-}
-
-static int valid_frame(int frame)
-{
-    return frame >= 0 && frame < NUM_PHYSICAL_PAGES;
-}
-
-static int valid_logical_page(int page)
-{
-    return page >= 0 && page < NUM_LOGICAL_PAGES;
-}
+/*
+ * ============================================================
+ * Internal helper
+ * ============================================================
+ */
 
 static void clear_page_table(int proc_id)
 {
-    if (!valid_proc(proc_id))
-        return;
+    int page;
 
-    for (int page = 0; page < NUM_LOGICAL_PAGES; page++) {
+    if (proc_id < 0 || proc_id >= NP) {
+        return;
+    }
+
+    for (page = 0; page < NUM_LOGICAL_PAGES; page++) {
         pageTable[proc_id][page] = -1;
-        diskPageTable[proc_id][page] = -1;
-        pageDirty[proc_id][page] = 0;
     }
 }
+
+
+/*
+ * ============================================================
+ * initialize_physical_memory
+ * ============================================================
+ */
 
 static void initialize_physical_memory(void)
 {
+    int i;
+
+    /*
+     * Clear physical memory.
+     */
     memset(memory, 0, sizeof(memory));
-    memset(frameOwnerProc, -1, sizeof(frameOwnerProc));
-    memset(frameOwnerPage, -1, sizeof(frameOwnerPage));
-    memset(frameStamp, 0, sizeof(frameStamp));
-    nextStamp = 1;
 
-    for (int frame = 0; frame < NUM_PHYSICAL_PAGES; frame++)
-        freePages[frame] = 0;
 
+    /*
+     * Mark every physical frame as free.
+     */
+    for (i = 0; i < NUM_PHYSICAL_PAGES; i++) {
+        freePages[i] = 0;
+    }
+
+
+    /*
+     * Frame 0 is reserved by the operating system.
+     */
     freePages[0] = 1;
-    frameOwnerProc[0] = -1;
-    frameOwnerPage[0] = -1;
-
-    for (int proc = 0; proc < NP; proc++)
-        clear_page_table(proc);
 }
+
+
+/*
+ * ============================================================
+ * initialize_memory
+ * ============================================================
+ */
 
 void initialize_memory(void)
 {
+    int proc_id;
+
+    /*
+     * Initialize physical memory and frame allocation.
+     */
     initialize_physical_memory();
 
-    if (disk_initialize("disk.img") != DISK_OK) {
-        fprintf(stderr, "ERROR: unable to initialize simulated disk\n");
+
+    /*
+     * Clear all process page tables.
+     */
+    for (proc_id = 0; proc_id < NP; proc_id++) {
+        clear_page_table(proc_id);
     }
+
+
+    /*
+     * Initialize the TLB.
+     */
+    initialize_tlb();
 }
+
+
+/*
+ * ============================================================
+ * finalize_memory
+ * ============================================================
+ */
+
+void finalize_memory(void)
+{
+    /*
+     * The TLB does not own physical memory, but it must be
+     * invalidated before the memory subsystem shuts down.
+     */
+    finalize_tlb();
+}
+
+
+/*
+ * ============================================================
+ * load_hex_file
+ * ============================================================
+ *
+ * Loads hexadecimal bytes from a text file.
+ *
+ * The file is expected to contain hexadecimal byte values.
+ *
+ * Returns:
+ *
+ *      number of bytes loaded
+ *      -1 on failure
+ * ============================================================
+ */
 
 static int load_hex_file(const char *filename,
-                         uint8_t *destination,
-                         int max_bytes,
-                         int *bytes_loaded)
+                         uint8_t *buffer,
+                         int max_size)
 {
-    if (filename == NULL || destination == NULL || bytes_loaded == NULL || max_bytes < 0)
-        return -1;
-
-    FILE *fp = fopen(filename, "r");
-    if (fp == NULL)
-        return -1;
-
-    int count = 0;
+    FILE *file;
     unsigned int value;
+    int count = 0;
 
-    while (count < max_bytes) {
-        int result = fscanf(fp, "%x", &value);
-        if (result != 1)
-            break;
+    if (filename == NULL ||
+        buffer == NULL ||
+        max_size <= 0) {
+        return -1;
+    }
+
+    file = fopen(filename, "r");
+
+    if (file == NULL) {
+        return -1;
+    }
+
+    while (count < max_size &&
+           fscanf(file, "%x", &value) == 1) {
 
         if (value > 0xFF) {
-            fclose(fp);
+            fclose(file);
             return -1;
         }
 
-        destination[count++] = (uint8_t)value;
+        buffer[count++] = (uint8_t)value;
     }
 
-    if (!feof(fp)) {
-        int c;
-        do {
-            c = fgetc(fp);
-        } while (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+    fclose(file);
 
-        if (c != EOF) {
-            fclose(fp);
-            return -1;
-        }
-    }
-
-    fclose(fp);
-    *bytes_loaded = count;
-    return 0;
+    return count;
 }
+
+
+/*
+ * ============================================================
+ * pages_required
+ * ============================================================
+ */
 
 static int pages_required(int bytes)
 {
-    if (bytes <= 0)
+    if (bytes <= 0) {
         return 0;
+    }
 
     return (bytes + PAGESIZE - 1) / PAGESIZE;
 }
 
+
+/*
+ * ============================================================
+ * getFreePage
+ * ============================================================
+ */
+
 int getFreePage(void)
 {
-    for (int frame = 1; frame < NUM_PHYSICAL_PAGES; frame++) {
+    int frame;
+
+    /*
+     * Start at frame 1 because frame 0 is reserved.
+     */
+    for (frame = 1; frame < NUM_PHYSICAL_PAGES; frame++) {
+
         if (freePages[frame] == 0) {
+
             freePages[frame] = 1;
-            memset(&memory[frame * PAGESIZE], 0, PAGESIZE);
-            frameOwnerProc[frame] = -1;
-            frameOwnerPage[frame] = -1;
-            frameStamp[frame] = nextStamp++;
+
+            /*
+             * Clear the newly allocated frame.
+             */
+            memset(&memory[frame * PAGESIZE],
+                   0,
+                   PAGESIZE);
+
             return frame;
         }
     }
@@ -145,381 +244,825 @@ int getFreePage(void)
     return -1;
 }
 
+
+/*
+ * ============================================================
+ * freePage
+ * ============================================================
+ */
+
 void freePage(int frame)
 {
-    if (frame <= 0 || frame >= NUM_PHYSICAL_PAGES)
+    if (frame <= 0 ||
+        frame >= NUM_PHYSICAL_PAGES) {
         return;
-
-    if (freePages[frame] == 0)
-        return;
-
-    int owner_proc = frameOwnerProc[frame];
-    int owner_page = frameOwnerPage[frame];
-
-    if (valid_proc(owner_proc) && valid_logical_page(owner_page) &&
-        pageTable[owner_proc][owner_page] == frame) {
-        pageTable[owner_proc][owner_page] = -1;
     }
 
     freePages[frame] = 0;
-    frameOwnerProc[frame] = -1;
-    frameOwnerPage[frame] = -1;
-    frameStamp[frame] = 0;
-    memset(&memory[frame * PAGESIZE], 0, PAGESIZE);
+
+    /*
+     * Clear the released physical frame.
+     */
+    memset(&memory[frame * PAGESIZE],
+           0,
+           PAGESIZE);
 }
 
-static int choose_victim_frame(void)
-{
-    int victim = -1;
-    unsigned long oldest = 0;
 
-    for (int frame = 1; frame < NUM_PHYSICAL_PAGES; frame++) {
-        if (freePages[frame] == 0)
-            continue;
-
-        if (frameOwnerProc[frame] < 0 || frameOwnerPage[frame] < 0)
-            continue;
-
-        if (victim < 0 || frameStamp[frame] < oldest) {
-            victim = frame;
-            oldest = frameStamp[frame];
-        }
-    }
-
-    return victim;
-}
-
-static int allocate_page_frame(int proc_id, int logical_page)
-{
-    int frame = getFreePage();
-
-    if (frame >= 0)
-        return frame;
-
-    frame = choose_victim_frame();
-    if (frame < 0)
-        return -1;
-
-    int victim_proc = frameOwnerProc[frame];
-    int victim_page = frameOwnerPage[frame];
-
-    if (valid_proc(victim_proc) && valid_logical_page(victim_page)) {
-        if (pageDirty[victim_proc][victim_page]) {
-            int block = diskPageTable[victim_proc][victim_page];
-            if (block < 0 ||
-                disk_write_block(block, &memory[frame * PAGESIZE]) != DISK_OK) {
-                return -1;
-            }
-        }
-
-        pageTable[victim_proc][victim_page] = -1;
-        pageDirty[victim_proc][victim_page] = 0;
-    }
-
-    memset(&memory[frame * PAGESIZE], 0, PAGESIZE);
-    frameOwnerProc[frame] = proc_id;
-    frameOwnerPage[frame] = logical_page;
-    frameStamp[frame] = nextStamp++;
-    return frame;
-}
-
-int page_in(int proc_id, int logical_page)
-{
-    if (!valid_proc(proc_id) || !valid_logical_page(logical_page))
-        return -1;
-
-    if (pageTable[proc_id][logical_page] > 0)
-        return pageTable[proc_id][logical_page];
-
-    int block = diskPageTable[proc_id][logical_page];
-    if (block < 0)
-        return -1;
-
-    int frame = allocate_page_frame(proc_id, logical_page);
-    if (frame < 0)
-        return -1;
-
-    if (disk_read_block(block, &memory[frame * PAGESIZE]) != DISK_OK) {
-        freePage(frame);
-        return -1;
-    }
-
-    pageTable[proc_id][logical_page] = frame;
-    pageDirty[proc_id][logical_page] = 0;
-    frameOwnerProc[frame] = proc_id;
-    frameOwnerPage[frame] = logical_page;
-    frameStamp[frame] = nextStamp++;
-
-    return frame;
-}
-
-int page_out(int proc_id, int logical_page)
-{
-    if (!valid_proc(proc_id) || !valid_logical_page(logical_page))
-        return -1;
-
-    int frame = pageTable[proc_id][logical_page];
-    if (frame <= 0)
-        return 0;
-
-    int block = diskPageTable[proc_id][logical_page];
-    if (block < 0)
-        return -1;
-
-    if (pageDirty[proc_id][logical_page] &&
-        disk_write_block(block, &memory[frame * PAGESIZE]) != DISK_OK)
-        return -1;
-
-    pageDirty[proc_id][logical_page] = 0;
-    freePage(frame);
-    return 0;
-}
+/*
+ * ============================================================
+ * getPhysicallAddress
+ * ============================================================
+ *
+ * Logical address -> physical address.
+ *
+ * Translation path:
+ *
+ *     logical address
+ *          |
+ *          v
+ *         TLB
+ *       /     \
+ *    HIT       MISS
+ *     |          |
+ *     |      page table
+ *     |          |
+ *     |          v
+ *     |      physical frame
+ *     |          |
+ *     |       TLB insert
+ *     |          |
+ *     +----------+
+ *          |
+ *          v
+ *    physical address
+ *
+ * isFetch:
+ *
+ *      1 = instruction access
+ *      0 = data access
+ * ============================================================
+ */
 
 int getPhysicallAddress(int proc_id,
                         int isFetch,
                         int address)
 {
-    if (!valid_proc(proc_id) || address < 0)
-        return -1;
-
     int logical_page;
     int offset;
+    int physical_frame;
+    int physical_address;
+
+
+    /*
+     * --------------------------------------------------------
+     * Validate processor ID.
+     * --------------------------------------------------------
+     */
+
+    if (proc_id < 0 ||
+        proc_id >= NP) {
+        return -1;
+    }
+
+
+    /*
+     * --------------------------------------------------------
+     * Determine logical page and offset.
+     * --------------------------------------------------------
+     */
 
     if (isFetch) {
-        if (address >= INSTRUCTION_SIZE)
+
+        /*
+         * Instruction memory:
+         *
+         * logical pages 0-1
+         */
+        if (address < 0 ||
+            address >= INSTRUCTION_SIZE) {
             return -1;
+        }
+
         logical_page = address / PAGESIZE;
         offset = address % PAGESIZE;
+
     } else {
-        if (address >= DATA_SIZE)
+
+        /*
+         * Data memory:
+         *
+         * logical pages 2-9
+         */
+        if (address < 0 ||
+            address >= DATA_SIZE) {
             return -1;
-        logical_page = address / PAGESIZE + INSTRUCTION_SIZE / PAGESIZE;
+        }
+
+        logical_page =
+            address / PAGESIZE +
+            (INSTRUCTION_SIZE / PAGESIZE);
+
         offset = address % PAGESIZE;
     }
 
-    if (!valid_logical_page(logical_page))
-        return -1;
 
-    int frame = page_in(proc_id, logical_page);
-    if (frame <= 0)
-        return -1;
+    /*
+     * --------------------------------------------------------
+     * TLB LOOKUP
+     * --------------------------------------------------------
+     */
 
-    int physical_address = frame * PAGESIZE + offset;
-    if (physical_address < 0 || physical_address >= MEMSIZE)
+    physical_frame =
+        tlb_lookup(proc_id, logical_page);
+
+
+    /*
+     * --------------------------------------------------------
+     * TLB MISS
+     * --------------------------------------------------------
+     */
+
+    if (physical_frame < 0) {
+
+        /*
+         * TLB miss.
+         *
+         * Consult the authoritative page table.
+         */
+        physical_frame =
+            pageTable[proc_id][logical_page];
+
+
+        /*
+         * Page is not currently mapped.
+         *
+         * Demand paging can be added here later.
+         */
+        if (physical_frame < 0 ||
+            physical_frame >= NUM_PHYSICAL_PAGES ||
+            physical_frame == 0) {
+
+            return -1;
+        }
+
+
+        /*
+         * Page-table translation succeeded.
+         *
+         * Populate the TLB.
+         */
+        tlb_insert(proc_id,
+                   logical_page,
+                   physical_frame);
+    }
+
+
+    /*
+     * --------------------------------------------------------
+     * Construct physical address.
+     * --------------------------------------------------------
+     */
+
+    physical_address =
+        physical_frame * PAGESIZE + offset;
+
+
+    /*
+     * Final physical-memory bounds check.
+     */
+    if (physical_address < 0 ||
+        physical_address >= MEMSIZE) {
+
         return -1;
+    }
 
     return physical_address;
 }
 
-int read_physical_byte(int physical_address, uint8_t *value)
+
+/*
+ * ============================================================
+ * allocate_instruction_pages
+ * ============================================================
+ */
+
+static int allocate_instruction_pages(int proc_id,
+                                      int instruction_bytes)
 {
-    if (value == NULL || physical_address < 0 || physical_address >= MEMSIZE)
-        return -1;
+    int required;
+    int page;
+    int frame;
 
-    *value = memory[physical_address];
-    return 0;
-}
+    required = pages_required(instruction_bytes);
 
-int write_physical_byte(int physical_address, uint8_t value)
-{
-    if (physical_address < 0 || physical_address >= MEMSIZE)
-        return -1;
-
-    memory[physical_address] = value;
-    return 0;
-}
-
-int read_process_byte(int proc_id,
-                      int isFetch,
-                      int logical_address,
-                      uint8_t *value)
-{
-    int physical = getPhysicallAddress(proc_id, isFetch, logical_address);
-    if (physical < 0)
-        return -1;
-
-    return read_physical_byte(physical, value);
-}
-
-int write_process_byte(int proc_id,
-                       int logical_address,
-                       uint8_t value)
-{
-    int physical = getPhysicallAddress(proc_id, 0, logical_address);
-    if (physical < 0)
-        return -1;
-
-    int page = logical_address / PAGESIZE + INSTRUCTION_SIZE / PAGESIZE;
-    if (valid_logical_page(page))
-        pageDirty[proc_id][page] = 1;
-
-    return write_physical_byte(physical, value);
-}
-
-static int store_logical_page(int proc_id,
-                              int logical_page,
-                              const uint8_t *bytes)
-{
-    if (!valid_proc(proc_id) || !valid_logical_page(logical_page) || bytes == NULL)
-        return -1;
-
-    int block = disk_allocate_block();
-    if (block < 0)
-        return -1;
-
-    if (disk_write_block(block, bytes) != DISK_OK) {
-        disk_free_block(block);
+    if (required > INSTRUCTION_SIZE / PAGESIZE) {
         return -1;
     }
 
-    diskPageTable[proc_id][logical_page] = block;
-    pageTable[proc_id][logical_page] = -1;
-    pageDirty[proc_id][logical_page] = 0;
+    for (page = 0; page < required; page++) {
+
+        frame = getFreePage();
+
+        if (frame < 0) {
+
+            /*
+             * Roll back pages already allocated.
+             */
+            int rollback;
+
+            for (rollback = 0;
+                 rollback < page;
+                 rollback++) {
+
+                if (pageTable[proc_id][rollback] >= 0) {
+
+                    freePage(
+                        pageTable[proc_id][rollback]
+                    );
+
+                    pageTable[proc_id][rollback] = -1;
+                }
+            }
+
+            return -1;
+        }
+
+        pageTable[proc_id][page] = frame;
+    }
+
     return 0;
 }
+
+
+/*
+ * ============================================================
+ * allocate_data_pages
+ * ============================================================
+ */
+
+static int allocate_data_pages(int proc_id,
+                               int data_bytes)
+{
+    int required;
+    int page;
+    int frame;
+    int logical_page;
+
+    required = pages_required(data_bytes);
+
+    if (required > DATA_SIZE / PAGESIZE) {
+        return -1;
+    }
+
+    for (page = 0; page < required; page++) {
+
+        frame = getFreePage();
+
+        if (frame < 0) {
+
+            /*
+             * Roll back data pages already allocated.
+             */
+            int rollback;
+
+            for (rollback = 0;
+                 rollback < page;
+                 rollback++) {
+
+                logical_page =
+                    (INSTRUCTION_SIZE / PAGESIZE) +
+                    rollback;
+
+                if (pageTable[proc_id][logical_page] >= 0) {
+
+                    freePage(
+                        pageTable[proc_id][logical_page]
+                    );
+
+                    pageTable[proc_id][logical_page] = -1;
+                }
+            }
+
+            return -1;
+        }
+
+        logical_page =
+            (INSTRUCTION_SIZE / PAGESIZE) + page;
+
+        pageTable[proc_id][logical_page] = frame;
+    }
+
+    return 0;
+}
+
+
+/*
+ * ============================================================
+ * copy_instruction_bytes
+ * ============================================================
+ */
+
+static int copy_instruction_bytes(int proc_id,
+                                  const uint8_t *buffer,
+                                  int byte_count)
+{
+    int i;
+    int logical_page;
+    int offset;
+    int frame;
+    int physical_address;
+
+    if (proc_id < 0 ||
+        proc_id >= NP ||
+        buffer == NULL ||
+        byte_count < 0 ||
+        byte_count > INSTRUCTION_SIZE) {
+        return -1;
+    }
+
+    for (i = 0; i < byte_count; i++) {
+
+        logical_page = i / PAGESIZE;
+        offset = i % PAGESIZE;
+
+        frame = pageTable[proc_id][logical_page];
+
+        if (frame < 1 ||
+            frame >= NUM_PHYSICAL_PAGES) {
+            return -1;
+        }
+
+        physical_address =
+            frame * PAGESIZE + offset;
+
+        memory[physical_address] = buffer[i];
+    }
+
+    return 0;
+}
+
+
+/*
+ * ============================================================
+ * copy_data_bytes
+ * ============================================================
+ */
+
+static int copy_data_bytes(int proc_id,
+                           const uint8_t *buffer,
+                           int byte_count)
+{
+    int i;
+    int logical_page;
+    int offset;
+    int frame;
+    int physical_address;
+
+    if (proc_id < 0 ||
+        proc_id >= NP ||
+        buffer == NULL ||
+        byte_count < 0 ||
+        byte_count > DATA_SIZE) {
+        return -1;
+    }
+
+    for (i = 0; i < byte_count; i++) {
+
+        logical_page =
+            i / PAGESIZE +
+            (INSTRUCTION_SIZE / PAGESIZE);
+
+        offset = i % PAGESIZE;
+
+        frame = pageTable[proc_id][logical_page];
+
+        if (frame < 1 ||
+            frame >= NUM_PHYSICAL_PAGES) {
+            return -1;
+        }
+
+        physical_address =
+            frame * PAGESIZE + offset;
+
+        memory[physical_address] = buffer[i];
+    }
+
+    return 0;
+}
+
+
+/*
+ * ============================================================
+ * load_process_memory
+ * ============================================================
+ */
 
 int load_process_memory(int proc_id,
                         const char *program_file,
                         const char *data_file)
 {
-    if (!valid_proc(proc_id) || program_file == NULL)
+    uint8_t instruction_buffer[INSTRUCTION_SIZE];
+    uint8_t data_buffer[DATA_SIZE];
+
+    int instruction_bytes;
+    int data_bytes = 0;
+    int i;
+
+
+    /*
+     * --------------------------------------------------------
+     * Validate arguments.
+     * --------------------------------------------------------
+     */
+
+    if (proc_id < 0 ||
+        proc_id >= NP ||
+        program_file == NULL) {
         return -1;
+    }
+
+
+    /*
+     * --------------------------------------------------------
+     * Release any previous memory belonging to this process.
+     * --------------------------------------------------------
+     */
 
     release_process_memory(proc_id);
 
-    uint8_t instruction_bytes[INSTRUCTION_SIZE];
-    uint8_t data_bytes[DATA_SIZE];
-    memset(instruction_bytes, 0, sizeof(instruction_bytes));
-    memset(data_bytes, 0, sizeof(data_bytes));
 
-    int instruction_count = 0;
-    int data_count = 0;
+    /*
+     * --------------------------------------------------------
+     * Load instruction image.
+     * --------------------------------------------------------
+     */
 
-    if (load_hex_file(program_file,
-                      instruction_bytes,
-                      INSTRUCTION_SIZE,
-                      &instruction_count) != 0) {
-        fprintf(stderr, "ERROR: cannot load program file %s\n", program_file);
+    memset(instruction_buffer,
+           0,
+           sizeof(instruction_buffer));
+
+    instruction_bytes =
+        load_hex_file(program_file,
+                      instruction_buffer,
+                      INSTRUCTION_SIZE);
+
+    if (instruction_bytes < 0) {
         return -1;
     }
 
-    int instruction_pages = pages_required(instruction_count);
-    if (instruction_pages == 0)
-        instruction_pages = 1;
 
-    for (int page = 0; page < instruction_pages; page++) {
-        uint8_t page_buffer[PAGESIZE];
-        memset(page_buffer, 0, sizeof(page_buffer));
+    /*
+     * --------------------------------------------------------
+     * Allocate instruction pages.
+     * --------------------------------------------------------
+     */
 
-        int start = page * PAGESIZE;
-        int remaining = instruction_count - start;
-        int count = remaining > PAGESIZE ? PAGESIZE : remaining;
-        if (count > 0)
-            memcpy(page_buffer, instruction_bytes + start, count);
+    if (allocate_instruction_pages(proc_id,
+                                   instruction_bytes) < 0) {
 
-        if (store_logical_page(proc_id, page, page_buffer) != 0) {
+        release_process_memory(proc_id);
+
+        return -1;
+    }
+
+
+    /*
+     * --------------------------------------------------------
+     * Copy instruction image into physical memory.
+     * --------------------------------------------------------
+     */
+
+    if (copy_instruction_bytes(proc_id,
+                               instruction_buffer,
+                               instruction_bytes) < 0) {
+
+        release_process_memory(proc_id);
+
+        return -1;
+    }
+
+
+    /*
+     * --------------------------------------------------------
+     * Load optional data image.
+     * --------------------------------------------------------
+ */
+
+    if (data_file != NULL) {
+
+        memset(data_buffer,
+               0,
+               sizeof(data_buffer));
+
+        data_bytes =
+            load_hex_file(data_file,
+                          data_buffer,
+                          DATA_SIZE);
+
+        if (data_bytes < 0) {
+
             release_process_memory(proc_id);
+
+            return -1;
+        }
+
+
+        /*
+         * Remove trailing zero bytes.
+         *
+         * This preserves the behavior of the original memory
+         * implementation where the data image is sized to the
+         * actual non-zero contents.
+         */
+        while (data_bytes > 0 &&
+               data_buffer[data_bytes - 1] == 0) {
+
+            data_bytes--;
+        }
+    }
+
+
+    /*
+     * --------------------------------------------------------
+     * Allocate data pages.
+     * --------------------------------------------------------
+ */
+
+    if (data_bytes > 0) {
+
+        if (allocate_data_pages(proc_id,
+                                data_bytes) < 0) {
+
+            release_process_memory(proc_id);
+
+            return -1;
+        }
+
+
+        /*
+         * Copy data into physical memory.
+         */
+        if (copy_data_bytes(proc_id,
+                            data_buffer,
+                            data_bytes) < 0) {
+
+            release_process_memory(proc_id);
+
             return -1;
         }
     }
 
-    if (data_file != NULL && data_file[0] != '\0') {
-        if (load_hex_file(data_file,
-                          data_bytes,
-                          DATA_SIZE,
-                          &data_count) != 0) {
-            fprintf(stderr, "ERROR: cannot load data file %s\n", data_file);
-            release_process_memory(proc_id);
-            return -1;
+
+    /*
+     * --------------------------------------------------------
+     * Print memory mapping summary.
+     * --------------------------------------------------------
+ */
+
+    printf("\nProcess %d memory loaded.\n", proc_id);
+
+    printf("Instruction bytes: %d\n",
+           instruction_bytes);
+
+    printf("Data bytes:        %d\n",
+           data_bytes);
+
+    printf("Page table:\n");
+
+    for (i = 0; i < NUM_LOGICAL_PAGES; i++) {
+
+        if (pageTable[proc_id][i] >= 0) {
+
+            printf("  Logical page %d -> "
+                   "Physical frame %d\n",
+                   i,
+                   pageTable[proc_id][i]);
+
+        } else {
+
+            printf("  Logical page %d -> "
+                   "unmapped\n",
+                   i);
         }
     }
-
-    while (data_count > 0 && data_bytes[data_count - 1] == 0)
-        data_count--;
-
-    int data_pages = pages_required(data_count);
-    int first_data_page = INSTRUCTION_SIZE / PAGESIZE;
-
-    for (int page = 0; page < data_pages; page++) {
-        uint8_t page_buffer[PAGESIZE];
-        memset(page_buffer, 0, sizeof(page_buffer));
-
-        int start = page * PAGESIZE;
-        int remaining = data_count - start;
-        int count = remaining > PAGESIZE ? PAGESIZE : remaining;
-        if (count > 0)
-            memcpy(page_buffer, data_bytes + start, count);
-
-        if (store_logical_page(proc_id,
-                                first_data_page + page,
-                                page_buffer) != 0) {
-            release_process_memory(proc_id);
-            return -1;
-        }
-    }
-
-    printf("[MEM] proc=%d: instruction=%d bytes (%d pages), "
-           "data=%d bytes (%d pages) [disk-backed]\n",
-           proc_id,
-           instruction_count,
-           instruction_pages,
-           data_count,
-           data_pages);
 
     return 0;
 }
 
+
+/*
+ * ============================================================
+ * unload_process_memory
+ * ============================================================
+ */
+
 void unload_process_memory(int proc_id)
 {
-    if (valid_proc(proc_id))
-        release_process_memory(proc_id);
+    release_process_memory(proc_id);
 }
+
+
+/*
+ * ============================================================
+ * save_data_file
+ * ============================================================
+ *
+ * The current TLB implementation does not change the
+ * representation of process data, so this routine writes
+ * logical data bytes through the existing page table.
+ *
+ * Returns:
+ *
+ *      0  = success
+ *     -1  = failure
+ * ============================================================
+ */
+
+static int save_data_file(int proc_id,
+                          const char *filename)
+{
+    FILE *file;
+    int logical_address;
+    int physical_address;
+    int logical_page;
+    int offset;
+    int frame;
+
+    if (proc_id < 0 ||
+        proc_id >= NP ||
+        filename == NULL) {
+        return -1;
+    }
+
+    file = fopen(filename, "w");
+
+    if (file == NULL) {
+        return -1;
+    }
+
+
+    /*
+     * Write the complete logical data region.
+     *
+     * Unmapped pages are treated as zero-filled.
+     */
+    for (logical_address = 0;
+         logical_address < DATA_SIZE;
+         logical_address++) {
+
+        logical_page =
+            logical_address / PAGESIZE +
+            (INSTRUCTION_SIZE / PAGESIZE);
+
+        offset =
+            logical_address % PAGESIZE;
+
+        frame =
+            pageTable[proc_id][logical_page];
+
+        if (frame < 1 ||
+            frame >= NUM_PHYSICAL_PAGES) {
+
+            fprintf(file, "00\n");
+            continue;
+        }
+
+        physical_address =
+            frame * PAGESIZE + offset;
+
+        if (physical_address < 0 ||
+            physical_address >= MEMSIZE) {
+
+            fclose(file);
+            return -1;
+        }
+
+        fprintf(file,
+                "%02X\n",
+                memory[physical_address]);
+    }
+
+    fclose(file);
+
+    return 0;
+}
+
+
+/*
+ * ============================================================
+ * release_process_memory
+ * ============================================================
+ */
 
 void release_process_memory(int proc_id)
 {
-    if (!valid_proc(proc_id))
+    int page;
+    int frame;
+
+    if (proc_id < 0 ||
+        proc_id >= NP) {
         return;
+    }
 
-    for (int page = 0; page < NUM_LOGICAL_PAGES; page++) {
-        int frame = pageTable[proc_id][page];
-        int block = diskPageTable[proc_id][page];
 
-        if (frame > 0 && valid_frame(frame)) {
-            if (pageDirty[proc_id][page] && block >= 0)
-                disk_write_block(block, &memory[frame * PAGESIZE]);
+    /*
+     * --------------------------------------------------------
+     * IMPORTANT:
+     *
+     * Invalidate all TLB entries BEFORE releasing the physical
+     * frames.
+     *
+     * Otherwise the TLB could continue returning a physical
+     * frame that has already been reassigned to another
+     * process.
+     * --------------------------------------------------------
+     */
+
+    tlb_flush_process(proc_id);
+
+
+    /*
+     * --------------------------------------------------------
+     * Release all mapped physical frames.
+     * --------------------------------------------------------
+     */
+
+    for (page = 0;
+         page < NUM_LOGICAL_PAGES;
+         page++) {
+
+        frame = pageTable[proc_id][page];
+
+        if (frame >= 1 &&
+            frame < NUM_PHYSICAL_PAGES) {
 
             freePage(frame);
+
+            pageTable[proc_id][page] = -1;
         }
-
-        if (block >= 0)
-            disk_free_block(block);
-
-        pageTable[proc_id][page] = -1;
-        diskPageTable[proc_id][page] = -1;
-        pageDirty[proc_id][page] = 0;
     }
 }
 
-void finalize_memory(void)
+
+/*
+ * ============================================================
+ * Physical byte access
+ * ============================================================
+ */
+
+int read_physical_byte(int physical_address,
+                       uint8_t *value)
 {
-    for (int proc = 0; proc < NP; proc++)
-        release_process_memory(proc);
+    if (value == NULL) {
+        return -1;
+    }
 
-    memset(memory, 0, sizeof(memory));
+    if (physical_address < 0 ||
+        physical_address >= MEMSIZE) {
+        return -1;
+    }
 
-    for (int frame = 0; frame < NUM_PHYSICAL_PAGES; frame++)
-        freePages[frame] = 0;
+    *value = memory[physical_address];
 
-    freePages[0] = 1;
-    disk_finalize();
+    return 0;
 }
+
+
+/*
+ * ============================================================
+ * write_physical_byte
+ * ============================================================
+ */
+
+int write_physical_byte(int physical_address,
+                        uint8_t value)
+{
+    if (physical_address < 0 ||
+        physical_address >= MEMSIZE) {
+        return -1;
+    }
+
+    memory[physical_address] = value;
+
+    return 0;
+}
+
+
+/*
+ * ============================================================
+ * Compatibility functions
+ * ============================================================
+ */
 
 void initialize(void)
 {
     initialize_memory();
 }
 
+
 void finalize(void)
 {
     finalize_memory();
 }
+

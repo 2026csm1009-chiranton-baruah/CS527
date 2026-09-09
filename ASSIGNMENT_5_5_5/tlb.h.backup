@@ -35,7 +35,4 @@ void tlb_flush(int proc_id);
 
 void tlb_print_status(void);
 
-/* Print per-processor and total TLB hit/miss statistics. */
-void tlb_print_stats(void);
-
 #endif

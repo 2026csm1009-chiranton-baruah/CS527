@@ -11,6 +11,7 @@
 #include "memory.h"
 #include "processor.h"
 #include "disk.h"
+#include "tlb.h"
 
 
 /*
@@ -1058,6 +1059,9 @@ static void shutdown_os(void)
                 remove(task->data_file);
         }
     }
+
+    /* Report TLB activity before memory finalization clears the TLB. */
+    tlb_print_stats();
 
     finalize_memory();
 }

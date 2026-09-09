@@ -15,14 +15,14 @@ gcc -Wall -Wextra -std=c11 -O2 -c os.c
 In file included from /usr/include/string.h:535,
                  from os.c:5:
 In function ‘strncpy’,
-    inlined from ‘create_task’ at os.c:380:5:
+    inlined from ‘create_task’ at os.c:381:5:
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:10: warning: ‘__builtin_strncpy’ output may be truncated copying 255 bytes from a string of length 255 [-Wstringop-truncation]
    95 |   return __builtin___strncpy_chk (__dest, __src, __len,
       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    96 |                                   __glibc_objsize (__dest));
       |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
 In function ‘strncpy’,
-    inlined from ‘create_task’ at os.c:388:5:
+    inlined from ‘create_task’ at os.c:389:5:
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:10: warning: ‘__builtin_strncpy’ output may be truncated copying 255 bytes from a string of length 255 [-Wstringop-truncation]
    95 |   return __builtin___strncpy_chk (__dest, __src, __len,
       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -88,4 +88,13 @@ $ [Compiler] compiling a3.txt
 21
 34
 [OS] PID 5 finished on processor 2
+
+========== TLB STATISTICS ==========
+[TLB] proc=0: hits=770, misses=2, hit rate=99.74%
+[TLB] proc=1: hits=414, misses=2, hit rate=99.52%
+[TLB] proc=2: hits=1176, misses=4, hit rate=99.66%
+[TLB] proc=3: hits=1081, misses=3, hit rate=99.72%
+-------------------------------------
+[TLB] total: hits=3441, misses=11, hit rate=99.68%
+=====================================
 bumblebee@Chiranton:~/CS527/ASSIGNMENT_5_5_5$

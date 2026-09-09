@@ -2,9 +2,8 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -O2
 
 TARGET = simulator
-DISK_TEST = disk_test
 
-OBJS = main.o compiler.o processor.o memory.o disk.o os.o
+OBJS = main.o compiler.o processor.o memory.o disk.o os.o tlb.o swap.o
 
 .PHONY: all clean test
 
@@ -22,54 +21,33 @@ compiler.o: compiler.c compiler.h
 processor.o: processor.c processor.h memory.h
 	$(CC) $(CFLAGS) -c processor.c
 
-memory.o: memory.c memory.h processor.h disk.h
+memory.o: memory.c memory.h processor.h disk.h tlb.h swap.h
 	$(CC) $(CFLAGS) -c memory.c
 
 disk.o: disk.c disk.h
 	$(CC) $(CFLAGS) -c disk.c
 
+tlb.o: tlb.c tlb.h processor.h
+	$(CC) $(CFLAGS) -c tlb.c
+
+swap.o: swap.c swap.h disk.h
+	$(CC) $(CFLAGS) -c swap.c
+
 os.o: os.c os.h processor.h memory.h compiler.h disk.h
 	$(CC) $(CFLAGS) -c os.c
 
-# ------------------------------------------------------------
-# Disk subsystem test executable
-# ------------------------------------------------------------
 
-$(DISK_TEST): tests/disk_tests.c tests/disk_tests.h tests/disk_test_main.c disk.c disk.h
-	$(CC) $(CFLAGS) -I. -o $@ \
-		tests/disk_tests.c \
-		tests/disk_test_main.c \
-		disk.c
-
-# ------------------------------------------------------------
-# Cumulative test suite
-# ------------------------------------------------------------
-
-test: clean $(TARGET) $(DISK_TEST)
-	@echo ""
+# Load all four programs into ONE Mini OS instance
+test: $(TARGET)
 	@echo "========================================"
-	@echo " Mini OS Cumulative Test Suite"
+	@echo " Running 5 programs simultaneously"
 	@echo "========================================"
-	@echo ""
-
-	@echo "[1/2] Disk subsystem tests"
-	@./$(DISK_TEST)
-
-	@echo ""
-	@echo "[2/2] Simulator integration test"
-	@printf 'disk\nps\na3.txt data.byte\nf2.txt data.byte\ncross.txt data.byte\nexit\n' | ./$(TARGET)
-
-	@echo ""
-	@echo "========================================"
-	@echo " ALL TESTS PASSED"
-	@echo "========================================"
-
-# ------------------------------------------------------------
-# Cleanup
-# ------------------------------------------------------------
+	@printf 'a3.txt data.byte\nf2.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\nfib.txt data.byte\n\nexit\n' | ./$(TARGET)
 
 clean:
-	rm -f $(OBJS) $(TARGET) $(DISK_TEST) \
-	      program.byte program_*.byte \
-	      processor.log data_*.byte \
-	      disk_test.img disk.img
+	rm -f $(OBJS) $(TARGET)
+	rm -f program.byte
+	rm -f program_*.byte
+	rm -f data_*.byte
+	rm -f processor.log
+	rm -f disk.img

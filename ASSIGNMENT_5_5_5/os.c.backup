@@ -534,9 +534,6 @@ static void finish_task(Task *task)
     if (processor >= 0 &&
         processor < NP) {
 
-        /* Flush all user-program output before this processor is reset. */
-        processor_flush_output(processor);
-
         unload_process_memory(processor);
 
         proc_pid[processor] = 0;

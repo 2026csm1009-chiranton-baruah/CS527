@@ -38,12 +38,6 @@ int end_of_simulation[NP];
 
 static int32_t vector_registers[NP][NUM_VECTOR_REGISTERS];
 
-/* Per-process output buffer. A process is bound to one processor
- * while running in the current OS design. */
-#define OUTPUT_BUFFER_SIZE 8192
-static char output_buffer[NP][OUTPUT_BUFFER_SIZE];
-static size_t output_length[NP];
-
 /*
 
 * ============================================================
@@ -668,22 +662,8 @@ if (opcode == 0x08) {
     }
 
 
-    /* Buffer user-program output; do not interleave it on stdout. */
-    int written = snprintf(
-        output_buffer[proc_id] + output_length[proc_id],
-        OUTPUT_BUFFER_SIZE - output_length[proc_id],
-        "%d\n",
-        registers_file[proc_id][src2]);
-
-    if (written < 0 ||
-        (size_t)written >=
-            OUTPUT_BUFFER_SIZE - output_length[proc_id]) {
-        processor_error(proc_id,
-                        "process output buffer full");
-        return 0;
-    }
-
-    output_length[proc_id] += (size_t)written;
+    printf("%d\n",
+           registers_file[proc_id][src2]);
 
     return advance_pc(proc_id);
 }
@@ -1166,10 +1146,6 @@ memset(registers_file[proc_id],
 memset(vector_registers[proc_id],
        0,
        sizeof(vector_registers[proc_id]));
-
-/* Fresh processor assignment starts with an empty output buffer. */
-output_length[proc_id] = 0;
-output_buffer[proc_id][0] = '\0';
 // ```
 
 }
@@ -1182,26 +1158,6 @@ output_buffer[proc_id][0] = '\0';
 * Executes at most instruction_count instructions.
 * ============================================================
   */
-
-/*
- * Flush user-program output accumulated on this processor.
- * The OS calls this when the process terminates, before reset().
- */
-void processor_flush_output(int proc_id)
-{
-    if (!valid_proc(proc_id))
-        return;
-
-    if (output_length[proc_id] == 0)
-        return;
-
-    fputs(output_buffer[proc_id], stdout);
-    fflush(stdout);
-
-    output_length[proc_id] = 0;
-    output_buffer[proc_id][0] = '\0';
-}
-
 
 void process_instructions(int proc_id,
 int instruction_count)

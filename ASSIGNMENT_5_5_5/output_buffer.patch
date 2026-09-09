@@ -1,0 +1,102 @@
+--- processor(4).c	2026-09-09 18:05:08.139889143 +0000
++++ processor.c	2026-09-09 18:05:42.472052137 +0000
+@@ -38,6 +38,12 @@
+ 
+ static int32_t vector_registers[NP][NUM_VECTOR_REGISTERS];
+ 
++/* Per-process output buffer. A process is bound to one processor
++ * while running in the current OS design. */
++#define OUTPUT_BUFFER_SIZE 8192
++static char output_buffer[NP][OUTPUT_BUFFER_SIZE];
++static size_t output_length[NP];
++
+ /*
+ 
+ * ============================================================
+@@ -662,8 +668,22 @@
+     }
+ 
+ 
+-    printf("%d\n",
+-           registers_file[proc_id][src2]);
++    /* Buffer user-program output; do not interleave it on stdout. */
++    int written = snprintf(
++        output_buffer[proc_id] + output_length[proc_id],
++        OUTPUT_BUFFER_SIZE - output_length[proc_id],
++        "%d\n",
++        registers_file[proc_id][src2]);
++
++    if (written < 0 ||
++        (size_t)written >=
++            OUTPUT_BUFFER_SIZE - output_length[proc_id]) {
++        processor_error(proc_id,
++                        "process output buffer full");
++        return 0;
++    }
++
++    output_length[proc_id] += (size_t)written;
+ 
+     return advance_pc(proc_id);
+ }
+@@ -1146,6 +1166,10 @@
+ memset(vector_registers[proc_id],
+        0,
+        sizeof(vector_registers[proc_id]));
++
++/* Fresh processor assignment starts with an empty output buffer. */
++output_length[proc_id] = 0;
++output_buffer[proc_id][0] = '\0';
+ // ```
+ 
+ }
+@@ -1159,6 +1183,26 @@
+ * ============================================================
+   */
+ 
++/*
++ * Flush user-program output accumulated on this processor.
++ * The OS calls this when the process terminates, before reset().
++ */
++void processor_flush_output(int proc_id)
++{
++    if (!valid_proc(proc_id))
++        return;
++
++    if (output_length[proc_id] == 0)
++        return;
++
++    fputs(output_buffer[proc_id], stdout);
++    fflush(stdout);
++
++    output_length[proc_id] = 0;
++    output_buffer[proc_id][0] = '\0';
++}
++
++
+ void process_instructions(int proc_id,
+ int instruction_count)
+ {
+--- processor(4).h	2026-09-09 18:05:08.655889137 +0000
++++ processor.h	2026-09-09 18:05:42.472284996 +0000
+@@ -124,6 +124,9 @@
+ void process_instructions(int proc_id,
+                           int instruction_count);
+ 
++/* Flush buffered Print output for the process on this processor. */
++void processor_flush_output(int proc_id);
++
+ 
+ /*
+  * ============================================================
+--- os(3).c	2026-09-09 18:05:08.559889138 +0000
++++ os.c	2026-09-09 18:05:42.472357794 +0000
+@@ -534,6 +534,9 @@
+     if (processor >= 0 &&
+         processor < NP) {
+ 
++        /* Flush all user-program output before this processor is reset. */
++        processor_flush_output(processor);
++
+         unload_process_memory(processor);
+ 
+         proc_pid[processor] = 0;

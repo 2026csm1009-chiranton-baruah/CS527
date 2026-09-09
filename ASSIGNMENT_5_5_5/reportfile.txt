@@ -2,7 +2,7 @@ bumblebee@Chiranton:~/CS527/ASSIGNMENT_5_5_5$ make clean
 rm -f main.o compiler.o processor.o memory.o disk.o os.o tlb.o swap.o simulator
 rm -f program.byte
 rm -f program_*.byte
-]rm -f data_*.byte
+rm -f data_*.byte
 rm -f processor.log
 rm -f disk.img
 bumblebee@Chiranton:~/CS527/ASSIGNMENT_5_5_5$ make test
@@ -49,9 +49,9 @@ $ [Compiler] compiling a3.txt
 [OS] PID 4 loaded on processor 3
 [Compiler] compiling fib.txt
 [OS] PID 5 placed in waiting queue
+[Shell] exiting; existing tasks will continue
 -3
 6
-[Shell] exiting; existing tasks will continue
 -3
 [OS] PID 3 finished on processor 2
 [MEM] proc=2: instruction=196 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
@@ -70,21 +70,22 @@ $ [Compiler] compiling a3.txt
 125
 136
 133
-0
-1
 162
 174
 151
-1
-2
-3
 279
 300
 265
 [OS] PID 4 finished on processor 3
+0
+1
+1
+2
+3
 5
 8
 13
 21
 34
 [OS] PID 5 finished on processor 2
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_5_5_5$

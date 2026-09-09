@@ -32,7 +32,7 @@ gcc -Wall -Wextra -std=c11 -O2 -c tlb.c
 gcc -Wall -Wextra -std=c11 -O2 -c swap.c
 gcc -Wall -Wextra -std=c11 -O2 -o simulator main.o compiler.o processor.o memory.o disk.o os.o tlb.o swap.o
 ========================================
- Running 5 programs simultaneously
+ Running 6 programs simultaneously
 ========================================
 Mini OS started with 4 processors.
 $ [Compiler] compiling a3.txt
@@ -49,6 +49,8 @@ $ [Compiler] compiling a3.txt
 [OS] PID 4 loaded on processor 3
 [Compiler] compiling fib.txt
 [OS] PID 5 placed in waiting queue
+[Compiler] compiling eitch.txt
+[OS] PID 6 placed in waiting queue
 [Shell] exiting; existing tasks will continue
 -3
 6
@@ -58,6 +60,8 @@ $ [Compiler] compiling a3.txt
 [OS] PID 5 dispatched to processor 2
 528
 [OS] PID 2 finished on processor 1
+[MEM] proc=1: instruction=160 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 6 dispatched to processor 1
 11
 13
 15
@@ -88,13 +92,30 @@ $ [Compiler] compiling a3.txt
 21
 34
 [OS] PID 5 finished on processor 2
+1
+2
+4
+7
+12
+20
+33
+54
+88
+143
+232
+376
+609
+986
+1596
+2583
+[OS] PID 6 finished on processor 1
 
 ========== TLB STATISTICS ==========
 [TLB] proc=0: hits=770, misses=2, hit rate=99.74%
-[TLB] proc=1: hits=414, misses=2, hit rate=99.52%
+[TLB] proc=1: hits=2264, misses=4, hit rate=99.82%
 [TLB] proc=2: hits=1176, misses=4, hit rate=99.66%
 [TLB] proc=3: hits=1081, misses=3, hit rate=99.72%
 -------------------------------------
-[TLB] total: hits=3441, misses=11, hit rate=99.68%
+[TLB] total: hits=5291, misses=13, hit rate=99.75%
 =====================================
 bumblebee@Chiranton:~/CS527/ASSIGNMENT_5_5_5$

@@ -1,0 +1,59 @@
+x1 = 1
+x2 = 200
+x2 = x2 + 100
+[x2] = x1
+
+x1 = 2
+x2 = 200
+x2 = x2 + 104
+[x2] = x1
+
+x3 = 2
+
+.loop
+
+x4 = x3 - 1
+x5 = x4 * 4
+x6 = x5 + 200
+x6 = x6 + 100
+x7 = [x6]
+
+x4 = x3 - 2
+x5 = x4 * 4
+x6 = x5 + 200
+x6 = x6 + 100
+x8 = [x6]
+
+x9 = x7 + x8
+x9 = x9 + 1
+
+x5 = x3 * 4
+x6 = x5 + 200
+x6 = x6 + 100
+[x6] = x9
+
+x3 = x3 + 1
+
+x4 = x3 - 16
+BEQ .exit
+BAL .loop
+
+.exit
+
+x3 = 200
+x3 = x3 + 100
+x4 = 0
+
+.printloop
+
+x5 = [x3]
+Print x5
+
+x3 = x3 + 4
+x4 = x4 + 1
+
+x6 = x4 - 16
+BEQ .done
+BAL .printloop
+
+.done

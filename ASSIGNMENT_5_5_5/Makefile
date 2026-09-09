@@ -40,9 +40,9 @@ os.o: os.c os.h processor.h memory.h compiler.h disk.h
 # Load all four programs into ONE Mini OS instance
 test: $(TARGET)
 	@echo "========================================"
-	@echo " Running 5 programs simultaneously"
+	@echo " Running 6 programs simultaneously"
 	@echo "========================================"
-	@printf 'a3.txt data.byte\nf2.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\nfib.txt data.byte\n\nexit\n' | ./$(TARGET)
+	@printf 'a3.txt data.byte\nf2.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\nfib.txt data.byte\neitch.txt data.byte\nexit\n' | ./$(TARGET)
 
 clean:
 	rm -f $(OBJS) $(TARGET)

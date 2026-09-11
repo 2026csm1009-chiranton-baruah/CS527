@@ -1,0 +1,26 @@
+--- os.c
++++ os.c
+@@ -104,9 +104,17 @@
+     t->pid = pid;
+     t->proc_id = -1;
+     t->state = (p >= 0) ? TASK_READY : TASK_WAITING;
+-    strncpy(t->source, program, sizeof(t->source) - 1);
+-    t->source[sizeof(t->source) - 1] = '\0';
+-    strncpy(t->program_file, program_file, sizeof(t->program_file) - 1);
+-    t->program_file[sizeof(t->program_file) - 1] = '\0';
+-    strncpy(t->data_file, data_file, sizeof(t->data_file) - 1);
+-    t->data_file[sizeof(t->data_file) - 1] = '\0';
++    snprintf(t->source,
++             sizeof(t->source),
++             "%s",
++             program);
++
++    snprintf(t->program_file,
++             sizeof(t->program_file),
++             "%s",
++             program_file);
++
++    snprintf(t->data_file,
++             sizeof(t->data_file),
++             "%s",
++             data_file);

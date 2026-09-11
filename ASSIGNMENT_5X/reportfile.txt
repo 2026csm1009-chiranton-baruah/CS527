@@ -1,3 +1,6 @@
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_5X$ make clean
+rm -f main.o compiler.o processor.o memory.o disk.o os.o tlb.o swap.o cache.o simulator
+rm -f program.byte program_*.byte data_*.byte processor.log disk.img
 bumblebee@Chiranton:~/CS527/ASSIGNMENT_5X$ make test
 gcc -Wall -Wextra -std=c11 -O2 -c main.c
 gcc -Wall -Wextra -std=c11 -O2 -c compiler.c

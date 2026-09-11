@@ -1,0 +1,26 @@
+x1 = 4
+x2 = 36
+
+x3 = 0
+x4 = 0
+
+.loop
+x5 = x4 - 8
+BEQ .exit
+
+x6 = [x1]
+x7 = [x2]
+
+x8 = x6 * x7
+x3 = x3 + x8
+
+x1 = x1 + 4
+x2 = x2 + 4
+
+x4 = x4 + 1
+
+BAL .loop
+
+.exit
+
+Print x3

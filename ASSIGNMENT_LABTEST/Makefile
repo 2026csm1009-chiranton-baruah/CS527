@@ -39,9 +39,9 @@ os.o: os.c os.h processor.h memory.h compiler.h disk.h
 
 test: $(TARGET)
 	@echo "========================================"
-	@echo " Running 9 programs simultaneously"
+	@echo " Running a few programs simultaneously"
 	@echo "========================================"
-	@printf 'booth2.txt data.byte\nrecurring_division.txt\nhamming_code_2.txt data.byte\na3.txt data.byte\nf2.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\nmulmul.txt data.byte\nfib.txt data.byte\neitch.txt data.byte\nexit\n' | ./$(TARGET)
+	@printf 'crc_test_fixed.txt data.byte\ncrc16_test.txt data.byte\nbooth2.txt data.byte\nrecurring_division.txt\nhamming_code_2.txt data.byte\na3.txt data.byte\nf2.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\nmulmul.txt data.byte\nfib.txt data.byte\neitch.txt data.byte\nexit\n' | ./$(TARGET)
 
 TEST_PROGRAMS = \
 	matmul.txt \
@@ -49,17 +49,21 @@ TEST_PROGRAMS = \
 	fib.txt \
 	booth2.txt\
 	a4.txt \
+	crc_test_fixed.txt\
 	eitch.txt \
 	hamming_code_2.txt\
 	mulmul.txt\
+	crc16_test.txt\
 	recurring_division.txt\
 	cross.txt \
 	f2.txt \
 	eitch.txt \
+	crc16_test.txt\
 	cross.txt \
 	hamming_code_2.txt\
 	matmul.txt \
 	f2.txt \
+	crc_test_fixed.txt\
 	a3.txt \
 	booth2.txt\
 	mulmul.txt\

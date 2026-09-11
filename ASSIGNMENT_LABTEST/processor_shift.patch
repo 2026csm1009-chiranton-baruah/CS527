@@ -1,0 +1,86 @@
+--- /mnt/data/shift_patch/processor(5).orig.c	2026-09-11 16:26:14.311506113 +0000
++++ /mnt/data/shift_patch/processor(5).c	2026-09-11 16:26:14.840013629 +0000
+@@ -1055,6 +1055,83 @@
+ 
+ /*
+  * ========================================================
++ * INTEGER SHIFT OPERATIONS
++ *
++ * 18 SLL  register shift-left logical
++ * 19 SRL  register shift-right logical
++ * 1A SRA  register shift-right arithmetic
++ * 1B SLLI immediate shift-left logical
++ * 1C SRLI immediate shift-right logical
++ * 1D SRAI immediate shift-right arithmetic
++ *
++ * RV32-style shift amounts use only the low five bits.
++ * ========================================================
++ */
++
++if (opcode >= 0x18 &&
++    opcode <= 0x1D) {
++
++    if (!valid_register(dest) ||
++        !valid_register(src1)) {
++
++        processor_error(
++            proc_id,
++            "invalid register in shift operation");
++
++        return 0;
++    }
++
++    int32_t value =
++        registers_file[proc_id][src1];
++
++    uint32_t shift_amount;
++
++    if (opcode <= 0x1A) {
++        if (!valid_register(src2)) {
++            processor_error(
++                proc_id,
++                "invalid shift register");
++            return 0;
++        }
++
++        shift_amount =
++            ((uint32_t)registers_file[proc_id][src2]) & 0x1FU;
++    } else {
++        /* src2 is the 8-bit immediate field; compiler restricts it to 0..31. */
++        shift_amount = ((uint32_t)src2) & 0x1FU;
++    }
++
++    uint32_t bits = (uint32_t)value;
++    uint32_t result;
++
++    if (opcode == 0x18 || opcode == 0x1B) {
++        /* SLL / SLLI */
++        result = bits << shift_amount;
++    } else if (opcode == 0x19 || opcode == 0x1C) {
++        /* SRL / SRLI */
++        result = bits >> shift_amount;
++    } else {
++        /* SRA / SRAI: explicitly sign-extend instead of relying on
++         * implementation-defined signed right-shift behaviour. */
++        result = bits >> shift_amount;
++
++        if (value < 0 && shift_amount != 0) {
++            result |= UINT32_MAX << (32U - shift_amount);
++        }
++    }
++
++    registers_file[proc_id][dest] =
++        (int32_t)result;
++
++    AC[proc_id] =
++        registers_file[proc_id][dest];
++
++    return advance_pc(proc_id);
++}
++
++
++/*
++ * ========================================================
+  * 1E BAL
+  *
+  * Unconditional instruction-relative branch.

@@ -1,0 +1,451 @@
+% ============================================================
+% Booth Multiplication - SIGNED 16-bit
+%
+% Four test cases:
+%
+%   13  *  11  =  143
+%   13  * -11  = -143
+%  -13  *  11  = -143
+%  -13  * -11  =  143
+%
+% Memory:
+%   [40]  =  11
+%   [48]  =  13
+%   [100] = -13
+%   [104] = -11
+%
+% ============================================================
+
+
+% ============================================================
+% CONSTANTS
+% ============================================================
+
+% x11 = 32768 = 1 << 15
+x11 = 1
+x11 = x11 << 15
+
+% x12 = 65536 = 32768 << 1
+x12 = x11 << 1
+
+
+% ============================================================
+% TEST 1
+%
+% 13 * 11 = 143
+% ============================================================
+
+x1 = [48]
+x2 = [40]
+
+% Normalize negative Q if necessary
+x7 = x2 + 0
+BLT .t1qnegative
+BAL .t1qready
+
+.t1qnegative
+
+x2 = x2 + x12
+
+.t1qready
+
+% A = 0
+x3 = 0
+
+% Q-1 = 0
+x4 = 0
+
+% 16 iterations
+x5 = 16
+
+
+.t1loop
+
+% ------------------------------------------------------------
+% Q0 = Q - ((Q >> 1) << 1)
+% ------------------------------------------------------------
+
+x7 = x2 >> 1
+x8 = x7 << 1
+x6 = x2 - x8
+
+% ------------------------------------------------------------
+% Booth decision
+% ------------------------------------------------------------
+
+x7 = x6 + 0
+BEQ .t1qzero
+
+% Q0 = 1
+% Q-1 = 0 -> SUB
+% Q-1 = 1 -> NOTHING
+
+x7 = x4 + 0
+BEQ .t1sub
+
+BAL .t1savebit
+
+
+.t1qzero
+
+% Q0 = 0
+% Q-1 = 0 -> NOTHING
+% Q-1 = 1 -> ADD
+
+x7 = x4 + 0
+BNE .t1add
+
+BAL .t1savebit
+
+
+.t1add
+
+x3 = x3 + x1
+BAL .t1savebit
+
+
+.t1sub
+
+x3 = x3 - x1
+
+
+.t1savebit
+
+% Save Q0 as Q-1
+x4 = x6 + 0
+
+% Extract A0
+x7 = x3 >> 1
+x8 = x7 << 1
+x9 = x3 - x8
+
+% Arithmetic right shift A
+% Logical right shift Q
+x3 = x3 >>> 1
+x2 = x2 >> 1
+
+% Insert old A0 into Q bit 15
+x7 = x9 - 1
+BEQ .t1insert
+
+BAL .t1next
+
+
+.t1insert
+
+x2 = x2 + x11
+
+
+.t1next
+
+x5 = x5 - 1
+BNE .t1loop
+
+% Final product
+x3 = x3 << 16
+x13 = x3 + x2
+
+Print x13
+
+
+% ============================================================
+% TEST 2
+%
+% 13 * -11 = -143
+% ============================================================
+
+x1 = [48]
+x2 = [104]
+
+% Normalize negative Q
+x7 = x2 + 0
+BLT .t2qnegative
+BAL .t2qready
+
+.t2qnegative
+
+x2 = x2 + x12
+
+.t2qready
+
+x3 = 0
+x4 = 0
+x5 = 16
+
+
+.t2loop
+
+% Extract Q0
+x7 = x2 >> 1
+x8 = x7 << 1
+x6 = x2 - x8
+
+% Booth decision
+x7 = x6 + 0
+BEQ .t2qzero
+
+% Q0 = 1
+x7 = x4 + 0
+BEQ .t2sub
+
+BAL .t2savebit
+
+
+.t2qzero
+
+% Q0 = 0
+x7 = x4 + 0
+BNE .t2add
+
+BAL .t2savebit
+
+
+.t2add
+
+x3 = x3 + x1
+BAL .t2savebit
+
+
+.t2sub
+
+x3 = x3 - x1
+
+
+.t2savebit
+
+% Save Q0 as Q-1
+x4 = x6 + 0
+
+% Extract A0
+x7 = x3 >> 1
+x8 = x7 << 1
+x9 = x3 - x8
+
+% Shift
+x3 = x3 >>> 1
+x2 = x2 >> 1
+
+% Insert A0 into Q bit 15
+x7 = x9 - 1
+BEQ .t2insert
+
+BAL .t2next
+
+
+.t2insert
+
+x2 = x2 + x11
+
+
+.t2next
+
+x5 = x5 - 1
+BNE .t2loop
+
+% Final product
+x3 = x3 << 16
+x13 = x3 + x2
+
+Print x13
+
+
+% ============================================================
+% TEST 3
+%
+% -13 * 11 = -143
+% ============================================================
+
+x1 = [100]
+x2 = [40]
+
+% Normalize negative Q if necessary
+x7 = x2 + 0
+BLT .t3qnegative
+BAL .t3qready
+
+.t3qnegative
+
+x2 = x2 + x12
+
+.t3qready
+
+x3 = 0
+x4 = 0
+x5 = 16
+
+
+.t3loop
+
+% Extract Q0
+x7 = x2 >> 1
+x8 = x7 << 1
+x6 = x2 - x8
+
+% Booth decision
+x7 = x6 + 0
+BEQ .t3qzero
+
+% Q0 = 1
+x7 = x4 + 0
+BEQ .t3sub
+
+BAL .t3savebit
+
+
+.t3qzero
+
+% Q0 = 0
+x7 = x4 + 0
+BNE .t3add
+
+BAL .t3savebit
+
+
+.t3add
+
+x3 = x3 + x1
+BAL .t3savebit
+
+
+.t3sub
+
+x3 = x3 - x1
+
+
+.t3savebit
+
+% Save Q0 as Q-1
+x4 = x6 + 0
+
+% Extract A0
+x7 = x3 >> 1
+x8 = x7 << 1
+x9 = x3 - x8
+
+% Shift
+x3 = x3 >>> 1
+x2 = x2 >> 1
+
+% Insert A0 into Q bit 15
+x7 = x9 - 1
+BEQ .t3insert
+
+BAL .t3next
+
+
+.t3insert
+
+x2 = x2 + x11
+
+
+.t3next
+
+x5 = x5 - 1
+BNE .t3loop
+
+% Final product
+x3 = x3 << 16
+x13 = x3 + x2
+
+Print x13
+
+
+% ============================================================
+% TEST 4
+%
+% -13 * -11 = 143
+% ============================================================
+
+x1 = [100]
+x2 = [104]
+
+% Normalize negative Q
+x7 = x2 + 0
+BLT .t4qnegative
+BAL .t4qready
+
+.t4qnegative
+
+x2 = x2 + x12
+
+.t4qready
+
+x3 = 0
+x4 = 0
+x5 = 16
+
+
+.t4loop
+
+% Extract Q0
+x7 = x2 >> 1
+x8 = x7 << 1
+x6 = x2 - x8
+
+% Booth decision
+x7 = x6 + 0
+BEQ .t4qzero
+
+% Q0 = 1
+x7 = x4 + 0
+BEQ .t4sub
+
+BAL .t4savebit
+
+
+.t4qzero
+
+% Q0 = 0
+x7 = x4 + 0
+BNE .t4add
+
+BAL .t4savebit
+
+
+.t4add
+
+x3 = x3 + x1
+BAL .t4savebit
+
+
+.t4sub
+
+x3 = x3 - x1
+
+
+.t4savebit
+
+% Save Q0 as Q-1
+x4 = x6 + 0
+
+% Extract A0
+x7 = x3 >> 1
+x8 = x7 << 1
+x9 = x3 - x8
+
+% Shift
+x3 = x3 >>> 1
+x2 = x2 >> 1
+
+% Insert A0 into Q bit 15
+x7 = x9 - 1
+BEQ .t4insert
+
+BAL .t4next
+
+
+.t4insert
+
+x2 = x2 + x11
+
+
+.t4next
+
+x5 = x5 - 1
+BNE .t4loop
+
+% Final product
+x3 = x3 << 16
+x13 = x3 + x2
+
+Print x13

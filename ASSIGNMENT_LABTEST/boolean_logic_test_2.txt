@@ -1,0 +1,123 @@
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_LABTEST$ ./simulator
+Mini OS started with 4 processors.
+$ parity.txt data.byte
+[Compiler] compiling parity.txt
+[MEM] proc=0: instruction=292 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 1 loaded on processor 0
+0
+1
+0
+1
+0
+0
+1
+0
+[OS] PID 1 finished on processor 0
+exit
+[Shell] exiting; existing tasks will continue
+
+========== TLB STATISTICS ==========
+[TLB] proc=0: hits=291, misses=1, hit rate=99.66%
+[TLB] proc=1: hits=0, misses=0, hit rate=0.00%
+[TLB] proc=2: hits=0, misses=0, hit rate=0.00%
+[TLB] proc=3: hits=0, misses=0, hit rate=0.00%
+-------------------------------------
+[TLB] total: hits=291, misses=1, hit rate=99.66%
+=====================================
+
+========================================
+ Cache Statistics
+========================================
+
+L1 Instruction Cache: 128 B/core
+----------------------------------------
+Core 0: hits=273 misses=19 hit-rate=93.49%
+Core 1: hits=0 misses=0 hit-rate=0.00%
+Core 2: hits=0 misses=0 hit-rate=0.00%
+Core 3: hits=0 misses=0 hit-rate=0.00%
+Total: hits=273 misses=19 hit-rate=93.49%
+
+L1 Data Cache: 128 B/core
+----------------------------------------
+Core 0: hits=0 misses=0 hit-rate=0.00%
+Core 1: hits=0 misses=0 hit-rate=0.00%
+Core 2: hits=0 misses=0 hit-rate=0.00%
+Core 3: hits=0 misses=0 hit-rate=0.00%
+Total: hits=0 misses=0 hit-rate=0.00%
+
+Private L2 Cache: 256 B/core
+----------------------------------------
+Core 0: hits=0 misses=19 hit-rate=0.00%
+Core 1: hits=0 misses=0 hit-rate=0.00%
+Core 2: hits=0 misses=0 hit-rate=0.00%
+Core 3: hits=0 misses=0 hit-rate=0.00%
+Total: hits=0 misses=19 hit-rate=0.00%
+
+Shared Unified L3 Cache: 512 B
+----------------------------------------
+Hits   : 0
+Misses : 19
+Hit-rate: 0.00%
+========================================
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_LABTEST$ ./simulator
+Mini OS started with 4 processors.
+$ popcount.txt data.byte
+[Compiler] compiling popcount.txt
+[MEM] proc=0: instruction=296 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 1 loaded on processor 0
+0
+1
+3
+4
+8
+4
+4
+2
+[OS] PID 1 finished on processor 0
+exit
+[Shell] exiting; existing tasks will continue
+
+========== TLB STATISTICS ==========
+[TLB] proc=0: hits=1127, misses=1, hit rate=99.91%
+[TLB] proc=1: hits=0, misses=0, hit rate=0.00%
+[TLB] proc=2: hits=0, misses=0, hit rate=0.00%
+[TLB] proc=3: hits=0, misses=0, hit rate=0.00%
+-------------------------------------
+[TLB] total: hits=1127, misses=1, hit rate=99.91%
+=====================================
+
+========================================
+ Cache Statistics
+========================================
+
+L1 Instruction Cache: 128 B/core
+----------------------------------------
+Core 0: hits=1109 misses=19 hit-rate=98.32%
+Core 1: hits=0 misses=0 hit-rate=0.00%
+Core 2: hits=0 misses=0 hit-rate=0.00%
+Core 3: hits=0 misses=0 hit-rate=0.00%
+Total: hits=1109 misses=19 hit-rate=98.32%
+
+L1 Data Cache: 128 B/core
+----------------------------------------
+Core 0: hits=0 misses=0 hit-rate=0.00%
+Core 1: hits=0 misses=0 hit-rate=0.00%
+Core 2: hits=0 misses=0 hit-rate=0.00%
+Core 3: hits=0 misses=0 hit-rate=0.00%
+Total: hits=0 misses=0 hit-rate=0.00%
+
+Private L2 Cache: 256 B/core
+----------------------------------------
+Core 0: hits=0 misses=19 hit-rate=0.00%
+Core 1: hits=0 misses=0 hit-rate=0.00%
+Core 2: hits=0 misses=0 hit-rate=0.00%
+Core 3: hits=0 misses=0 hit-rate=0.00%
+Total: hits=0 misses=19 hit-rate=0.00%
+
+Shared Unified L3 Cache: 512 B
+----------------------------------------
+Hits   : 0
+Misses : 19
+Hit-rate: 0.00%
+========================================
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_LABTEST$

@@ -1600,7 +1600,7 @@ The complete dispatch table remains defined by the implementation in `processor.
 Clone/open the repository and enter the project directory:
 
 ```bash
-cd ~/CS527/ASSIGNMENT_5_5_5_5
+cd ~/CS527/ASSIGNMENT_LABTEST
 ```
 
 Build:

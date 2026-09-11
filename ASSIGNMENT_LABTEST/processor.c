@@ -761,6 +761,82 @@ if (opcode >= 0x09 &&
 
 /*
  * ========================================================
+ * INTEGER LOGICAL OPERATIONS
+ *
+ * 30 AND   rd = rs1 & rs2
+ * 31 OR    rd = rs1 | rs2
+ * 32 XOR   rd = rs1 ^ rs2
+ * 33 ANDI  rd = rs1 & imm8
+ * 34 ORI   rd = rs1 | imm8
+ * 35 XORI  rd = rs1 ^ imm8
+ * 36 NOT   rd = ~rs1
+ *
+ * Logical immediates are zero-extended 8-bit values.
+ * ========================================================
+ */
+
+if (opcode >= 0x30 &&
+    opcode <= 0x36) {
+
+    if (!valid_register(dest) ||
+        !valid_register(src1)) {
+
+        processor_error(
+            proc_id,
+            "invalid register in logical operation");
+
+        return 0;
+    }
+
+    int32_t a =
+        registers_file[proc_id][src1];
+
+    int32_t result;
+
+    if (opcode == 0x30 ||
+        opcode == 0x31 ||
+        opcode == 0x32) {
+
+        if (!valid_register(src2)) {
+            processor_error(
+                proc_id,
+                "invalid second register in logical operation");
+
+            return 0;
+        }
+
+        int32_t b =
+            registers_file[proc_id][src2];
+
+        if (opcode == 0x30)
+            result = (int32_t)((uint32_t)a & (uint32_t)b);
+        else if (opcode == 0x31)
+            result = (int32_t)((uint32_t)a | (uint32_t)b);
+        else
+            result = (int32_t)((uint32_t)a ^ (uint32_t)b);
+
+    } else if (opcode == 0x33) {
+        result = (int32_t)((uint32_t)a & (uint32_t)src2);
+
+    } else if (opcode == 0x34) {
+        result = (int32_t)((uint32_t)a | (uint32_t)src2);
+
+    } else if (opcode == 0x35) {
+        result = (int32_t)((uint32_t)a ^ (uint32_t)src2);
+
+    } else {
+        result = (int32_t)(~(uint32_t)a);
+    }
+
+    registers_file[proc_id][dest] = result;
+    AC[proc_id] = result;
+
+    return advance_pc(proc_id);
+}
+
+
+/*
+ * ========================================================
  * 0F LOAD IMMEDIATE
  *
  * xD = constant

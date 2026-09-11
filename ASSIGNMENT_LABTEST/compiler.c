@@ -1506,6 +1506,41 @@ for (int line_number = 0;
 
     /*
      * ----------------------------------------------------
+     * INTEGER BITWISE NOT
+     *
+     * x1 = ~x2 -> 36 NOT
+     * ----------------------------------------------------
+     */
+    if (R[0] == '~') {
+        char operand[64];
+
+        if (sscanf(R + 1,
+                   " %63s",
+                   operand) != 1 ||
+            !is_valid_register(operand)) {
+
+            compiler_error(
+                line_number + 1,
+                "NOT requires an integer register");
+
+            fclose(out);
+            exit(EXIT_FAILURE);
+        }
+
+        emit(out,
+             0x36,
+             destination,
+             regnum(operand),
+             0);
+
+        pc++;
+
+        continue;
+    }
+
+
+    /*
+     * ----------------------------------------------------
      * IMMEDIATE DATA MOVEMENT
      *
      * x1 = 25
@@ -1550,10 +1585,13 @@ for (int line_number = 0;
 
     /*
      * ----------------------------------------------------
-     * INTEGER ARITHMETIC
+     * INTEGER ARITHMETIC / LOGICAL OPERATIONS
      *
      * x1 = x2 + x3
      * x1 = x2 + 10
+     * x1 = x2 & x3
+     * x1 = x2 & 15
+     * x1 = ~x2
      * ----------------------------------------------------
      */
 
@@ -1581,7 +1619,10 @@ for (int line_number = 0;
                (operation[0] == '+' ||
                 operation[0] == '-' ||
                 operation[0] == '*' ||
-                operation[0] == '/')) ||
+                operation[0] == '/' ||
+                operation[0] == '&' ||
+                operation[0] == '|' ||
+                operation[0] == '^')) ||
               !strcmp(operation, "<<") ||
               !strcmp(operation, ">>") ||
               !strcmp(operation, ">>>"))) {
@@ -1641,6 +1682,15 @@ for (int line_number = 0;
 
             else if (!strcmp(operation, ">>>"))
                 opcode_value = 0x1D;
+
+            else if (!strcmp(operation, "&"))
+                opcode_value = 0x33;
+
+            else if (!strcmp(operation, "|"))
+                opcode_value = 0x34;
+
+            else if (!strcmp(operation, "^"))
+                opcode_value = 0x35;
 
             else
                 opcode_value = -1;
@@ -1716,6 +1766,15 @@ for (int line_number = 0;
 
         else if (!strcmp(operation, ">>>"))
             opcode_value = 0x1A;
+
+        else if (!strcmp(operation, "&"))
+            opcode_value = 0x30;
+
+        else if (!strcmp(operation, "|"))
+            opcode_value = 0x31;
+
+        else if (!strcmp(operation, "^"))
+            opcode_value = 0x32;
 
         else
             opcode_value = -1;

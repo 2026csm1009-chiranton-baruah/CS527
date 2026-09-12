@@ -1,30 +1,34 @@
 % Fibonacci sequence - first 10 terms
-% Results stored at addresses 200..236
+% Results stored at addresses 400..436
 % Temporary storage:
-%   240 = old x2
-%   244 = new Fibonacci value
+%   440 = old x2
+%   444 = new Fibonacci value
 
 x1 = 0
 x2 = 1
 x3 = 200
+x3 = x3 + x3
 x4 = 0
 
 .loop
 [x3] = x1
 
 % Save current x2
-x6 = 240
+x6 = 220
+x6 = x6 + x6
 [x6] = x2
 
 % Calculate next Fibonacci number
 x5 = x1 + x2
 
 % x1 = old x2
-x6 = 240
+x6 = 220
+x6 = x6 + x6
 x1 = [x6]
 
 % x2 = new Fibonacci number
-x6 = 244
+x6 = 222
+x6 = x6 + x6
 [x6] = x5
 x2 = [x6]
 
@@ -40,6 +44,7 @@ BAL .loop
 
 % Print the ten stored results
 x3 = 200
+x3 = x3 + x3
 x7 = [x3]
 Print x7
 

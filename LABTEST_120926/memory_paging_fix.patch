@@ -1,0 +1,113 @@
+--- /mnt/data/patch_work/memory(4).c	2026-09-12 05:01:08.588332355 +0000
++++ /mnt/data/patch_work/memory_patched.c	2026-09-12 05:02:17.853596177 +0000
+@@ -165,6 +165,7 @@
+     if (valid_proc(owner_proc) && valid_logical_page(owner_page) &&
+         pageTable[owner_proc][owner_page] == frame) {
+         pageTable[owner_proc][owner_page] = -1;
++        pageDirty[owner_proc][owner_page] = 0;
+         tlb_invalidate(owner_proc, owner_page);
+     }
+ 
+@@ -196,12 +197,17 @@
+     return victim;
+ }
+ 
+-static int allocate_page_frame(int proc_id, int logical_page)
++static int allocate_page_frame(int *victim_proc_out, int *victim_page_out)
+ {
+     int frame = getFreePage();
+ 
+-    if (frame >= 0)
++    if (frame >= 0) {
++        if (victim_proc_out)
++            *victim_proc_out = -1;
++        if (victim_page_out)
++            *victim_page_out = -1;
+         return frame;
++    }
+ 
+     frame = choose_victim_frame();
+     if (frame < 0)
+@@ -210,8 +216,7 @@
+     int victim_proc = frameOwnerProc[frame];
+     int victim_page = frameOwnerPage[frame];
+ 
+-    /* A write-back cache may still contain the newest bytes. Flush the whole
+-     * frame through L1/L2 before its contents are copied to swap. */
++    /* Flush and invalidate the victim while its old ownership is still intact. */
+     cache_invalidate_frame(frame);
+ 
+     if (valid_proc(victim_proc) && valid_logical_page(victim_page)) {
+@@ -223,15 +228,21 @@
+             }
+         }
+ 
++        /* The victim is now safely backed by swap. Detach its mapping, but
++         * keep the frame ownership unchanged until page_in succeeds. */
+         pageTable[victim_proc][victim_page] = -1;
+         pageDirty[victim_proc][victim_page] = 0;
+         tlb_invalidate(victim_proc, victim_page);
+     }
+ 
+-    memset(&memory[frame * PAGESIZE], 0, PAGESIZE);
+-    frameOwnerProc[frame] = proc_id;
+-    frameOwnerPage[frame] = logical_page;
+-    frameStamp[frame] = nextStamp++;
++    if (victim_proc_out)
++        *victim_proc_out = victim_proc;
++    if (victim_page_out)
++        *victim_page_out = victim_page;
++
++    /* Reserve the frame, but leave ownership/mapping changes to page_in().
++     * This makes the page replacement a transaction that can be rolled back
++     * if the incoming swap read fails. */
+     return frame;
+ }
+ 
+@@ -246,17 +257,37 @@
+     if (!swap_has_page(proc_id, logical_page))
+         return -1;
+ 
+-    int frame = allocate_page_frame(proc_id, logical_page);
++    int victim_proc = -1;
++    int victim_page = -1;
++    int frame = allocate_page_frame(&victim_proc, &victim_page);
+     if (frame < 0)
+         return -1;
+ 
+     if (swap_read_page(proc_id,
+                        logical_page,
+                        &memory[frame * PAGESIZE]) != 0) {
++        /* Roll back the replacement instead of calling freePage() on a frame
++         * that has not yet been committed to the incoming page. */
++        if (valid_proc(victim_proc) && valid_logical_page(victim_page)) {
++            if (swap_read_page(victim_proc,
++                               victim_page,
++                               &memory[frame * PAGESIZE]) == 0) {
++                pageTable[victim_proc][victim_page] = frame;
++                pageDirty[victim_proc][victim_page] = 0;
++                frameOwnerProc[frame] = victim_proc;
++                frameOwnerPage[frame] = victim_page;
++                frameStamp[frame] = nextStamp++;
++                tlb_insert(victim_proc, victim_page, frame);
++                return -1;
++            }
++        }
++
++        /* No victim to restore: release the reserved frame. */
+         freePage(frame);
+         return -1;
+     }
+ 
++    /* Commit the replacement only after the incoming page is safely loaded. */
+     pageTable[proc_id][logical_page] = frame;
+     pageDirty[proc_id][logical_page] = 0;
+     frameOwnerProc[frame] = proc_id;
+@@ -265,6 +296,7 @@
+     tlb_insert(proc_id, logical_page, frame);
+ 
+     return frame;
++
+ }
+ 
+ int page_out(int proc_id, int logical_page)

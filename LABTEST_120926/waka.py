@@ -1,0 +1,77 @@
+from pathlib import Path
+
+patch = r"""--- memory.c.orig	2026-09-12
++++ memory.c	2026-09-12
+@@ -236,9 +236,6 @@
+     if (pageTable[proc_id][logical_page] > 0)
+         return pageTable[proc_id][logical_page];
+ 
+-    if (!swap_has_page(proc_id, logical_page))
+-        return -1;
+-
+     int victim_proc = -1;
+     int victim_page = -1;
+     int frame = allocate_page_frame(&victim_proc, &victim_page);
+@@ -246,12 +243,38 @@
+     if (frame < 0)
+         return -1;
+ 
+-    if (swap_read_page(proc_id,
+-                       logical_page,
+-                       &memory[frame * PAGESIZE]) != 0) {
++    /*
++     * If this logical page already has swap backing, restore its contents.
++     * Otherwise this is a new writable page: demand-zero the frame.
++     */
++    if (swap_has_page(proc_id, logical_page)) {
++        if (swap_read_page(proc_id,
++                           logical_page,
++                           &memory[frame * PAGESIZE]) != 0) {
++            /* Roll back the replacement. */
++            if (valid_proc(victim_proc) &&
++                valid_logical_page(victim_page)) {
++                if (swap_read_page(victim_proc,
++                                   victim_page,
++                                   &memory[frame * PAGESIZE]) == 0) {
++                    pageTable[victim_proc][victim_page] = frame;
++                    pageDirty[victim_proc][victim_page] = 0;
++                    frameOwnerProc[frame] = victim_proc;
++                    frameOwnerPage[frame] = victim_page;
++                    frameStamp[frame] = nextStamp++;
++                    tlb_insert(victim_proc, victim_page, frame);
++                    return -1;
++                }
++            }
+ 
+-        /* Roll back the replacement instead of calling freePage() on a frame
+-         * that has not yet been committed to the incoming page. */
+-        if (valid_proc(victim_proc) && valid_logical_page(victim_page)) {
+-            if (swap_read_page(victim_proc,
+-                               victim_page,
+-                               &memory[frame * PAGESIZE]) == 0) {
+-                pageTable[victim_proc][victim_page] = frame;
+-                pageDirty[victim_proc][victim_page] = 0;
+-                frameOwnerProc[frame] = victim_proc;
+-                frameOwnerPage[frame] = victim_page;
+-                frameStamp[frame] = nextStamp++;
+-                tlb_insert(victim_proc, victim_page, frame);
+-                return -1;
+-            }
++            /* No victim to restore: release the reserved frame. */
++            freePage(frame);
++            return -1;
+         }
+-
+-        /* No victim to restore: release the reserved frame. */
+-        freePage(frame);
+-        return -1;
++    } else {
++        memset(&memory[frame * PAGESIZE], 0, PAGESIZE);
+     }
+ 
+     /* Commit the replacement only after the incoming page is safely loaded. */
+"""
+path = Path("/home/bumblebee/CS527/LABTEST_120926/demand_zero_paging_fix.patch")
+path.write_text(patch)
+print(path)
+print(path.read_text())

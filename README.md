@@ -301,13 +301,14 @@ The implemented opcode families include:
 
 05  integer load
 06  integer store
-07  data movement
+07  MOD
 08  Print
 
 09  ADD immediate
 0A  SUB immediate
 0B  MUL immediate
 0C  DIV immediate
+0D  MOD immediate
 0F  load immediate
 ```
 

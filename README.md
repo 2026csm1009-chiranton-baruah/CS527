@@ -157,7 +157,7 @@ Logical pages 2-9 : data memory
 The corresponding logical regions are:
 
 ```text
-Instruction space : 1024 bytes = 1KiB
+Instruction space : 1024 bytes = 1 KiB
 Data space        : 4096 bytes = 4 KiB
 ```
 

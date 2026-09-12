@@ -41,37 +41,39 @@ test: $(TARGET)
 	@echo "========================================"
 	@echo " Running a few programs simultaneously"
 	@echo "========================================"
-	@printf 'crc_test_fixed.txt data.byte\nfib.txt\nrs64_compact.txt data.byte\ncrc16_test.txt data.byte\nnrd.2 data.byte\nbooth2.txt data.byte\nrecurring_division.txt\nhamming_code_2.txt data.byte\na3.txt data.byte\nsod.txt data.byte\nf2.txt data.byte\na4.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\neitch.txt data.byte\nexit\n' | ./$(TARGET)
+	@printf 'crc_test_fixed.txt data.byte\nfib.txt\nrs64_compact.txt data.byte\nldpc126_new.txt data.byte\ncrc16_test.txt data.byte\nnrd.2 data.byte\nbooth2.txt data.byte\nrecurring_division.txt\nhamming_code_2.txt data.byte\na3.txt data.byte\nsod.txt data.byte\nf2.txt data.byte\na4.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\neitch.txt data.byte\nexit\n' | ./$(TARGET)
 
 TEST_PROGRAMS = \
 	matmul.txt \
 	a3.txt \
-	sod.txt\
-	booth2.txt\
+	sod.txt \
+	booth2.txt \
 	a4.txt \
-	rs64_compact.txt\
-	crc_test_fixed.txt\
-	fib.txt\
+	rs64_compact.txt \
+	crc_test_fixed.txt \
+	fib.txt \
 	eitch.txt \
-	hamming_code_2.txt\
-	crc16_test.txt\
-	nrd2.txt\
-	recurring_division.txt\
+	ldpc126_new.txt \
+	hamming_code_2.txt \
+	crc16_test.txt \
+	nrd2.txt \
+	recurring_division.txt \
 	cross.txt \
-	sod.txt\
+	sod.txt \
 	f2.txt \
 	eitch.txt \
-	crc16_test.txt\
+	crc16_test.txt \
 	cross.txt \
-	nrd2.txt\
-	hamming_code_2.txt\
+	nrd2.txt \
+	hamming_code_2.txt \
 	matmul.txt \
 	f2.txt \
 	fib.txt \
-	crc_test_fixed.txt\
+	crc_test_fixed.txt \
 	a3.txt \
-	booth2.txt\
-	rs64_compact.txt\
+	ldpc126_new.txt \
+	booth2.txt \
+	rs64_compact.txt \
 	a4.txt \
 	recurring_division.txt
 

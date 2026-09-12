@@ -131,8 +131,8 @@ A processor is reset whenever a new process is dispatched to it.
 ### Physical Memory
 
 ```text
-Physical memory : 8192 bytes
-Page size        : 512 bytes
+Physical memory : 8192 bytes = 8 KiB
+Page size        : 512 bytes = 0.5 KiB
 Physical frames  : 16
 Reserved frame   : frame 0
 ```
@@ -157,8 +157,8 @@ Logical pages 2-9 : data memory
 The corresponding logical regions are:
 
 ```text
-Instruction space : 1024 bytes
-Data space        : 4096 bytes
+Instruction space : 1024 bytes = 1KiB
+Data space        : 4096 bytes = 4 KiB
 ```
 
 The page table maps:
@@ -755,8 +755,8 @@ disk-backed swap slot
 The disk subsystem uses:
 
 ```text
-Disk size       : 65536 bytes
-Block size      : 512 bytes
+Disk size       : 65536 bytes = 64 KiB
+Block size      : 512 bytes = 0.5 KiB
 Number of blocks: 128
 ```
 
@@ -917,7 +917,7 @@ Across four processors:
 
 ```text
 4 * (128 + 128 + 256) + 512
-= 2560 bytes
+= 2560 bytes = 2.5 KiB
 ```
 
 ### Cache / Paging Separation

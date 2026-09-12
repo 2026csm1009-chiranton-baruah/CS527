@@ -734,7 +734,7 @@ if (opcode >= 0x09 &&
         registers_file[proc_id][src1];
 
     int32_t immediate =
-        (int32_t)src2;
+        (int32_t)(int8_t)src2;
 
 
     if (opcode == 0x09) {
@@ -886,7 +886,7 @@ if (opcode == 0x0F) {
 
 
     registers_file[proc_id][dest] =
-        (int32_t)src2;
+        (int32_t)(int8_t)src2;
 
     AC[proc_id] =
         registers_file[proc_id][dest];
@@ -1135,7 +1135,7 @@ if (opcode >= 0x29 &&
         vector_registers[proc_id][src1];
 
     int32_t immediate =
-        (int32_t)src2;
+        (int32_t)(int8_t)src2;
 
 
     if (opcode == 0x29) {

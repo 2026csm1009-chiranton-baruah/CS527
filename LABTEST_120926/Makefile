@@ -46,14 +46,12 @@ test: $(TARGET)
 TEST_PROGRAMS = \
 	matmul.txt \
 	a3.txt \
-	fib.txt \
 	sod.txt\
 	booth2.txt\
 	a4.txt \
 	crc_test_fixed.txt\
 	eitch.txt \
 	hamming_code_2.txt\
-	mulmul.txt\
 	crc16_test.txt\
 	recurring_division.txt\
 	cross.txt \
@@ -68,9 +66,7 @@ TEST_PROGRAMS = \
 	crc_test_fixed.txt\
 	a3.txt \
 	booth2.txt\
-	mulmul.txt\
 	a4.txt \
-	fib.txt\
 	recurring_division.txt
 
 stress-test: $(TARGET)

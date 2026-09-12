@@ -1,0 +1,343 @@
+bumblebee@Chiranton:~/CS527/LABTEST_120926$ make stress-test
+========================================
+ Running 26 programs
+========================================
+Mini OS started with 4 processors.
+$ [Compiler] compiling matmul.txt
+[MEM] proc=0: instruction=796 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 1 loaded on processor 0
+[Compiler] compiling a3.txt
+[MEM] proc=1: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 2 loaded on processor 1
+[Compiler] compiling sod.txt
+[MEM] proc=2: instruction=104 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 3 loaded on processor 2
+[Compiler] compiling booth2.txt
+[MEM] proc=3: instruction=656 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 4 loaded on processor 3
+[Compiler] compiling a4.txt
+[OS] PID 5 placed in waiting queue
+[Compiler] compiling crc_test_fixed.txt
+[OS] PID 6 placed in waiting queue
+[Compiler] compiling fib.txt
+[OS] PID 7 placed in waiting queue
+[Compiler] compiling eitch.txt
+[OS] PID 8 placed in waiting queue
+[Compiler] compiling hamming_code_2.txt
+[OS] PID 9 placed in waiting queue
+45
+[OS] PID 3 finished on processor 2
+[MEM] proc=2: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 5 dispatched to processor 2
+[Compiler] compiling crc16_test.txt
+[OS] PID 10 placed in waiting queue
+[Compiler] compiling recurring_division.txt
+[OS] PID 11 placed in waiting queue
+[Compiler] compiling cross.txt
+[OS] PID 12 placed in waiting queue
+[Compiler] compiling sod.txt
+[OS] PID 13 placed in waiting queue
+[Compiler] compiling f2.txt
+[OS] PID 14 placed in waiting queue
+[Compiler] compiling eitch.txt
+[OS] PID 15 placed in waiting queue
+[Compiler] compiling crc16_test.txt
+[OS] PID 16 placed in waiting queue
+[Compiler] compiling cross.txt
+[OS] PID 17 placed in waiting queue
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 2 finished on processor 1
+[MEM] proc=1: instruction=320 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 6 dispatched to processor 1
+[Compiler] compiling hamming_code_2.txt
+[OS] PID 18 placed in waiting queue
+[Compiler] compiling matmul.txt
+[OS] PID 19 placed in waiting queue
+[Compiler] compiling f2.txt
+[OS] PID 20 placed in waiting queue
+125
+136
+133
+162
+174
+151
+279
+300
+265
+[OS] PID 1 finished on processor 0
+[MEM] proc=0: instruction=216 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 7 dispatched to processor 0
+[Compiler] compiling fib.txt
+[OS] PID 21 placed in waiting queue
+[Compiler] compiling crc_test_fixed.txt
+[OS] PID 22 placed in waiting queue
+[Compiler] compiling a3.txt
+[OS] PID 23 placed in waiting queue
+[Compiler] compiling booth2.txt
+[OS] PID 24 placed in waiting queue
+[Compiler] compiling a4.txt
+[OS] PID 25 placed in waiting queue
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+[OS] PID 5 finished on processor 2
+[MEM] proc=2: instruction=160 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 8 dispatched to processor 2
+[Compiler] compiling recurring_division.txt
+[OS] PID 26 placed in waiting queue
+[Shell] exiting; existing tasks will continue
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+[OS] PID 7 finished on processor 0
+[MEM] proc=0: instruction=1016 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 9 dispatched to processor 0
+120
+[OS] PID 6 finished on processor 1
+[MEM] proc=1: instruction=332 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 10 dispatched to processor 1
+1
+2
+4
+7
+12
+20
+33
+54
+88
+143
+232
+376
+609
+986
+1596
+2583
+[OS] PID 8 finished on processor 2
+[MEM] proc=2: instruction=352 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 11 dispatched to processor 2
+30488
+[OS] PID 10 finished on processor 1
+[MEM] proc=1: instruction=172 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 12 dispatched to processor 1
+-3
+6
+-3
+[OS] PID 12 finished on processor 1
+[MEM] proc=1: instruction=104 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 13 dispatched to processor 1
+45
+[OS] PID 13 finished on processor 1
+[MEM] proc=1: instruction=64 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 14 dispatched to processor 1
+528
+[OS] PID 14 finished on processor 1
+[MEM] proc=1: instruction=160 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 15 dispatched to processor 1
+143
+-143
+-143
+143
+[OS] PID 4 finished on processor 3
+[MEM] proc=3: instruction=332 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 16 dispatched to processor 3
+4
+1
+5
+1
+10
+0
+36
+3
+[OS] PID 11 finished on processor 2
+[MEM] proc=2: instruction=172 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 17 dispatched to processor 2
+-3
+6
+-3
+[OS] PID 17 finished on processor 2
+[MEM] proc=2: instruction=1016 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 18 dispatched to processor 2
+1
+2
+4
+7
+12
+20
+33
+54
+88
+143
+232
+376
+609
+986
+1596
+2583
+[OS] PID 15 finished on processor 1
+[MEM] proc=1: instruction=796 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 19 dispatched to processor 1
+30488
+[OS] PID 16 finished on processor 3
+[MEM] proc=3: instruction=64 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 20 dispatched to processor 3
+528
+[OS] PID 20 finished on processor 3
+[MEM] proc=3: instruction=216 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 21 dispatched to processor 3
+125
+136
+133
+162
+174
+151
+279
+300
+265
+[OS] PID 19 finished on processor 1
+[MEM] proc=1: instruction=320 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 22 dispatched to processor 1
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+[OS] PID 21 finished on processor 3
+[MEM] proc=3: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 23 dispatched to processor 3
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 23 finished on processor 3
+[MEM] proc=3: instruction=656 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 24 dispatched to processor 3
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+[OS] PID 9 finished on processor 0
+[MEM] proc=0: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 25 dispatched to processor 0
+120
+[OS] PID 22 finished on processor 1
+[MEM] proc=1: instruction=352 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 26 dispatched to processor 1
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+[OS] PID 25 finished on processor 0
+4
+1
+5
+1
+10
+0
+36
+3
+[OS] PID 26 finished on processor 1
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+[OS] PID 18 finished on processor 2
+143
+-143
+-143
+143
+[OS] PID 24 finished on processor 3
+
+========== TLB STATISTICS ==========
+[TLB] proc=0: hits=9975, misses=9, hit rate=99.91%
+[TLB] proc=1: hits=12748, misses=16, hit rate=99.87%
+[TLB] proc=2: hits=13426, misses=10, hit rate=99.93%
+[TLB] proc=3: hits=14051, misses=13, hit rate=99.91%
+-------------------------------------
+[TLB] total: hits=50200, misses=48, hit rate=99.90%
+=====================================
+
+========================================
+ Cache Statistics
+========================================
+
+L1 Instruction Cache: 128 B/core
+----------------------------------------
+Core 0: hits=8913 misses=411 hit-rate=95.59%
+Core 1: hits=11795 misses=173 hit-rate=98.55%
+Core 2: hits=12595 misses=397 hit-rate=96.94%
+Core 3: hits=13435 misses=129 hit-rate=99.05%
+Total: hits=46738 misses=1110 hit-rate=97.68%
+
+L1 Data Cache: 128 B/core
+----------------------------------------
+Core 0: hits=464 misses=17 hit-rate=96.47%
+Core 1: hits=637 misses=27 hit-rate=95.93%
+Core 2: hits=330 misses=15 hit-rate=95.65%
+Core 3: hits=333 misses=21 hit-rate=94.07%
+Total: hits=1764 misses=80 hit-rate=95.66%
+
+Private L2 Cache: 256 B/core
+----------------------------------------
+Core 0: hits=77 misses=351 hit-rate=17.99%
+Core 1: hits=0 misses=200 hit-rate=0.00%
+Core 2: hits=77 misses=335 hit-rate=18.69%
+Core 3: hits=0 misses=150 hit-rate=0.00%
+Total: hits=154 misses=1036 hit-rate=12.94%
+
+Shared Unified L3 Cache: 512 B
+----------------------------------------
+Hits   : 204
+Misses : 832
+Hit-rate: 19.69%
+========================================
+bumblebee@Chiranton:~/CS527/LABTEST_120926$

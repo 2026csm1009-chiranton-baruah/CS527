@@ -1,0 +1,142 @@
+--- /mnt/data/shift_patch/compiler(6).orig.c	2026-09-11 16:26:14.310147464 +0000
++++ /mnt/data/shift_patch/compiler(6).c	2026-09-11 16:26:14.839832738 +0000
+@@ -1533,6 +1533,22 @@
+ 
+ 
+     /*
++     * ====================================================
++     * SHIFT OPERATIONS
++     *
++     * Register shifts:
++     *   x1 = x2 << x3    -> 18 SLL
++     *   x1 = x2 >> x3    -> 19 SRL
++     *   x1 = x2 >>> x3   -> 1A SRA
++     *
++     * Immediate shifts:
++     *   x1 = x2 << 3    -> 1B SLLI
++     *   x1 = x2 >> 3    -> 1C SRLI
++     *   x1 = x2 >>> 3   -> 1D SRAI
++     * ====================================================
++     */
++
++    /*
+      * ----------------------------------------------------
+      * INTEGER ARITHMETIC
+      *
+@@ -1561,11 +1577,14 @@
+         }
+ 
+ 
+-        if (strlen(operation) != 1 ||
+-            (operation[0] != '+' &&
+-             operation[0] != '-' &&
+-             operation[0] != '*' &&
+-             operation[0] != '/')) {
++        if (!((strlen(operation) == 1 &&
++               (operation[0] == '+' ||
++                operation[0] == '-' ||
++                operation[0] == '*' ||
++                operation[0] == '/')) ||
++              !strcmp(operation, "<<") ||
++              !strcmp(operation, ">>") ||
++              !strcmp(operation, ">>>"))) {
+ 
+             compiler_error(
+                 line_number + 1,
+@@ -1602,18 +1621,49 @@
+ 
+             int opcode_value;
+ 
+-            if (operation[0] == '+')
++            if (operation[0] == '+' && strlen(operation) == 1)
+                 opcode_value = 0x09;
+ 
+-            else if (operation[0] == '-')
++            else if (operation[0] == '-' && strlen(operation) == 1)
+                 opcode_value = 0x0A;
+ 
+-            else if (operation[0] == '*')
++            else if (operation[0] == '*' && strlen(operation) == 1)
+                 opcode_value = 0x0B;
+ 
+-            else
++            else if (operation[0] == '/' && strlen(operation) == 1)
+                 opcode_value = 0x0C;
+ 
++            else if (!strcmp(operation, "<<"))
++                opcode_value = 0x1B;
++
++            else if (!strcmp(operation, ">>"))
++                opcode_value = 0x1C;
++
++            else if (!strcmp(operation, ">>>"))
++                opcode_value = 0x1D;
++
++            else
++                opcode_value = -1;
++
++            if (opcode_value < 0) {
++                compiler_error(
++                    line_number + 1,
++                    "invalid integer operator");
++                fclose(out);
++                exit(EXIT_FAILURE);
++            }
++
++            /* RISC-V-style immediate shift amounts are 5 bits on RV32. */
++            if ((opcode_value >= 0x1B &&
++                 opcode_value <= 0x1D) &&
++                (immediate < 0 || immediate > 31)) {
++                compiler_error(
++                    line_number + 1,
++                    "shift immediate must be in the range 0..31");
++                fclose(out);
++                exit(EXIT_FAILURE);
++            }
++
+ 
+             emit(out,
+                  opcode_value,
+@@ -1646,18 +1696,38 @@
+ 
+         int opcode_value;
+ 
+-        if (operation[0] == '+')
++        if (operation[0] == '+' && strlen(operation) == 1)
+             opcode_value = 0x01;
+ 
+-        else if (operation[0] == '-')
++        else if (operation[0] == '-' && strlen(operation) == 1)
+             opcode_value = 0x02;
+ 
+-        else if (operation[0] == '*')
++        else if (operation[0] == '*' && strlen(operation) == 1)
+             opcode_value = 0x03;
+ 
+-        else
++        else if (operation[0] == '/' && strlen(operation) == 1)
+             opcode_value = 0x04;
+ 
++        else if (!strcmp(operation, "<<"))
++            opcode_value = 0x18;
++
++        else if (!strcmp(operation, ">>"))
++            opcode_value = 0x19;
++
++        else if (!strcmp(operation, ">>>"))
++            opcode_value = 0x1A;
++
++        else
++            opcode_value = -1;
++
++        if (opcode_value < 0) {
++            compiler_error(
++                line_number + 1,
++                "invalid integer operator");
++            fclose(out);
++            exit(EXIT_FAILURE);
++        }
++
+ 
+         emit(out,
+              opcode_value,

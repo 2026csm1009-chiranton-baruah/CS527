@@ -1,0 +1,129 @@
+% ============================================================
+% CRC-16/CCITT-FALSE ISA workload
+% Polynomial: x^16 + x^12 + x^5 + 1 (0x1021)
+% Initial CRC: 0xFFFF
+% RefIn/RefOut: false
+% Test message: ASCII "1234567"
+% Expected CRC: 0x7718 = 30488
+%
+% CRC is stored in the top 16 bits of a 32-bit register.
+% For each input byte:
+%   crc = crc XOR (byte << 24)
+% For each bit:
+%   feedback = MSB ? 0x1021 : 0
+%   crc = (crc << 1) XOR (feedback << 16)
+%
+% The polynomial 0x1021 is constructed as 16 << 8 + 33,
+% because source constants are limited to 0..255.
+% ============================================================
+
+% Initialize CRC to 0xFFFF in the top 16 bits.
+x3 = 255
+x3 = x3 << 24
+x1 = 255
+x1 = x1 << 16
+x3 = x3 | x1
+
+% Build polynomial 0x1021 = 4096 + 33.
+x4 = 16
+x4 = x4 << 8
+x5 = 33
+x4 = x4 + x5
+x4 = x4 << 16
+
+% Byte 1: '1'
+x1 = 49
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B0
+x5 = x3 >> 31
+x5 = x5 * x4
+x3 = x3 << 1
+x3 = x3 ^ x5
+x2 = x2 - 1
+BGT .B0
+
+% Byte 2: '2'
+x1 = 50
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B1
+x5 = x3 >> 31
+x5 = x5 * x4
+x3 = x3 << 1
+x3 = x3 ^ x5
+x2 = x2 - 1
+BGT .B1
+
+% Byte 3: '3'
+x1 = 51
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B2
+x5 = x3 >> 31
+x5 = x5 * x4
+x3 = x3 << 1
+x3 = x3 ^ x5
+x2 = x2 - 1
+BGT .B2
+
+% Byte 4: '4'
+x1 = 52
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B3
+x5 = x3 >> 31
+x5 = x5 * x4
+x3 = x3 << 1
+x3 = x3 ^ x5
+x2 = x2 - 1
+BGT .B3
+
+% Byte 5: '5'
+x1 = 53
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B4
+x5 = x3 >> 31
+x5 = x5 * x4
+x3 = x3 << 1
+x3 = x3 ^ x5
+x2 = x2 - 1
+BGT .B4
+
+% Byte 6: '6'
+x1 = 54
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B5
+x5 = x3 >> 31
+x5 = x5 * x4
+x3 = x3 << 1
+x3 = x3 ^ x5
+x2 = x2 - 1
+BGT .B5
+
+% Byte 7: '7'
+x1 = 55
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B6
+x5 = x3 >> 31
+x5 = x5 * x4
+x3 = x3 << 1
+x3 = x3 ^ x5
+x2 = x2 - 1
+BGT .B6
+
+% Extract the final 16-bit CRC.
+x3 = x3 >> 16
+Print x3
+
+% Expected output: 30488 (0x7718)

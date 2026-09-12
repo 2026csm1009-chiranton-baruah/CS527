@@ -1,0 +1,110 @@
+% ============================================================
+% CRC-8/ATM (CRC-8/ITU) rigorous ISA workload
+% Polynomial: x^8 + x^2 + x + 1 (0x07)
+% Initial CRC: 0x00
+% Test message: ASCII "1234567"
+% Expected CRC: 0x78 = 120
+%
+% The CRC is kept in the top byte of a 32-bit register.
+% This lets logical arithmetic shifts implement the CRC reduction
+% without changing the ISA or relying on values wider than 8 bits.
+% Each bit performs: feedback = MSB ? 0x07 : 0; crc=(crc<<1)^feedback.
+% The test deliberately uses repeated bit-level shifts/XORs and branches
+% so the compiled instruction stream is close to the 256-instruction limit.
+% ============================================================
+
+% Byte 1: 1
+x1 = 49
+x1 = x1 << 24
+x3 = x1 + 0
+x2 = 8
+.B0
+x4 = x3 >>> 31
+x4 = x4 & 7
+x3 = x3 << 1
+x3 = x3 ^ x4
+x2 = x2 - 1
+BGT .B0
+
+% Byte 2: 2
+x1 = 50
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B1
+x4 = x3 >>> 31
+x4 = x4 & 7
+x3 = x3 << 1
+x3 = x3 ^ x4
+x2 = x2 - 1
+BGT .B1
+
+% Byte 3: 3
+x1 = 51
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B2
+x4 = x3 >>> 31
+x4 = x4 & 7
+x3 = x3 << 1
+x3 = x3 ^ x4
+x2 = x2 - 1
+BGT .B2
+
+% Byte 4: 4
+x1 = 52
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B3
+x4 = x3 >>> 31
+x4 = x4 & 7
+x3 = x3 << 1
+x3 = x3 ^ x4
+x2 = x2 - 1
+BGT .B3
+
+% Byte 5: 5
+x1 = 53
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B4
+x4 = x3 >>> 31
+x4 = x4 & 7
+x3 = x3 << 1
+x3 = x3 ^ x4
+x2 = x2 - 1
+BGT .B4
+
+% Byte 6: 6
+x1 = 54
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B5
+x4 = x3 >>> 31
+x4 = x4 & 7
+x3 = x3 << 1
+x3 = x3 ^ x4
+x2 = x2 - 1
+BGT .B5
+
+% Byte 7: 7
+x1 = 55
+x1 = x1 << 24
+x3 = x3 ^ x1
+x2 = 8
+.B6
+x4 = x3 >>> 31
+x4 = x4 & 7
+x3 = x3 << 1
+x3 = x3 ^ x4
+x2 = x2 - 1
+BGT .B6
+
+x3 = x3 >>> 24
+Print x3
+% Expected output: 120 (0x78)
+

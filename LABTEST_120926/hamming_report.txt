@@ -1,0 +1,67 @@
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_LABTEST$ ./simulator
+Mini OS started with 4 processors.
+$ hamming_code_1.txt data.byte
+[Compiler] compiling hamming_code_1.txt
+[MEM] proc=0: instruction=980 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 1 loaded on processor 0
+165
+164
+165
+164
+165
+175
+161
+175
+133
+149
+165
+197
+37
+[OS] PID 1 finished on processor 0
+exit
+[Shell] exiting; existing tasks will continue
+
+========== TLB STATISTICS ==========
+[TLB] proc=0: hits=6894, misses=2, hit rate=99.97%
+[TLB] proc=1: hits=0, misses=0, hit rate=0.00%
+[TLB] proc=2: hits=0, misses=0, hit rate=0.00%
+[TLB] proc=3: hits=0, misses=0, hit rate=0.00%
+-------------------------------------
+[TLB] total: hits=6894, misses=2, hit rate=99.97%
+=====================================
+
+========================================
+ Cache Statistics
+========================================
+
+L1 Instruction Cache: 128 B/core
+----------------------------------------
+Core 0: hits=6570 misses=326 hit-rate=95.27%
+Core 1: hits=0 misses=0 hit-rate=0.00%
+Core 2: hits=0 misses=0 hit-rate=0.00%
+Core 3: hits=0 misses=0 hit-rate=0.00%
+Total: hits=6570 misses=326 hit-rate=95.27%
+
+L1 Data Cache: 128 B/core
+----------------------------------------
+Core 0: hits=0 misses=0 hit-rate=0.00%
+Core 1: hits=0 misses=0 hit-rate=0.00%
+Core 2: hits=0 misses=0 hit-rate=0.00%
+Core 3: hits=0 misses=0 hit-rate=0.00%
+Total: hits=0 misses=0 hit-rate=0.00%
+
+Private L2 Cache: 256 B/core
+----------------------------------------
+Core 0: hits=88 misses=238 hit-rate=26.99%
+Core 1: hits=0 misses=0 hit-rate=0.00%
+Core 2: hits=0 misses=0 hit-rate=0.00%
+Core 3: hits=0 misses=0 hit-rate=0.00%
+Total: hits=88 misses=238 hit-rate=26.99%
+
+Shared Unified L3 Cache: 512 B
+----------------------------------------
+Hits   : 176
+Misses : 62
+Hit-rate: 73.95%
+========================================
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_LABTEST$

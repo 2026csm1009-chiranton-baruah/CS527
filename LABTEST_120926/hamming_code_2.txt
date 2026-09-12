@@ -1,0 +1,322 @@
+% Rigorous Hamming(12,8) SEC test.
+%
+% Codeword positions:
+%   1=p1  2=p2  3=d1  4=p4  5=d2  6=d3
+%   7=d4  8=p8  9=d5 10=d6 11=d7 12=d8
+%
+% Even parity. The program:
+%   - encodes 0xA5 (165),
+%   - verifies clean decoding,
+%   - flips every one of the 12 codeword bits, one at a time,
+%   - computes the syndrome,
+%   - corrects the indicated bit,
+%   - extracts the original byte.
+%
+% Expected output: thirteen lines, all equal to 165.
+%
+% x1=input, x2=codeword, x3=syndrome, x4-x7=scratch,
+% x16=saved clean codeword, x18=error position, x19=error mask.
+
+x1 = 165
+
+% -------------------- ENCODE 8 DATA BITS --------------------
+x2 = 0
+x4 = x1 & 1
+x4 = x4 << 2
+x2 = x2 | x4
+x4 = x1 & 2
+x4 = x4 << 3
+x2 = x2 | x4
+x4 = x1 & 4
+x4 = x4 << 3
+x2 = x2 | x4
+x4 = x1 & 8
+x4 = x4 << 3
+x2 = x2 | x4
+x4 = x1 & 16
+x4 = x4 << 4
+x2 = x2 | x4
+x4 = x1 & 32
+x4 = x4 << 4
+x2 = x2 | x4
+x4 = x1 & 64
+x4 = x4 << 4
+x2 = x2 | x4
+x4 = x1 & 128
+x4 = x4 << 4
+x2 = x2 | x4
+
+% -------------------- ADD EVEN PARITY --------------------
+% p1: bits 2,4,6,8,10
+x4 = x2 & 85
+x5 = x2 >> 8
+x5 = x5 & 5
+x5 = x5 << 1
+x4 = x4 | x5
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x2 = x2 | x4
+
+% p2: bits 2,5,6,9,10
+x4 = x2 & 102
+x5 = x2 >> 8
+x5 = x5 & 6
+x5 = x5 << 2
+x4 = x4 | x5
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x4 = x4 << 1
+x2 = x2 | x4
+
+% p4: bits 4,5,6,11
+x4 = x2 & 120
+x5 = x2 >> 8
+x5 = x5 & 8
+x5 = x5 << 4
+x4 = x4 | x5
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x4 = x4 << 3
+x2 = x2 | x4
+
+% p8: bits 7,8,9,10,11
+x4 = x2 >> 7
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x4 = x4 << 7
+x2 = x2 | x4
+
+x16 = x2 + 0
+
+% -------------------- CLEAN DECODE --------------------
+% Compute syndrome.
+x3 = 0
+
+% s1
+x4 = x2 & 85
+x5 = x2 >> 8
+x5 = x5 & 5
+x5 = x5 << 1
+x4 = x4 | x5
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x3 = x3 | x4
+
+% s2
+x4 = x2 & 102
+x5 = x2 >> 8
+x5 = x5 & 6
+x5 = x5 << 2
+x4 = x4 | x5
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x4 = x4 << 1
+x3 = x3 | x4
+
+% s4
+x4 = x2 & 120
+x5 = x2 >> 8
+x5 = x5 & 8
+x5 = x5 << 4
+x4 = x4 | x5
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x4 = x4 << 2
+x3 = x3 | x4
+
+% s8
+x4 = x2 >> 7
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x4 = x4 << 3
+x3 = x3 | x4
+
+% Clean word has syndrome zero; no correction is needed.
+% Extract d1..d8.
+x17 = 0
+x4 = x2 & 4
+x4 = x4 >> 2
+x17 = x17 | x4
+x4 = x2 & 16
+x4 = x4 >> 3
+x17 = x17 | x4
+x4 = x2 & 32
+x4 = x4 >> 3
+x17 = x17 | x4
+x4 = x2 & 64
+x4 = x4 >> 3
+x17 = x17 | x4
+x4 = x2 >> 4
+x4 = x4 & 16
+x17 = x17 | x4
+x4 = x2 >> 4
+x4 = x4 & 32
+x17 = x17 | x4
+x4 = x2 >> 4
+x4 = x4 & 64
+x17 = x17 | x4
+x4 = x2 >> 4
+x4 = x4 & 128
+x17 = x17 | x4
+Print x17
+
+% -------------------- ALL 12 SINGLE-BIT ERRORS --------------------
+x18 = 1
+.LERROR
+x2 = x16 + 0
+x19 = 1
+x4 = x18 - 1
+.LMASK
+BEQ .FLIP
+x19 = x19 << 1
+x4 = x4 - 1
+BAL .LMASK
+
+.FLIP
+x2 = x2 ^ x19
+
+% Syndrome after exactly one flipped bit.
+x3 = 0
+
+% s1
+x4 = x2 & 85
+x5 = x2 >> 8
+x5 = x5 & 5
+x5 = x5 << 1
+x4 = x4 | x5
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x3 = x3 | x4
+
+% s2
+x4 = x2 & 102
+x5 = x2 >> 8
+x5 = x5 & 6
+x5 = x5 << 2
+x4 = x4 | x5
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x4 = x4 << 1
+x3 = x3 | x4
+
+% s4
+x4 = x2 & 120
+x5 = x2 >> 8
+x5 = x5 & 8
+x5 = x5 << 4
+x4 = x4 | x5
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x4 = x4 << 2
+x3 = x3 | x4
+
+% s8
+x4 = x2 >> 7
+x5 = x4 >> 4
+x4 = x4 ^ x5
+x5 = x4 >> 2
+x4 = x4 ^ x5
+x5 = x4 >> 1
+x4 = x4 ^ x5
+x4 = x4 & 1
+x4 = x4 << 3
+x3 = x3 | x4
+
+% Correct: x19 = 1 << (syndrome-1).
+x19 = 1
+x4 = x3 - 1
+.LCORRECT
+BEQ .FIXED
+x19 = x19 << 1
+x4 = x4 - 1
+BAL .LCORRECT
+.FIXED
+x2 = x2 ^ x19
+
+% Extract data.
+x17 = 0
+x4 = x2 & 4
+x4 = x4 >> 2
+x17 = x17 | x4
+x4 = x2 & 16
+x4 = x4 >> 3
+x17 = x17 | x4
+x4 = x2 & 32
+x4 = x4 >> 3
+x17 = x17 | x4
+x4 = x2 & 64
+x4 = x4 >> 3
+x17 = x17 | x4
+x4 = x2 >> 4
+x4 = x4 & 16
+x17 = x17 | x4
+x4 = x2 >> 4
+x4 = x4 & 32
+x17 = x17 | x4
+x4 = x2 >> 4
+x4 = x4 & 64
+x17 = x17 | x4
+x4 = x2 >> 4
+x4 = x4 & 128
+x17 = x17 | x4
+Print x17
+
+x18 = x18 + 1
+x4 = x18 - 13
+BNE .LERROR
+

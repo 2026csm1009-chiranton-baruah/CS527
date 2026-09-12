@@ -1,0 +1,13 @@
+<frequency> <source instruction>
+1 x1 = 0 % index
+1 x2 = 0 % sum
+1 x3 = 0 % array address
+1 x4 = [x3] % read the size of array
+601 x15 = x1 - x4 % compare
+601 BEQ .exit
+600 x3 = x3 + 4 % increase the address
+600 x6 = [x3] % load the array data
+600 x2 = x2 + x6 % update sum
+600 x1 = x1 + 1 % increment index
+600 BAL .loopback
+1 [x3] = x2

@@ -1,0 +1,2 @@
+x1 = [0] % constant address load
+print x1

@@ -1,0 +1,33 @@
+<frequency> <source instruction>
+1 x1 = 20
+1 x2 = 6
+1 x3 = x1 MOD x2
+1 x4 = x1 MOD 6
+1 x5 = x1 << x2
+1 x6 = x5 >> x2
+1 x7 = x5 >>> x2
+1 x8 = x1 & x2
+1 x9 = x1 | x2
+1 x10 = x1 ^ x2
+1 x11 = x1 & 15
+1 x12 = x1 | 8
+1 x13 = x1 ^ 31
+1 x14 = ~x1
+1 MV x15 x2
+1 MOVE x16, x3
+1 x17 = x4
+1 Print x3
+1 Print x4
+1 Print x5
+1 Print x6
+1 Print x7
+1 Print x8
+1 Print x9
+1 Print x10
+1 Print x11
+1 Print x12
+1 Print x13
+1 Print x14
+1 Print x15
+1 Print x16
+1 Print x17

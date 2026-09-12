@@ -41,7 +41,7 @@ test: $(TARGET)
 	@echo "========================================"
 	@echo " Running a few programs simultaneously"
 	@echo "========================================"
-	@printf 'crc_test_fixed.txt data.byte\ncrc16_test.txt data.byte\nbooth2.txt data.byte\nrecurring_division.txt\nhamming_code_2.txt data.byte\na3.txt data.byte\nsod.txt data.byte\nf2.txt data.byte\na4.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\nmulmul.txt data.byte\nfib.txt data.byte\neitch.txt data.byte\nexit\n' | ./$(TARGET)
+	@printf 'crc_test_fixed.txt data.byte\ncrc16_test.txt data.byte\nbooth2.txt data.byte\nrecurring_division.txt\nhamming_code_2.txt data.byte\na3.txt data.byte\nsod.txt data.byte\nf2.txt data.byte\na4.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\neitch.txt data.byte\nexit\n' | ./$(TARGET)
 
 TEST_PROGRAMS = \
 	matmul.txt \

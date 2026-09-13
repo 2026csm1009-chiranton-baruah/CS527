@@ -1,0 +1,329 @@
+% ============================================================
+% Non-restoring division
+%
+% 16-bit unsigned dividend / divisor
+%
+% Algorithm:
+%
+%   A = 0
+%   Q = dividend
+%   M = divisor
+%
+%   Repeat 16 times:
+%
+%       bit = Q[15]
+%       Q = Q << 1
+%       Q = Q & 0xFFFF
+%
+%       if A >= 0:
+%           A = (A << 1) + bit
+%           A = A - M
+%       else:
+%           A = (A << 1) + bit
+%           A = A + M
+%
+%       if A >= 0:
+%           Q[0] = 1
+%       else:
+%           Q[0] = 0
+%
+%   Final:
+%
+%       if A < 0:
+%           A = A + M
+%
+%       Q = quotient
+%       A = remainder
+%
+% Tests:
+%   13  / 3   = 4  remainder 1
+%   11  / 2   = 5  remainder 1
+%   100 / 10  = 10 remainder 0
+%   255 / 7   = 36 remainder 3
+%
+% ============================================================
+
+% ============================================================
+% CONSTANTS
+% ============================================================
+
+% Build 65536
+x8 = 1
+x8 = x8 << 16
+
+% Build 65535 = 0xFFFF
+x7 = x8 - 1
+
+% ============================================================
+% TEST 1: 13 / 3
+% ============================================================
+
+x1 = 3
+x2 = 13
+
+% A = 0
+x3 = 0
+
+% Counter = 16
+x4 = 16
+
+.t1loop
+
+% ------------------------------------------------------------
+% Extract Q[15]
+% ------------------------------------------------------------
+
+x5 = x2 >> 15
+
+% ------------------------------------------------------------
+% Q = Q << 1
+% ------------------------------------------------------------
+
+x2 = x2 << 1
+
+% Keep only lower 16 bits
+x6 = x2 >> 16
+x6 = x6 << 16
+x2 = x2 - x6
+
+% ------------------------------------------------------------
+% A = (A << 1) + extracted bit
+% ------------------------------------------------------------
+
+x3 = x3 << 1
+x3 = x3 + x5
+
+% ------------------------------------------------------------
+% Non-restoring step
+%
+% If A >= 0:
+%       A = A - M
+%
+% If A < 0:
+%       A = A + M
+% ------------------------------------------------------------
+
+BGE .t1subtract
+
+% A < 0: A = A + M
+x3 = x3 + x1
+BAL .t1quotient
+
+.t1subtract
+
+% A >= 0: A = A - M
+x3 = x3 - x1
+
+% ------------------------------------------------------------
+% Set quotient bit according to new sign of A
+% ------------------------------------------------------------
+
+.t1quotient
+
+BLT .t1next
+
+% A >= 0 -> quotient bit = 1
+x2 = x2 + 1
+
+.t1next
+
+x4 = x4 - 1
+BNE .t1loop
+
+% ------------------------------------------------------------
+% Final correction
+%
+% Non-restoring division leaves A negative in some cases.
+% If A < 0, add M once.
+% ------------------------------------------------------------
+
+BLT .t1finalrestore
+BAL .t1print
+
+.t1finalrestore
+x3 = x3 + x1
+
+.t1print
+
+Print x2
+Print x3
+
+% ============================================================
+% TEST 2: 11 / 2
+% ============================================================
+
+x1 = 2
+x2 = 11
+x3 = 0
+x4 = 16
+
+.t2loop
+
+x5 = x2 >> 15
+
+x2 = x2 << 1
+
+% Mask Q to 16 bits
+x6 = x2 >> 16
+x6 = x6 << 16
+x2 = x2 - x6
+
+% A = (A << 1) + Q[15]
+x3 = x3 << 1
+x3 = x3 + x5
+
+% Non-restoring step
+BGE .t2subtract
+
+% A < 0 -> A = A + M
+x3 = x3 + x1
+BAL .t2quotient
+
+.t2subtract
+
+% A >= 0 -> A = A - M
+x3 = x3 - x1
+
+.t2quotient
+
+BLT .t2next
+
+% A >= 0 -> quotient bit = 1
+x2 = x2 + 1
+
+.t2next
+
+x4 = x4 - 1
+BNE .t2loop
+
+% Final correction
+BLT .t2finalrestore
+BAL .t2print
+
+.t2finalrestore
+x3 = x3 + x1
+
+.t2print
+
+Print x2
+Print x3
+
+% ============================================================
+% TEST 3: 100 / 10
+% ============================================================
+
+x1 = 10
+x2 = 100
+x3 = 0
+x4 = 16
+
+.t3loop
+
+x5 = x2 >> 15
+
+x2 = x2 << 1
+
+% Mask Q to 16 bits
+x6 = x2 >> 16
+x6 = x6 << 16
+x2 = x2 - x6
+
+% A = (A << 1) + Q[15]
+x3 = x3 << 1
+x3 = x3 + x5
+
+% Non-restoring step
+BGE .t3subtract
+
+% A < 0 -> A = A + M
+x3 = x3 + x1
+BAL .t3quotient
+
+.t3subtract
+
+% A >= 0 -> A = A - M
+x3 = x3 - x1
+
+.t3quotient
+
+BLT .t3next
+
+% A >= 0 -> quotient bit = 1
+x2 = x2 + 1
+
+.t3next
+
+x4 = x4 - 1
+BNE .t3loop
+
+% Final correction
+BLT .t3finalrestore
+BAL .t3print
+
+.t3finalrestore
+x3 = x3 + x1
+
+.t3print
+
+Print x2
+Print x3
+
+% ============================================================
+% TEST 4: 255 / 7
+% ============================================================
+
+x1 = 7
+x2 = 255
+x3 = 0
+x4 = 16
+
+.t4loop
+
+x5 = x2 >> 15
+
+x2 = x2 << 1
+
+% Mask Q to 16 bits
+x6 = x2 >> 16
+x6 = x6 << 16
+x2 = x2 - x6
+
+% A = (A << 1) + Q[15]
+x3 = x3 << 1
+x3 = x3 + x5
+
+% Non-restoring step
+BGE .t4subtract
+
+% A < 0 -> A = A + M
+x3 = x3 + x1
+BAL .t4quotient
+
+.t4subtract
+
+% A >= 0 -> A = A - M
+x3 = x3 - x1
+
+.t4quotient
+
+BLT .t4next
+
+% A >= 0 -> quotient bit = 1
+x2 = x2 + 1
+
+.t4next
+
+x4 = x4 - 1
+BNE .t4loop
+
+% Final correction
+BLT .t4finalrestore
+BAL .t4print
+
+.t4finalrestore
+x3 = x3 + x1
+
+.t4print
+
+Print x2
+Print x3

@@ -1,0 +1,243 @@
+--- memory.c
++++ memory.c
+@@ -11,9 +11,17 @@
+ #include "cache.h"
+ 
+ uint8_t memory[MEMSIZE];
+-int pageTable[NP][NUM_LOGICAL_PAGES];
+ int freePages[NUM_PHYSICAL_PAGES];
+ 
++/*
++ * Page tables live in reserved physical frame 0.  Each entry is one
++ * byte because NUM_PHYSICAL_PAGES is small enough for the physical
++ * frame number to fit in uint8_t.  Entry 0 means "not resident";
++ * frame 0 is reserved and can therefore never be a valid mapping.
++ */
++#define PAGE_TABLE_BYTES_PER_PROC NUM_LOGICAL_PAGES
++#define PAGE_TABLE_REGION_SIZE   (NP * PAGE_TABLE_BYTES_PER_PROC)
++
+ static int pageDirty[NP][NUM_LOGICAL_PAGES];
+ 
+ /* Reverse mapping for resident physical frames. */
+@@ -37,17 +45,51 @@
+     return page >= 0 && page < NUM_LOGICAL_PAGES;
+ }
+ 
++static int page_table_address(int proc_id, int logical_page)
++{
++    if (!valid_proc(proc_id) || !valid_logical_page(logical_page))
++        return -1;
++
++    if (PTBR[proc_id] < 0)
++        return -1;
++
++    int address = PTBR[proc_id] + logical_page;
++    if (address < 0 || address >= PAGESIZE ||
++        address >= MEMSIZE)
++        return -1;
++
++    return address;
++}
++
++static int page_table_get(int proc_id, int logical_page)
++{
++    int address = page_table_address(proc_id, logical_page);
++    if (address < 0)
++        return 0;
++
++    return (int)memory[address];
++}
++
++static int page_table_set(int proc_id, int logical_page, int frame)
++{
++    int address = page_table_address(proc_id, logical_page);
++    if (address < 0 || frame < 0 || frame >= NUM_PHYSICAL_PAGES)
++        return -1;
++
++    memory[address] = (uint8_t)frame;
++    return 0;
++}
++
+ static void clear_page_table(int proc_id)
+ {
+-    if (!valid_proc(proc_id))
++    if (!valid_proc(proc_id) || PTBR[proc_id] < 0)
+         return;
+ 
+-    for (int page = 0; page < NUM_LOGICAL_PAGES; page++) {
+-        pageTable[proc_id][page] = -1;
+-        pageDirty[proc_id][page] = 0;
+-    }
++    for (int page = 0; page < NUM_LOGICAL_PAGES; page++)
++        page_table_set(proc_id, page, 0);
+ }
+ 
++
+ static void initialize_physical_memory(void)
+ {
+     memset(memory, 0, sizeof(memory));
+@@ -63,8 +105,12 @@
+     frameOwnerProc[0] = -1;
+     frameOwnerPage[0] = -1;
+ 
+-    for (int proc = 0; proc < NP; proc++)
+-        clear_page_table(proc);
++    /* Frame 0 contains all processor page-table regions. */
++    memset(&memory[0], 0, PAGE_TABLE_REGION_SIZE);
++    for (int proc = 0; proc < NP; proc++) {
++        PTBR[proc] = -1;
++        memset(pageDirty[proc], 0, sizeof(pageDirty[proc]));
++    }
+ }
+ 
+ void initialize_memory(void)
+@@ -163,8 +209,8 @@
+     int owner_page = frameOwnerPage[frame];
+ 
+     if (valid_proc(owner_proc) && valid_logical_page(owner_page) &&
+-        pageTable[owner_proc][owner_page] == frame) {
+-        pageTable[owner_proc][owner_page] = -1;
++        page_table_get(owner_proc, owner_page) == frame) {
++        page_table_set(owner_proc, owner_page, 0);
+         pageDirty[owner_proc][owner_page] = 0;
+         tlb_invalidate(owner_proc, owner_page);
+     }
+@@ -230,7 +276,7 @@
+ 
+         /* The victim is now safely backed by swap. Detach its mapping, but
+          * keep the frame ownership unchanged until page_in succeeds. */
+-        pageTable[victim_proc][victim_page] = -1;
++        page_table_set(victim_proc, victim_page, 0);
+         pageDirty[victim_proc][victim_page] = 0;
+         tlb_invalidate(victim_proc, victim_page);
+     }
+@@ -251,8 +297,9 @@
+     if (!valid_proc(proc_id) || !valid_logical_page(logical_page))
+         return -1;
+ 
+-    if (pageTable[proc_id][logical_page] > 0)
+-        return pageTable[proc_id][logical_page];
++    int mapped_frame = page_table_get(proc_id, logical_page);
++    if (mapped_frame > 0)
++        return mapped_frame;
+ 
+     int victim_proc = -1;
+     int victim_page = -1;
+@@ -270,7 +317,7 @@
+                 if (swap_read_page(victim_proc,
+                                    victim_page,
+                                    &memory[frame * PAGESIZE]) == 0) {
+-                    pageTable[victim_proc][victim_page] = frame;
++                    page_table_set(victim_proc, victim_page, frame);
+                     pageDirty[victim_proc][victim_page] = 0;
+                     frameOwnerProc[frame] = victim_proc;
+                     frameOwnerPage[frame] = victim_page;
+@@ -294,7 +341,7 @@
+ 
+     /* Commit the replacement only after the incoming page is safely loaded
+      * or demand-zero initialized. */
+-    pageTable[proc_id][logical_page] = frame;
++    page_table_set(proc_id, logical_page, frame);
+     pageDirty[proc_id][logical_page] = 0;
+     frameOwnerProc[frame] = proc_id;
+     frameOwnerPage[frame] = logical_page;
+@@ -310,7 +357,7 @@
+     if (!valid_proc(proc_id) || !valid_logical_page(logical_page))
+         return -1;
+ 
+-    int frame = pageTable[proc_id][logical_page];
++    int frame = page_table_get(proc_id, logical_page);
+     if (frame <= 0)
+         return 0;
+ 
+@@ -430,7 +477,7 @@
+         swap_free(proc_id, logical_page);
+         return -1;
+     }
+-    pageTable[proc_id][logical_page] = -1;
++    page_table_set(proc_id, logical_page, 0);
+     pageDirty[proc_id][logical_page] = 0;
+     return 0;
+ }
+@@ -444,6 +491,10 @@
+ 
+     release_process_memory(proc_id);
+ 
++    /* One fixed, non-overlapping page-table region per processor in frame 0. */
++    PTBR[proc_id] = proc_id * PAGE_TABLE_BYTES_PER_PROC;
++    clear_page_table(proc_id);
++
+     uint8_t instruction_bytes[INSTRUCTION_SIZE];
+     uint8_t data_bytes[DATA_SIZE];
+     memset(instruction_bytes, 0, sizeof(instruction_bytes));
+@@ -538,7 +589,7 @@
+         return;
+ 
+     for (int page = 0; page < NUM_LOGICAL_PAGES; page++) {
+-        int frame = pageTable[proc_id][page];
++        int frame = page_table_get(proc_id, page);
+         int block = swap_block(proc_id, page);
+ 
+         if (frame > 0 && valid_frame(frame)) {
+@@ -555,11 +606,15 @@
+         if (block >= 0)
+             swap_free(proc_id, page);
+ 
+-        pageTable[proc_id][page] = -1;
++        page_table_set(proc_id, page, 0);
+         pageDirty[proc_id][page] = 0;
+     }
+ 
+     tlb_flush(proc_id);
++
++    /* The processor is now unmapped; the next loader will install a PTBR. */
++    clear_page_table(proc_id);
++    PTBR[proc_id] = -1;
+ }
+ 
+ void finalize_memory(void)
+--- memory.h
++++ memory.h
+@@ -12,7 +12,6 @@
+ #define NUM_PHYSICAL_PAGES  (MEMSIZE / PAGESIZE)
+ 
+ extern uint8_t memory[MEMSIZE];
+-extern int pageTable[NP][NUM_LOGICAL_PAGES];
+ extern int freePages[NUM_PHYSICAL_PAGES];
+ 
+ void initialize_memory(void);
+--- processor.c
++++ processor.c
+@@ -28,6 +28,7 @@
+ int status[NP];
+ int IR[NP];
+ int baseAddress[NP];
++int PTBR[NP];
+ int end_of_simulation[NP];
+ 
+ /*
+@@ -1294,6 +1295,7 @@
+     IR[p] = 0;
+ 
+     baseAddress[p] = 0;
++    PTBR[p] = -1;
+ 
+     end_of_simulation[p] = 0;
+ 
+--- processor.h
++++ processor.h
+@@ -81,6 +81,14 @@
+  */
+ extern int baseAddress[NP];
+ 
++/*
++ * Page Table Base Register.  For a running task, PTBR[p] contains
++ * the physical byte address of the first page-table entry for the
++ * task currently assigned to processor p.  A negative value means
++ * that the processor currently has no task mapped.
++ */
++extern int PTBR[NP];
++
+ 
+ /*
+  * Indicates that the current process has terminated and that

@@ -1,0 +1,307 @@
+% Reed-Solomon RS(6,4) over GF(256)
+% Primitive polynomial: x^8 + x^4 + x^3 + x^2 + 1 (0x11D)
+% Generator: g(x) = (x-1)(x-2) = x^2 + 3x + 2
+% 4 data symbols + 2 parity symbols; corrects one corrupted byte.
+%
+% This program:
+%   1. Encodes 11 22 33 44
+%   2. Verifies a clean decode
+%   3. Injects one 0x5A symbol error into every one of 6 positions
+%   4. Computes S1=R(1), S2=R(2), locates and corrects each error
+%   5. Injects a selected two-symbol error and reports uncorrectable
+%
+% Registers:
+% x1-x4 data, x5-x6 parity/codeword
+% x20-x25 saved clean codeword
+% x26 polynomial 0x11D
+% x27 error magnitude
+% x28 packed decoded 32-bit word
+% x29-x31 scratch
+
+% Build 0x11D = 285
+x26 = 1
+x26 = x26 << 8
+x30 = 29
+x26 = x26 | x30
+
+% -------------------- INPUT --------------------
+x1 = 17
+x2 = 34
+x3 = 51
+x4 = 68
+
+% -------------------- ENCODE --------------------
+% Generator recurrence for g(x)=x^2+3x+2:
+%   f  = data XOR p0
+%   p0 = old_p1 XOR (3*f)
+%   p1 = 2*f
+x5 = 0
+x6 = 0
+
+% data x1
+x7 = x1 ^ x5
+x8 = x7 << 1
+x9 = x8 >> 8
+BEQ .ENC0N
+x8 = x8 ^ x26
+.ENC0N
+x8 = x8 ^ x7
+x5 = x6 ^ x8
+x8 = x7 << 1
+x9 = x8 >> 8
+BEQ .ENC0N2
+x8 = x8 ^ x26
+.ENC0N2
+x6 = x8 + 0
+
+% data x2
+x7 = x2 ^ x5
+x8 = x7 << 1
+x9 = x8 >> 8
+BEQ .ENC1N
+x8 = x8 ^ x26
+.ENC1N
+x8 = x8 ^ x7
+x5 = x6 ^ x8
+x8 = x7 << 1
+x9 = x8 >> 8
+BEQ .ENC1N2
+x8 = x8 ^ x26
+.ENC1N2
+x6 = x8 + 0
+
+% data x3
+x7 = x3 ^ x5
+x8 = x7 << 1
+x9 = x8 >> 8
+BEQ .ENC2N
+x8 = x8 ^ x26
+.ENC2N
+x8 = x8 ^ x7
+x5 = x6 ^ x8
+x8 = x7 << 1
+x9 = x8 >> 8
+BEQ .ENC2N2
+x8 = x8 ^ x26
+.ENC2N2
+x6 = x8 + 0
+
+% data x4
+x7 = x4 ^ x5
+x8 = x7 << 1
+x9 = x8 >> 8
+BEQ .ENC3N
+x8 = x8 ^ x26
+.ENC3N
+x8 = x8 ^ x7
+x5 = x6 ^ x8
+x8 = x7 << 1
+x9 = x8 >> 8
+BEQ .ENC3N2
+x8 = x8 ^ x26
+.ENC3N2
+x6 = x8 + 0
+
+% Save clean codeword.
+x20 = x1 + 0
+x21 = x2 + 0
+x22 = x3 + 0
+x23 = x4 + 0
+x24 = x5 + 0
+x25 = x6 + 0
+
+% -------------------- CLEAN DECODE CHECK --------------------
+% S1 = R(1) = XOR of all six symbols.
+x16 = x1 ^ x2
+x16 = x16 ^ x3
+x16 = x16 ^ x4
+x16 = x16 ^ x5
+x16 = x16 ^ x6
+
+% S2 = R(2), using Horner evaluation and GF multiplication by 2.
+x17 = 0
+x17 = x17 << 1
+x30 = x17 >> 8
+BEQ .CL0N
+x17 = x17 ^ x26
+.CL0N
+x17 = x17 ^ x1
+% Pack 11 22 33 44 and print the clean decoded word.
+x28 = x1 << 24
+x29 = x2 << 16
+x28 = x28 | x29
+x29 = x3 << 8
+x28 = x28 | x29
+x28 = x28 | x4
+Print x28
+
+% -------------------- SIX SINGLE-SYMBOL ERRORS --------------------
+x18 = 0
+.TEST
+% Restore clean codeword.
+x1 = x20 + 0
+x2 = x21 + 0
+x3 = x22 + 0
+x4 = x23 + 0
+x5 = x24 + 0
+x6 = x25 + 0
+
+% Inject the same nonzero GF(256) error into each symbol in turn.
+x27 = 90
+x19 = x18 - 0
+BEQ .INJ0
+x19 = x18 - 1
+BEQ .INJ1
+x19 = x18 - 2
+BEQ .INJ2
+x19 = x18 - 3
+BEQ .INJ3
+x19 = x18 - 4
+BEQ .INJ4
+x19 = x18 - 5
+BEQ .INJ5
+
+.INJ0
+x1 = x1 ^ x27
+BAL .DECODE
+.INJ1
+x2 = x2 ^ x27
+BAL .DECODE
+.INJ2
+x3 = x3 ^ x27
+BAL .DECODE
+.INJ3
+x4 = x4 ^ x27
+BAL .DECODE
+.INJ4
+x5 = x5 ^ x27
+BAL .DECODE
+.INJ5
+x6 = x6 ^ x27
+BAL .DECODE
+
+% -------------------- ONE-SYMBOL DECODER --------------------
+.DECODE
+% S1 = R(1).
+x16 = x1 ^ x2
+x16 = x16 ^ x3
+x16 = x16 ^ x4
+x16 = x16 ^ x5
+x16 = x16 ^ x6
+
+% S2 = R(2).
+x17 = 0
+x17 = x17 << 1
+x30 = x17 >> 8
+BEQ .S20N
+x17 = x17 ^ x26
+.S20N
+x17 = x17 ^ x1
+x17 = x17 << 1
+x30 = x17 >> 8
+BEQ .S21N
+x17 = x17 ^ x26
+.S21N
+x17 = x17 ^ x2
+x17 = x17 << 1
+x30 = x17 >> 8
+BEQ .S22N
+x17 = x17 ^ x26
+.S22N
+x17 = x17 ^ x3
+x17 = x17 << 1
+x30 = x17 >> 8
+BEQ .S23N
+x17 = x17 ^ x26
+.S23N
+x17 = x17 ^ x4
+x17 = x17 << 1
+x30 = x17 >> 8
+BEQ .S24N
+x17 = x17 ^ x26
+.S24N
+x17 = x17 ^ x5
+x17 = x17 << 1
+x30 = x17 >> 8
+BEQ .S25N
+x17 = x17 ^ x26
+.S25N
+x17 = x17 ^ x6
+
+% For one symbol error at polynomial exponent j:
+%   S1 = error magnitude e
+%   S2 = e * 2^j
+% Search j=0..5. x19 becomes j.
+x19 = 0
+x29 = x16 + 0
+.LOCATE
+x30 = x17 - x29
+BEQ .FOUND
+x19 = x19 + 1
+x31 = x29 << 1
+x30 = x31 >> 8
+BEQ .LOCN
+x31 = x31 ^ x26
+.LOCN
+x29 = x31 + 0
+x30 = x19 - 6
+BNE .LOCATE
+
+% No one-symbol locator found.
+x29 = 0
+x29 = x29 - 1
+Print x29
+BAL .NEXT
+
+.FOUND
+% Codeword position = 5-j. Since S1=e, correction is XOR S1.
+x30 = x19 - 0
+BEQ .CORR0
+x30 = x19 - 1
+BEQ .CORR1
+x30 = x19 - 2
+BEQ .CORR2
+x30 = x19 - 3
+BEQ .CORR3
+x30 = x19 - 4
+BEQ .CORR4
+x30 = x19 - 5
+BEQ .CORR5
+BAL .NEXT
+
+.CORR0
+x6 = x6 ^ x16
+BAL .PACK
+.CORR1
+x5 = x5 ^ x16
+BAL .PACK
+.CORR2
+x4 = x4 ^ x16
+BAL .PACK
+.CORR3
+x3 = x3 ^ x16
+BAL .PACK
+.CORR4
+x2 = x2 ^ x16
+BAL .PACK
+.CORR5
+x1 = x1 ^ x16
+BAL .PACK
+
+.PACK
+% Pack corrected data bytes back into the original 32-bit word.
+x28 = x1 << 24
+x29 = x2 << 16
+x28 = x28 | x29
+x29 = x3 << 8
+x28 = x28 | x29
+x28 = x28 | x4
+Print x18
+Print x28
+
+.NEXT
+x18 = x18 + 1
+x19 = x18 - 6
+BNE .TEST
+
+x19 = x18 - 5

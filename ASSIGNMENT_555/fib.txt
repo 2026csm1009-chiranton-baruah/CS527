@@ -1,0 +1,85 @@
+% Fibonacci sequence - first 10 terms
+% Results stored at addresses 400..436
+% Temporary storage:
+%   440 = old x2
+%   444 = new Fibonacci value
+
+x1 = 0
+x2 = 1
+x3 = 200
+x3 = x3 + x3
+x4 = 0
+
+.loop
+[x3] = x1
+
+% Save current x2
+x6 = 220
+x6 = x6 + x6
+[x6] = x2
+
+% Calculate next Fibonacci number
+x5 = x1 + x2
+
+% x1 = old x2
+x6 = 220
+x6 = x6 + x6
+x1 = [x6]
+
+% x2 = new Fibonacci number
+x6 = 222
+x6 = x6 + x6
+[x6] = x5
+x2 = [x6]
+
+% Advance result pointer and counter
+x3 = x3 + 4
+x4 = x4 + 1
+
+x6 = x4 - 10
+BEQ .exit
+BAL .loop
+
+.exit
+
+% Print the ten stored results
+x3 = 200
+x3 = x3 + x3
+x7 = [x3]
+Print x7
+
+x3 = x3 + 4
+x7 = [x3]
+Print x7
+
+x3 = x3 + 4
+x7 = [x3]
+Print x7
+
+x3 = x3 + 4
+x7 = [x3]
+Print x7
+
+x3 = x3 + 4
+x7 = [x3]
+Print x7
+
+x3 = x3 + 4
+x7 = [x3]
+Print x7
+
+x3 = x3 + 4
+x7 = [x3]
+Print x7
+
+x3 = x3 + 4
+x7 = [x3]
+Print x7
+
+x3 = x3 + 4
+x7 = [x3]
+Print x7
+
+x3 = x3 + 4
+x7 = [x3]
+Print x7

@@ -1,0 +1,281 @@
+% LDPC(12,6) hard-decision bit-flipping test
+%
+% Binary (12,6) sparse code.
+% Six data bits x1..x6 and six parity bits x7..x12.
+%
+% H rows:
+% s0: x1 x2 x4 x6 x10 x12
+% s1: x1 x2 x3 x5 x6 x11 x12
+% s2: x1 x3 x5 x7 x8 x11
+% s3: x2 x3 x4 x8 x9 x10
+% s4: x4 x6 x7 x9 x11
+% s5: x5 x7 x8 x9 x10 x12
+%
+% Every variable node has degree 3.
+% A single error therefore makes exactly three checks fail.
+% The decoder uses those three failed-check votes to identify
+% and flip the erroneous variable node.
+%
+% Message = 0x2B = 43.
+% The clean word is decoded first, followed by all 12
+% possible single-bit error positions.
+%
+% Expected output: thirteen lines, all equal to 43.
+
+% -------------------- ENCODE --------------------
+x1 = 1
+x2 = 1
+x3 = 0
+x4 = 1
+x5 = 0
+x6 = 1
+
+% Parity equations obtained from H:
+% p0=d1^d2
+x7 = x2 ^ x3
+
+% p1=d2^d3^d4^d5
+x8 = x3 ^ x4
+x8 = x8 ^ x5
+x8 = x8 ^ x6
+
+% p2=d0
+x9 = x1 + 0
+
+% p3=d0^d1^d4^d5
+x10 = x1 ^ x2
+x10 = x10 ^ x5
+x10 = x10 ^ x6
+
+% p4=d0^d1^d2^d3^d5
+x11 = x1 ^ x2
+x11 = x11 ^ x3
+x11 = x11 ^ x4
+x11 = x11 ^ x6
+
+% p5=d3^d4
+x12 = x4 ^ x5
+
+% -------------------- TEST LOOP --------------------
+% x18 = error position: 0 means clean, 1..12 means injected bit.
+x18 = 0
+
+.TEST
+% Select the requested single-bit error.
+% The previous iteration ends with a clean corrected word,
+% so no separate restore operation is necessary.
+
+x16 = x18 - 0
+BEQ .DECODE
+
+x16 = x18 - 1
+BEQ .E1
+x16 = x18 - 2
+BEQ .E2
+x16 = x18 - 3
+BEQ .E3
+x16 = x18 - 4
+BEQ .E4
+x16 = x18 - 5
+BEQ .E5
+x16 = x18 - 6
+BEQ .E6
+x16 = x18 - 7
+BEQ .E7
+x16 = x18 - 8
+BEQ .E8
+x16 = x18 - 9
+BEQ .E9
+x16 = x18 - 10
+BEQ .E10
+x16 = x18 - 11
+BEQ .E11
+x16 = x18 - 12
+BEQ .E12
+
+.E1
+x1 = x1 ^ 1
+BAL .DECODE
+.E2
+x2 = x2 ^ 1
+BAL .DECODE
+.E3
+x3 = x3 ^ 1
+BAL .DECODE
+.E4
+x4 = x4 ^ 1
+BAL .DECODE
+.E5
+x5 = x5 ^ 1
+BAL .DECODE
+.E6
+x6 = x6 ^ 1
+BAL .DECODE
+.E7
+x7 = x7 ^ 1
+BAL .DECODE
+.E8
+x8 = x8 ^ 1
+BAL .DECODE
+.E9
+x9 = x9 ^ 1
+BAL .DECODE
+.E10
+x10 = x10 ^ 1
+BAL .DECODE
+.E11
+x11 = x11 ^ 1
+BAL .DECODE
+.E12
+x12 = x12 ^ 1
+BAL .DECODE
+
+% -------------------- SYNDROME --------------------
+.DECODE
+
+% Pack six syndrome bits into x17.
+% s0 = x1^x2^x4^x6^x10^x12
+x16 = x1 ^ x2
+x16 = x16 ^ x4
+x16 = x16 ^ x6
+x16 = x16 ^ x10
+x16 = x16 ^ x12
+x17 = x16 + 0
+
+% s1 = x1^x2^x3^x5^x6^x11^x12
+x16 = x1 ^ x2
+x16 = x16 ^ x3
+x16 = x16 ^ x5
+x16 = x16 ^ x6
+x16 = x16 ^ x11
+x16 = x16 ^ x12
+x16 = x16 << 1
+x17 = x17 | x16
+
+% s2 = x1^x3^x5^x7^x8^x11
+x16 = x1 ^ x3
+x16 = x16 ^ x5
+x16 = x16 ^ x7
+x16 = x16 ^ x8
+x16 = x16 ^ x11
+x16 = x16 << 2
+x17 = x17 | x16
+
+% s3 = x2^x3^x4^x8^x9^x10
+x16 = x2 ^ x3
+x16 = x16 ^ x4
+x16 = x16 ^ x8
+x16 = x16 ^ x9
+x16 = x16 ^ x10
+x16 = x16 << 3
+x17 = x17 | x16
+
+% s4 = x4^x6^x7^x9^x11
+x16 = x4 ^ x6
+x16 = x16 ^ x7
+x16 = x16 ^ x9
+x16 = x16 ^ x11
+x16 = x16 << 4
+x17 = x17 | x16
+
+% s5 = x5^x7^x8^x9^x10^x12
+x16 = x5 ^ x7
+x16 = x16 ^ x8
+x16 = x16 ^ x9
+x16 = x16 ^ x10
+x16 = x16 ^ x12
+x16 = x16 << 5
+x17 = x17 | x16
+
+% Zero syndrome: no error remains.
+BEQ .OUTPUT
+
+% -------------------- HARD-DECISION BIT FLIP --------------------
+% Each degree-3 variable has a unique 3-check syndrome.
+x16 = x17 - 7
+BEQ .F1
+x16 = x17 - 11
+BEQ .F2
+x16 = x17 - 14
+BEQ .F3
+x16 = x17 - 25
+BEQ .F4
+x16 = x17 - 38
+BEQ .F5
+x16 = x17 - 19
+BEQ .F6
+x16 = x17 - 52
+BEQ .F7
+x16 = x17 - 44
+BEQ .F8
+x16 = x17 - 56
+BEQ .F9
+x16 = x17 - 41
+BEQ .F10
+x16 = x17 - 22
+BEQ .F11
+x16 = x17 - 35
+BEQ .F12
+
+
+.BACK2
+BAL .TEST
+
+.F1
+x1 = x1 ^ 1
+BAL .DECODE
+.F2
+x2 = x2 ^ 1
+BAL .DECODE
+.F3
+x3 = x3 ^ 1
+BAL .DECODE
+.F4
+x4 = x4 ^ 1
+BAL .DECODE
+.F5
+x5 = x5 ^ 1
+BAL .DECODE
+.F6
+x6 = x6 ^ 1
+BAL .DECODE
+.F7
+x7 = x7 ^ 1
+BAL .DECODE
+.F8
+x8 = x8 ^ 1
+BAL .DECODE
+.F9
+x9 = x9 ^ 1
+BAL .DECODE
+.F10
+x10 = x10 ^ 1
+BAL .DECODE
+.F11
+x11 = x11 ^ 1
+BAL .DECODE
+.F12
+x12 = x12 ^ 1
+BAL .DECODE
+
+.OUTPUT
+% Extract data bits x1..x6 as an integer.
+x19 = x1 + 0
+x16 = x2 << 1
+x19 = x19 | x16
+x16 = x3 << 2
+x19 = x19 | x16
+x16 = x4 << 3
+x19 = x19 | x16
+x16 = x5 << 4
+x19 = x19 | x16
+x16 = x6 << 5
+x19 = x19 | x16
+Print x19
+
+x18 = x18 + 1
+x16 = x18 - 13
+BNE .BACK1
+
+.BACK1
+BAL .BACK2

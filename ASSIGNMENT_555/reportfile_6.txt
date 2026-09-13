@@ -1,0 +1,526 @@
+bumblebee@Chiranton:~/CS527/LABTEST_120926$ make test && make stress-test
+========================================
+ Running a few programs simultaneously
+========================================
+Mini OS started with 4 processors.
+$ [Compiler] compiling crc_test_fixed.txt
+[MEM] proc=0: instruction=320 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 1 loaded on processor 0
+[Compiler] compiling crc16_test.txt
+[MEM] proc=1: instruction=332 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 2 loaded on processor 1
+[Compiler] compiling booth2.txt
+[MEM] proc=2: instruction=656 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 3 loaded on processor 2
+[Compiler] compiling recurring_division.txt
+[MEM] proc=3: instruction=352 bytes (1 pages), data=0 bytes (0 pages) [disk-backed]
+[OS] PID 4 loaded on processor 3
+[Compiler] compiling hamming_code_2.txt
+[OS] PID 5 placed in waiting queue
+[Compiler] compiling a3.txt
+[OS] PID 6 placed in waiting queue
+[Compiler] compiling sod.txt
+[OS] PID 7 placed in waiting queue
+[Compiler] compiling f2.txt
+[OS] PID 8 placed in waiting queue
+[Compiler] compiling a4.txt
+[OS] PID 9 placed in waiting queue
+[Compiler] compiling cross.txt
+[OS] PID 10 placed in waiting queue
+[Compiler] compiling matmul.txt
+[OS] PID 11 placed in waiting queue
+[Compiler] compiling mulmul.txt
+[OS] PID 12 placed in waiting queue
+[Compiler] compiling fib.txt
+[OS] PID 13 placed in waiting queue
+[Compiler] compiling eitch.txt
+[OS] PID 14 placed in waiting queue
+[Shell] exiting; existing tasks will continue
+30488
+[OS] PID 2 finished on processor 1
+[MEM] proc=1: instruction=1016 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 5 dispatched to processor 1
+120
+[OS] PID 1 finished on processor 0
+[MEM] proc=0: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 6 dispatched to processor 0
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 6 finished on processor 0
+[MEM] proc=0: instruction=104 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 7 dispatched to processor 0
+45
+[OS] PID 7 finished on processor 0
+[MEM] proc=0: instruction=64 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 8 dispatched to processor 0
+528
+[OS] PID 8 finished on processor 0
+[MEM] proc=0: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 9 dispatched to processor 0
+4
+1
+5
+1
+10
+0
+65534
+-458739
+[OS] PID 4 finished on processor 3
+[MEM] proc=3: instruction=172 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 10 dispatched to processor 3
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+[OS] PID 9 finished on processor 0
+[MEM] proc=0: instruction=796 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 11 dispatched to processor 0
+-3
+6
+-3
+[OS] PID 10 finished on processor 3
+[MEM] proc=3: instruction=112 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 12 dispatched to processor 3
+[Processor 3] ERROR: integer store failed
+[OS] PID 12 finished on processor 3
+[MEM] proc=3: instruction=216 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 13 dispatched to processor 3
+[Processor 3] ERROR: integer store failed
+[OS] PID 13 finished on processor 3
+[MEM] proc=3: instruction=160 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 14 dispatched to processor 3
+125
+136
+133
+162
+174
+151
+279
+300
+265
+[OS] PID 11 finished on processor 0
+143
+-143
+-143
+143
+[OS] PID 3 finished on processor 2
+1
+2
+4
+7
+12
+20
+33
+54
+88
+143
+232
+376
+609
+986
+1596
+2583
+[OS] PID 14 finished on processor 3
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+[OS] PID 5 finished on processor 1
+
+========== TLB STATISTICS ==========
+[TLB] proc=0: hits=4989, misses=11, hit rate=99.78%
+[TLB] proc=1: hits=8569, misses=3, hit rate=99.97%
+[TLB] proc=2: hits=5149, misses=3, hit rate=99.94%
+[TLB] proc=3: hits=5565, misses=7, hit rate=99.87%
+-------------------------------------
+[TLB] total: hits=24272, misses=24, hit rate=99.90%
+=====================================
+
+========================================
+ Cache Statistics
+========================================
+
+L1 Instruction Cache: 128 B/core
+----------------------------------------
+Core 0: hits=4287 misses=97 hit-rate=97.79%
+Core 1: hits=8212 misses=360 hit-rate=95.80%
+Core 2: hits=5079 misses=41 hit-rate=99.20%
+Core 3: hits=5208 misses=52 hit-rate=99.01%
+Total: hits=22786 misses=550 hit-rate=97.64%
+
+L1 Data Cache: 128 B/core
+----------------------------------------
+Core 0: hits=499 misses=26 hit-rate=95.05%
+Core 1: hits=0 misses=0 hit-rate=0.00%
+Core 2: hits=29 misses=3 hit-rate=90.62%
+Core 3: hits=234 misses=8 hit-rate=96.69%
+Total: hits=762 misses=37 hit-rate=95.37%
+
+Private L2 Cache: 256 B/core
+----------------------------------------
+Core 0: hits=0 misses=123 hit-rate=0.00%
+Core 1: hits=77 misses=283 hit-rate=21.39%
+Core 2: hits=0 misses=44 hit-rate=0.00%
+Core 3: hits=0 misses=60 hit-rate=0.00%
+Total: hits=77 misses=510 hit-rate=13.12%
+
+Shared Unified L3 Cache: 512 B
+----------------------------------------
+Hits   : 162
+Misses : 348
+Hit-rate: 31.76%
+========================================
+========================================
+ Running 28 programs
+========================================
+Mini OS started with 4 processors.
+$ [Compiler] compiling matmul.txt
+[MEM] proc=0: instruction=796 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 1 loaded on processor 0
+[Compiler] compiling a3.txt
+[MEM] proc=1: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 2 loaded on processor 1
+[Compiler] compiling fib.txt
+[MEM] proc=2: instruction=216 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 3 loaded on processor 2
+[Processor 2] ERROR: integer store failed
+[OS] PID 3 finished on processor 2
+[Compiler] compiling sod.txt
+[MEM] proc=2: instruction=104 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 4 loaded on processor 2
+[Compiler] compiling booth2.txt
+[MEM] proc=3: instruction=656 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 5 loaded on processor 3
+[Compiler] compiling a4.txt
+[OS] PID 6 placed in waiting queue
+[Compiler] compiling crc_test_fixed.txt
+[OS] PID 7 placed in waiting queue
+[Compiler] compiling eitch.txt
+[OS] PID 8 placed in waiting queue
+[Compiler] compiling hamming_code_2.txt
+[OS] PID 9 placed in waiting queue
+[Compiler] compiling mulmul.txt
+[OS] PID 10 placed in waiting queue
+45
+[OS] PID 4 finished on processor 2
+[MEM] proc=2: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 6 dispatched to processor 2
+[Compiler] compiling crc16_test.txt
+[OS] PID 11 placed in waiting queue
+[Compiler] compiling recurring_division.txt
+[OS] PID 12 placed in waiting queue
+[Compiler] compiling cross.txt
+[OS] PID 13 placed in waiting queue
+[Compiler] compiling sod.txt
+[OS] PID 14 placed in waiting queue
+[Compiler] compiling f2.txt
+[OS] PID 15 placed in waiting queue
+[Compiler] compiling eitch.txt
+[OS] PID 16 placed in waiting queue
+[Compiler] compiling crc16_test.txt
+[OS] PID 17 placed in waiting queue
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 2 finished on processor 1
+[MEM] proc=1: instruction=320 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 7 dispatched to processor 1
+[Compiler] compiling cross.txt
+[OS] PID 18 placed in waiting queue
+[Compiler] compiling hamming_code_2.txt
+[OS] PID 19 placed in waiting queue
+[Compiler] compiling matmul.txt
+[OS] PID 20 placed in waiting queue
+125
+136
+133
+162
+174
+151
+279
+300
+265
+[OS] PID 1 finished on processor 0
+[MEM] proc=0: instruction=160 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 8 dispatched to processor 0
+[Compiler] compiling f2.txt
+[OS] PID 21 placed in waiting queue
+[Compiler] compiling crc_test_fixed.txt
+[OS] PID 22 placed in waiting queue
+[Compiler] compiling a3.txt
+[OS] PID 23 placed in waiting queue
+[Compiler] compiling booth2.txt
+[OS] PID 24 placed in waiting queue
+[Compiler] compiling mulmul.txt
+[OS] PID 25 placed in waiting queue
+[Compiler] compiling a4.txt
+[OS] PID 26 placed in waiting queue
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+[OS] PID 6 finished on processor 2
+[MEM] proc=2: instruction=1016 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 9 dispatched to processor 2
+[Compiler] compiling fib.txt
+[OS] PID 27 placed in waiting queue
+[Compiler] compiling recurring_division.txt
+[OS] PID 28 placed in waiting queue
+[Shell] exiting; existing tasks will continue
+120
+[OS] PID 7 finished on processor 1
+[MEM] proc=1: instruction=112 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 10 dispatched to processor 1
+1
+2
+4
+7
+12
+20
+33
+54
+88
+143
+232
+376
+609
+986
+1596
+2583
+[OS] PID 8 finished on processor 0
+[MEM] proc=0: instruction=332 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 11 dispatched to processor 0
+[Processor 1] ERROR: integer store failed
+[OS] PID 10 finished on processor 1
+[MEM] proc=1: instruction=352 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 12 dispatched to processor 1
+30488
+[OS] PID 11 finished on processor 0
+[MEM] proc=0: instruction=172 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 13 dispatched to processor 0
+-3
+6
+-3
+[OS] PID 13 finished on processor 0
+[MEM] proc=0: instruction=104 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 14 dispatched to processor 0
+45
+[OS] PID 14 finished on processor 0
+[MEM] proc=0: instruction=64 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 15 dispatched to processor 0
+528
+[OS] PID 15 finished on processor 0
+[MEM] proc=0: instruction=160 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 16 dispatched to processor 0
+143
+-143
+-143
+143
+[OS] PID 5 finished on processor 3
+[MEM] proc=3: instruction=332 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 17 dispatched to processor 3
+4
+1
+5
+1
+10
+0
+65534
+-458739
+[OS] PID 12 finished on processor 1
+[MEM] proc=1: instruction=172 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 18 dispatched to processor 1
+-3
+6
+-3
+[OS] PID 18 finished on processor 1
+[MEM] proc=1: instruction=1016 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 19 dispatched to processor 1
+1
+2
+4
+7
+12
+20
+33
+54
+88
+143
+232
+376
+609
+986
+1596
+2583
+[OS] PID 16 finished on processor 0
+[MEM] proc=0: instruction=796 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 20 dispatched to processor 0
+30488
+[OS] PID 17 finished on processor 3
+[MEM] proc=3: instruction=64 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 21 dispatched to processor 3
+528
+[OS] PID 21 finished on processor 3
+[MEM] proc=3: instruction=320 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 22 dispatched to processor 3
+125
+136
+133
+162
+174
+151
+279
+300
+265
+[OS] PID 20 finished on processor 0
+[MEM] proc=0: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 23 dispatched to processor 0
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 23 finished on processor 0
+[MEM] proc=0: instruction=656 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 24 dispatched to processor 0
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+[OS] PID 9 finished on processor 2
+[MEM] proc=2: instruction=112 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 25 dispatched to processor 2
+[Processor 2] ERROR: integer store failed
+[OS] PID 25 finished on processor 2
+[MEM] proc=2: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 26 dispatched to processor 2
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+[OS] PID 26 finished on processor 2
+[MEM] proc=2: instruction=216 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 27 dispatched to processor 2
+120
+[OS] PID 22 finished on processor 3
+[MEM] proc=3: instruction=352 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 28 dispatched to processor 3
+[Processor 2] ERROR: integer store failed
+[OS] PID 27 finished on processor 2
+4
+1
+5
+1
+10
+0
+65534
+-458739
+[OS] PID 28 finished on processor 3
+143
+-143
+-143
+143
+[OS] PID 24 finished on processor 0
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+[OS] PID 19 finished on processor 1
+
+========== TLB STATISTICS ==========
+[TLB] proc=0: hits=14207, misses=21, hit rate=99.85%
+[TLB] proc=1: hits=13215, misses=9, hit rate=99.93%
+[TLB] proc=2: hits=9018, misses=10, hit rate=99.89%
+[TLB] proc=3: hits=12104, misses=8, hit rate=99.93%
+-------------------------------------
+[TLB] total: hits=48544, misses=48, hit rate=99.90%
+=====================================
+
+========================================
+ Cache Statistics
+========================================
+
+L1 Instruction Cache: 128 B/core
+----------------------------------------
+Core 0: hits=12660 misses=212 hit-rate=98.35%
+Core 1: hits=12613 misses=407 hit-rate=96.87%
+Core 2: hits=8391 misses=373 hit-rate=95.74%
+Core 3: hits=11908 misses=108 hit-rate=99.10%
+Total: hits=45572 misses=1100 hit-rate=97.64%
+
+L1 Data Cache: 128 B/core
+----------------------------------------
+Core 0: hits=1090 misses=42 hit-rate=96.29%
+Core 1: hits=154 misses=10 hit-rate=93.90%
+Core 2: hits=192 misses=14 hit-rate=93.20%
+Core 3: hits=88 misses=8 hit-rate=91.67%
+Total: hits=1524 misses=74 hit-rate=95.37%
+
+Private L2 Cache: 256 B/core
+----------------------------------------
+Core 0: hits=0 misses=254 hit-rate=0.00%
+Core 1: hits=77 misses=340 hit-rate=18.47%
+Core 2: hits=77 misses=310 hit-rate=19.90%
+Core 3: hits=0 misses=116 hit-rate=0.00%
+Total: hits=154 misses=1020 hit-rate=13.12%
+
+Shared Unified L3 Cache: 512 B
+----------------------------------------
+Hits   : 236
+Misses : 784
+Hit-rate: 23.14%
+========================================
+bumblebee@Chiranton:~/CS527/LABTEST_120926$

@@ -1,0 +1,17 @@
+x1 = 20
+x2 = 5
+x3 = x1 / x2
+Print x3
+
+x4 = 20
+x5 = 6
+x6 = x4 MOD x5
+Print x6
+
+x7 = 25
+x8 = x7 / 4
+Print x8
+
+x9 = 25
+x10 = x9 MOD 4
+Print x10

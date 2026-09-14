@@ -1,0 +1,1120 @@
+========================================
+ Running 72 programs for maximum stress
+========================================
+Mini OS started with 4 processors.
+$ [Compiler] compiling matmul.txt
+[MEM] proc=0: instruction=796 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 1 loaded on processor 0
+[Compiler] compiling a3.txt
+[MEM] proc=1: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 2 loaded on processor 1
+[STORE DEBUG] attempt: proc=0 logical=72 value=125
+[Compiler] compiling sod.txt
+[MEM] proc=2: instruction=104 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 3 loaded on processor 2
+[STORE DEBUG] attempt: proc=1 logical=68 value=11
+[Compiler] compiling booth2.txt
+[MEM] proc=3: instruction=656 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 4 loaded on processor 3
+[STORE DEBUG] attempt: proc=0 logical=76 value=136
+[STORE DEBUG] attempt: proc=1 logical=72 value=13
+[Compiler] compiling a4.txt
+[OS] PID 5 placed in waiting queue
+[STORE DEBUG] attempt: proc=1 logical=76 value=15
+[Compiler] compiling rs64_compact.txt
+[OS] PID 6 placed in waiting queue
+[STORE DEBUG] attempt: proc=0 logical=80 value=133
+[STORE DEBUG] attempt: proc=1 logical=80 value=17
+[Compiler] compiling crc_test_fixed.txt
+[OS] PID 7 placed in waiting queue
+[STORE DEBUG] attempt: proc=1 logical=84 value=19
+[Compiler] compiling tlb-stress-2.txt
+[OS] PID 8 placed in waiting queue
+[STORE DEBUG] attempt: proc=0 logical=84 value=162
+[STORE DEBUG] attempt: proc=1 logical=88 value=21
+[Compiler] compiling fib.txt
+[OS] PID 9 placed in waiting queue
+[STORE DEBUG] attempt: proc=1 logical=92 value=23
+45
+[OS] PID 3 finished on processor 2
+[MEM] proc=2: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 5 dispatched to processor 2
+[Compiler] compiling r4.txt
+[OS] PID 10 placed in waiting queue
+[STORE DEBUG] attempt: proc=0 logical=88 value=174
+[STORE DEBUG] attempt: proc=1 logical=96 value=25
+[Compiler] compiling eitch.txt
+[OS] PID 11 placed in waiting queue
+[STORE DEBUG] attempt: proc=2 logical=68 value=-9
+[Compiler] compiling ldpc126_new.txt
+[OS] PID 12 placed in waiting queue
+[STORE DEBUG] attempt: proc=0 logical=92 value=151
+[STORE DEBUG] attempt: proc=2 logical=72 value=-9
+[Compiler] compiling hamming_code_2.txt
+[OS] PID 13 placed in waiting queue
+[STORE DEBUG] attempt: proc=2 logical=76 value=-9
+[Compiler] compiling crc16_test.txt
+[OS] PID 14 placed in waiting queue
+[STORE DEBUG] attempt: proc=0 logical=96 value=279
+[STORE DEBUG] attempt: proc=2 logical=80 value=-9
+[Compiler] compiling nrd2.txt
+[OS] PID 15 placed in waiting queue
+[STORE DEBUG] attempt: proc=2 logical=84 value=-9
+[Compiler] compiling recurring_division.txt
+[OS] PID 16 placed in waiting queue
+[STORE DEBUG] attempt: proc=0 logical=100 value=300
+[STORE DEBUG] attempt: proc=2 logical=88 value=-9
+[Compiler] compiling cross.txt
+[OS] PID 17 placed in waiting queue
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 2 finished on processor 1
+[MEM] proc=1: instruction=816 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 6 dispatched to processor 1
+[STORE DEBUG] attempt: proc=2 logical=92 value=-9
+[Compiler] compiling sod.txt
+[OS] PID 18 placed in waiting queue
+[STORE DEBUG] attempt: proc=0 logical=104 value=265
+[STORE DEBUG] attempt: proc=2 logical=96 value=-9
+[Compiler] compiling hamming_code_2.txt
+[OS] PID 19 placed in waiting queue
+[Compiler] compiling eitch.txt
+[OS] PID 20 placed in waiting queue
+125
+136
+133
+162
+174
+151
+279
+300
+265
+[OS] PID 1 finished on processor 0
+[MEM] proc=0: instruction=320 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 7 dispatched to processor 0
+[Compiler] compiling crc16_test.txt
+[OS] PID 21 placed in waiting queue
+[Compiler] compiling cross.txt
+[OS] PID 22 placed in waiting queue
+[Compiler] compiling nrd2.txt
+[OS] PID 23 placed in waiting queue
+[Compiler] compiling f2.txt
+[OS] PID 24 placed in waiting queue
+[Compiler] compiling matmul.txt
+[OS] PID 25 placed in waiting queue
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+[OS] PID 5 finished on processor 2
+[MEM] proc=2: instruction=564 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 8 dispatched to processor 2
+[Compiler] compiling f2.txt
+[OS] PID 26 placed in waiting queue
+[Compiler] compiling tlb-stress-2.txt
+[OS] PID 27 placed in waiting queue
+[Compiler] compiling fib.txt
+[OS] PID 28 placed in waiting queue
+[Compiler] compiling crc_test_fixed.txt
+[OS] PID 29 placed in waiting queue
+[Compiler] compiling a3.txt
+[OS] PID 30 placed in waiting queue
+[Compiler] compiling ldpc126_new.txt
+[OS] PID 31 placed in waiting queue
+[Compiler] compiling booth2.txt
+[OS] PID 32 placed in waiting queue
+[Compiler] compiling rs64_compact.txt
+[OS] PID 33 placed in waiting queue
+[Compiler] compiling r4.txt
+[OS] PID 34 placed in waiting queue
+[Compiler] compiling a4.txt
+[OS] PID 35 placed in waiting queue
+[Compiler] compiling recurring_division.txt
+[OS] PID 36 placed in waiting queue
+[Shell] exiting; existing tasks will continue
+120
+[OS] PID 7 finished on processor 0
+[MEM] proc=0: instruction=216 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 9 dispatched to processor 0
+[STORE DEBUG] attempt: proc=0 logical=400 value=0
+[STORE DEBUG] attempt: proc=0 logical=440 value=1
+[OS] PID 8 finished on processor 2
+[MEM] proc=2: instruction=144 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 10 dispatched to processor 2
+[STORE DEBUG] attempt: proc=0 logical=444 value=1
+[STORE DEBUG] attempt: proc=2 logical=0 value=0
+[STORE DEBUG] attempt: proc=0 logical=404 value=1
+[STORE DEBUG] attempt: proc=0 logical=440 value=1
+[STORE DEBUG] attempt: proc=2 logical=4 value=1
+[STORE DEBUG] attempt: proc=0 logical=444 value=2
+[STORE DEBUG] attempt: proc=0 logical=408 value=1
+[STORE DEBUG] attempt: proc=2 logical=8 value=3
+[STORE DEBUG] attempt: proc=0 logical=440 value=2
+[STORE DEBUG] attempt: proc=0 logical=444 value=3
+[STORE DEBUG] attempt: proc=2 logical=12 value=6
+[STORE DEBUG] attempt: proc=0 logical=412 value=2
+[STORE DEBUG] attempt: proc=0 logical=440 value=3
+[STORE DEBUG] attempt: proc=0 logical=444 value=5
+[STORE DEBUG] attempt: proc=0 logical=416 value=3
+[STORE DEBUG] attempt: proc=0 logical=440 value=5
+[STORE DEBUG] attempt: proc=0 logical=444 value=8
+[STORE DEBUG] attempt: proc=0 logical=420 value=5
+[STORE DEBUG] attempt: proc=0 logical=440 value=8
+[STORE DEBUG] attempt: proc=2 logical=16 value=2
+[STORE DEBUG] attempt: proc=0 logical=444 value=13
+[STORE DEBUG] attempt: proc=0 logical=424 value=8
+[STORE DEBUG] attempt: proc=2 logical=20 value=7
+[STORE DEBUG] attempt: proc=0 logical=440 value=13
+[STORE DEBUG] attempt: proc=0 logical=444 value=21
+[STORE DEBUG] attempt: proc=0 logical=428 value=13
+[STORE DEBUG] attempt: proc=0 logical=440 value=21
+[STORE DEBUG] attempt: proc=2 logical=24 value=13
+[STORE DEBUG] attempt: proc=0 logical=444 value=34
+[STORE DEBUG] attempt: proc=0 logical=432 value=21
+[STORE DEBUG] attempt: proc=0 logical=440 value=34
+[STORE DEBUG] attempt: proc=0 logical=444 value=55
+[STORE DEBUG] attempt: proc=0 logical=436 value=34
+[STORE DEBUG] attempt: proc=0 logical=440 value=55
+[STORE DEBUG] attempt: proc=0 logical=444 value=89
+[STORE DEBUG] attempt: proc=2 logical=28 value=20
+287454020
+0
+287454020
+1
+287454020
+2
+287454020
+3
+287454020
+4
+287454020
+5
+287454020
+[OS] PID 6 finished on processor 1
+[MEM] proc=1: instruction=160 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 11 dispatched to processor 1
+[STORE DEBUG] attempt: proc=1 logical=300 value=1
+[STORE DEBUG] attempt: proc=1 logical=304 value=2
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+[OS] PID 9 finished on processor 0
+[MEM] proc=0: instruction=612 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 12 dispatched to processor 0
+[STORE DEBUG] attempt: proc=1 logical=308 value=4
+[STORE DEBUG] attempt: proc=1 logical=312 value=7
+[STORE DEBUG] attempt: proc=2 logical=32 value=12
+[STORE DEBUG] attempt: proc=1 logical=316 value=12
+[STORE DEBUG] attempt: proc=1 logical=320 value=20
+[STORE DEBUG] attempt: proc=2 logical=36 value=21
+[STORE DEBUG] attempt: proc=1 logical=324 value=33
+[STORE DEBUG] attempt: proc=1 logical=328 value=54
+[STORE DEBUG] attempt: proc=1 logical=332 value=88
+[STORE DEBUG] attempt: proc=1 logical=336 value=143
+[STORE DEBUG] attempt: proc=1 logical=340 value=232
+[STORE DEBUG] attempt: proc=2 logical=40 value=11
+[STORE DEBUG] attempt: proc=2 logical=44 value=22
+[STORE DEBUG] attempt: proc=1 logical=344 value=376
+[STORE DEBUG] attempt: proc=1 logical=348 value=609
+[STORE DEBUG] attempt: proc=1 logical=352 value=986
+[STORE DEBUG] attempt: proc=1 logical=356 value=1596
+[STORE DEBUG] attempt: proc=1 logical=360 value=2583
+[STORE DEBUG] attempt: proc=2 logical=48 value=10
+[STORE DEBUG] attempt: proc=2 logical=52 value=23
+1
+2
+4
+7
+12
+20
+33
+54
+88
+143
+232
+376
+609
+986
+1596
+2583
+[OS] PID 11 finished on processor 1
+[MEM] proc=1: instruction=1016 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 13 dispatched to processor 1
+[STORE DEBUG] attempt: proc=2 logical=56 value=9
+[STORE DEBUG] attempt: proc=2 logical=60 value=24
+143
+-143
+-143
+143
+[OS] PID 4 finished on processor 3
+[MEM] proc=3: instruction=332 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 14 dispatched to processor 3
+[STORE DEBUG] attempt: proc=2 logical=64 value=8
+[STORE DEBUG] attempt: proc=2 logical=68 value=25
+[STORE DEBUG] attempt: proc=2 logical=72 value=43
+[STORE DEBUG] attempt: proc=2 logical=76 value=62
+30488
+[OS] PID 14 finished on processor 3
+[MEM] proc=3: instruction=544 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 15 dispatched to processor 3
+[STORE DEBUG] attempt: proc=2 logical=80 value=42
+[STORE DEBUG] attempt: proc=2 logical=84 value=63
+[STORE DEBUG] attempt: proc=2 logical=88 value=41
+[STORE DEBUG] attempt: proc=2 logical=92 value=18
+[STORE DEBUG] attempt: proc=2 logical=96 value=42
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+[OS] PID 12 finished on processor 0
+[MEM] proc=0: instruction=352 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 16 dispatched to processor 0
+[STORE DEBUG] attempt: proc=2 logical=100 value=17
+[STORE DEBUG] attempt: proc=2 logical=104 value=43
+4
+1
+5
+1
+10
+0
+36
+3
+[OS] PID 15 finished on processor 3
+[MEM] proc=3: instruction=172 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 17 dispatched to processor 3
+[STORE DEBUG] attempt: proc=3 logical=100 value=-3
+[STORE DEBUG] attempt: proc=3 logical=104 value=6
+[STORE DEBUG] attempt: proc=3 logical=108 value=-3
+-3
+6
+-3
+[OS] PID 17 finished on processor 3
+[MEM] proc=3: instruction=104 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 18 dispatched to processor 3
+45
+[OS] PID 18 finished on processor 3
+[MEM] proc=3: instruction=1016 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 19 dispatched to processor 3
+[STORE DEBUG] attempt: proc=2 logical=108 value=16
+[STORE DEBUG] attempt: proc=2 logical=112 value=44
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+[OS] PID 13 finished on processor 1
+[MEM] proc=1: instruction=160 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 20 dispatched to processor 1
+[STORE DEBUG] attempt: proc=1 logical=300 value=1
+[STORE DEBUG] attempt: proc=1 logical=304 value=2
+[STORE DEBUG] attempt: proc=2 logical=116 value=15
+[STORE DEBUG] attempt: proc=1 logical=308 value=4
+[STORE DEBUG] attempt: proc=2 logical=120 value=45
+[STORE DEBUG] attempt: proc=1 logical=312 value=7
+[STORE DEBUG] attempt: proc=1 logical=316 value=12
+[STORE DEBUG] attempt: proc=1 logical=320 value=20
+[STORE DEBUG] attempt: proc=1 logical=324 value=33
+[STORE DEBUG] attempt: proc=1 logical=328 value=54
+[STORE DEBUG] attempt: proc=1 logical=332 value=88
+[STORE DEBUG] attempt: proc=1 logical=336 value=143
+[STORE DEBUG] attempt: proc=1 logical=340 value=232
+[STORE DEBUG] attempt: proc=1 logical=344 value=376
+[STORE DEBUG] attempt: proc=1 logical=348 value=609
+[STORE DEBUG] attempt: proc=1 logical=352 value=986
+[STORE DEBUG] attempt: proc=1 logical=356 value=1596
+4
+1
+5
+1
+10
+0
+36
+3
+[OS] PID 16 finished on processor 0
+[MEM] proc=0: instruction=332 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 21 dispatched to processor 0
+[STORE DEBUG] attempt: proc=1 logical=360 value=2583
+[STORE DEBUG] attempt: proc=2 logical=124 value=14
+[STORE DEBUG] attempt: proc=2 logical=128 value=46
+[STORE DEBUG] attempt: proc=2 logical=132 value=79
+1
+2
+4
+7
+12
+20
+33
+54
+88
+143
+232
+376
+609
+986
+1596
+2583
+[OS] PID 20 finished on processor 1
+[MEM] proc=1: instruction=172 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 22 dispatched to processor 1
+[STORE DEBUG] attempt: proc=1 logical=100 value=-3
+[STORE DEBUG] attempt: proc=1 logical=104 value=6
+[STORE DEBUG] attempt: proc=1 logical=108 value=-3
+-3
+6
+-3
+[OS] PID 22 finished on processor 1
+[MEM] proc=1: instruction=544 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 23 dispatched to processor 1
+[STORE DEBUG] attempt: proc=2 logical=136 value=113
+30488
+[OS] PID 21 finished on processor 0
+[MEM] proc=0: instruction=64 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 24 dispatched to processor 0
+528
+[OS] PID 24 finished on processor 0
+[MEM] proc=0: instruction=796 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 25 dispatched to processor 0
+[STORE DEBUG] attempt: proc=0 logical=72 value=125
+[STORE DEBUG] attempt: proc=0 logical=76 value=136
+[STORE DEBUG] attempt: proc=0 logical=80 value=133
+[STORE DEBUG] attempt: proc=0 logical=84 value=162
+[STORE DEBUG] attempt: proc=0 logical=88 value=174
+[STORE DEBUG] attempt: proc=0 logical=92 value=151
+[STORE DEBUG] attempt: proc=0 logical=96 value=279
+[STORE DEBUG] attempt: proc=0 logical=100 value=300
+[STORE DEBUG] attempt: proc=2 logical=140 value=78
+[STORE DEBUG] attempt: proc=0 logical=104 value=265
+125
+136
+133
+162
+174
+151
+279
+300
+265
+[OS] PID 25 finished on processor 0
+[MEM] proc=0: instruction=64 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 26 dispatched to processor 0
+528
+[OS] PID 26 finished on processor 0
+[MEM] proc=0: instruction=564 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 27 dispatched to processor 0
+[STORE DEBUG] attempt: proc=2 logical=144 value=114
+4
+1
+5
+1
+10
+0
+36
+3
+[OS] PID 23 finished on processor 1
+[MEM] proc=1: instruction=216 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 28 dispatched to processor 1
+[STORE DEBUG] attempt: proc=1 logical=400 value=0
+[STORE DEBUG] attempt: proc=1 logical=440 value=1
+[STORE DEBUG] attempt: proc=2 logical=148 value=77
+[STORE DEBUG] attempt: proc=1 logical=444 value=1
+[OS] PID 27 finished on processor 0
+[MEM] proc=0: instruction=320 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 29 dispatched to processor 0
+[STORE DEBUG] attempt: proc=1 logical=404 value=1
+[STORE DEBUG] attempt: proc=1 logical=440 value=1
+[STORE DEBUG] attempt: proc=1 logical=444 value=2
+[STORE DEBUG] attempt: proc=1 logical=408 value=1
+[STORE DEBUG] attempt: proc=1 logical=440 value=2
+[STORE DEBUG] attempt: proc=1 logical=444 value=3
+[STORE DEBUG] attempt: proc=1 logical=412 value=2
+[STORE DEBUG] attempt: proc=1 logical=440 value=3
+[STORE DEBUG] attempt: proc=1 logical=444 value=5
+[STORE DEBUG] attempt: proc=1 logical=416 value=3
+[STORE DEBUG] attempt: proc=1 logical=440 value=5
+[STORE DEBUG] attempt: proc=1 logical=444 value=8
+[STORE DEBUG] attempt: proc=1 logical=420 value=5
+[STORE DEBUG] attempt: proc=1 logical=440 value=8
+[STORE DEBUG] attempt: proc=1 logical=444 value=13
+[STORE DEBUG] attempt: proc=1 logical=424 value=8
+[STORE DEBUG] attempt: proc=1 logical=440 value=13
+[STORE DEBUG] attempt: proc=1 logical=444 value=21
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+[OS] PID 19 finished on processor 3
+[MEM] proc=3: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 30 dispatched to processor 3
+[STORE DEBUG] attempt: proc=1 logical=428 value=13
+[STORE DEBUG] attempt: proc=1 logical=440 value=21
+[STORE DEBUG] attempt: proc=1 logical=444 value=34
+[STORE DEBUG] attempt: proc=3 logical=68 value=11
+[STORE DEBUG] attempt: proc=1 logical=432 value=21
+[STORE DEBUG] attempt: proc=1 logical=440 value=34
+[STORE DEBUG] attempt: proc=3 logical=72 value=13
+[STORE DEBUG] attempt: proc=1 logical=444 value=55
+[STORE DEBUG] attempt: proc=1 logical=436 value=34
+[STORE DEBUG] attempt: proc=3 logical=76 value=15
+[STORE DEBUG] attempt: proc=1 logical=440 value=55
+[STORE DEBUG] attempt: proc=1 logical=444 value=89
+[STORE DEBUG] attempt: proc=3 logical=80 value=17
+[STORE DEBUG] attempt: proc=3 logical=84 value=19
+[STORE DEBUG] attempt: proc=3 logical=88 value=21
+[STORE DEBUG] attempt: proc=3 logical=92 value=23
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+[OS] PID 28 finished on processor 1
+[MEM] proc=1: instruction=612 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 31 dispatched to processor 1
+[STORE DEBUG] attempt: proc=3 logical=96 value=25
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 30 finished on processor 3
+[MEM] proc=3: instruction=656 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 32 dispatched to processor 3
+[STORE DEBUG] attempt: proc=2 logical=152 value=39
+[STORE DEBUG] attempt: proc=2 logical=156 value=78
+120
+[OS] PID 29 finished on processor 0
+[MEM] proc=0: instruction=816 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 33 dispatched to processor 0
+[STORE DEBUG] attempt: proc=2 logical=160 value=38
+[STORE DEBUG] attempt: proc=2 logical=164 value=79
+[STORE DEBUG] attempt: proc=2 logical=168 value=37
+[STORE DEBUG] attempt: proc=2 logical=172 value=80
+287454020
+0
+287454020
+1
+287454020
+2
+287454020
+3
+287454020
+4
+287454020
+5
+287454020
+[OS] PID 33 finished on processor 0
+[MEM] proc=0: instruction=144 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 34 dispatched to processor 0
+[STORE DEBUG] attempt: proc=0 logical=0 value=0
+[STORE DEBUG] attempt: proc=0 logical=4 value=1
+[STORE DEBUG] attempt: proc=0 logical=8 value=3
+[STORE DEBUG] attempt: proc=0 logical=12 value=6
+[STORE DEBUG] attempt: proc=0 logical=16 value=2
+[STORE DEBUG] attempt: proc=0 logical=20 value=7
+[STORE DEBUG] attempt: proc=0 logical=24 value=13
+[STORE DEBUG] attempt: proc=0 logical=28 value=20
+[STORE DEBUG] attempt: proc=0 logical=32 value=12
+[STORE DEBUG] attempt: proc=0 logical=36 value=21
+[STORE DEBUG] attempt: proc=2 logical=176 value=36
+[STORE DEBUG] attempt: proc=2 logical=180 value=81
+[STORE DEBUG] attempt: proc=0 logical=40 value=11
+[STORE DEBUG] attempt: proc=0 logical=44 value=22
+143
+-143
+-143
+143
+[OS] PID 32 finished on processor 3
+[MEM] proc=3: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 35 dispatched to processor 3
+[STORE DEBUG] attempt: proc=3 logical=68 value=-9
+[STORE DEBUG] attempt: proc=3 logical=72 value=-9
+[STORE DEBUG] attempt: proc=0 logical=48 value=10
+[STORE DEBUG] attempt: proc=3 logical=76 value=-9
+[STORE DEBUG] attempt: proc=3 logical=80 value=-9
+[STORE DEBUG] attempt: proc=0 logical=52 value=23
+[STORE DEBUG] attempt: proc=3 logical=84 value=-9
+[STORE DEBUG] attempt: proc=3 logical=88 value=-9
+[STORE DEBUG] attempt: proc=3 logical=92 value=-9
+[STORE DEBUG] attempt: proc=3 logical=96 value=-9
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+[OS] PID 35 finished on processor 3
+[MEM] proc=3: instruction=352 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 36 dispatched to processor 3
+[STORE DEBUG] attempt: proc=0 logical=56 value=9
+[STORE DEBUG] attempt: proc=0 logical=60 value=24
+[STORE DEBUG] attempt: proc=2 logical=184 value=35
+[STORE DEBUG] attempt: proc=2 logical=188 value=82
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+[OS] PID 31 finished on processor 1
+[STORE DEBUG] attempt: proc=0 logical=64 value=8
+[STORE DEBUG] attempt: proc=0 logical=68 value=25
+[STORE DEBUG] attempt: proc=0 logical=72 value=43
+[STORE DEBUG] attempt: proc=0 logical=76 value=62
+[STORE DEBUG] attempt: proc=2 logical=192 value=34
+[STORE DEBUG] attempt: proc=2 logical=196 value=83
+[STORE DEBUG] attempt: proc=0 logical=80 value=42
+[STORE DEBUG] attempt: proc=0 logical=84 value=63
+4
+1
+5
+1
+10
+0
+36
+3
+[OS] PID 36 finished on processor 3
+[STORE DEBUG] attempt: proc=0 logical=88 value=41
+[STORE DEBUG] attempt: proc=2 logical=200 value=33
+[STORE DEBUG] attempt: proc=2 logical=204 value=84
+[STORE DEBUG] attempt: proc=0 logical=92 value=18
+[STORE DEBUG] attempt: proc=0 logical=96 value=42
+[STORE DEBUG] attempt: proc=0 logical=100 value=17
+[STORE DEBUG] attempt: proc=0 logical=104 value=43
+[STORE DEBUG] attempt: proc=2 logical=208 value=32
+[STORE DEBUG] attempt: proc=2 logical=212 value=85
+[STORE DEBUG] attempt: proc=0 logical=108 value=16
+[STORE DEBUG] attempt: proc=0 logical=112 value=44
+[STORE DEBUG] attempt: proc=0 logical=116 value=15
+[STORE DEBUG] attempt: proc=0 logical=120 value=45
+[STORE DEBUG] attempt: proc=2 logical=216 value=31
+[STORE DEBUG] attempt: proc=2 logical=220 value=86
+[STORE DEBUG] attempt: proc=0 logical=124 value=14
+[STORE DEBUG] attempt: proc=0 logical=128 value=46
+[STORE DEBUG] attempt: proc=0 logical=132 value=79
+[STORE DEBUG] attempt: proc=2 logical=224 value=30
+[STORE DEBUG] attempt: proc=2 logical=228 value=87
+[STORE DEBUG] attempt: proc=0 logical=136 value=113
+[STORE DEBUG] attempt: proc=0 logical=140 value=78
+[STORE DEBUG] attempt: proc=2 logical=232 value=29
+[STORE DEBUG] attempt: proc=2 logical=236 value=88
+[STORE DEBUG] attempt: proc=0 logical=144 value=114
+[STORE DEBUG] attempt: proc=0 logical=148 value=77
+[STORE DEBUG] attempt: proc=2 logical=240 value=28
+[STORE DEBUG] attempt: proc=2 logical=244 value=89
+[STORE DEBUG] attempt: proc=0 logical=152 value=39
+[STORE DEBUG] attempt: proc=0 logical=156 value=78
+[STORE DEBUG] attempt: proc=2 logical=248 value=27
+[STORE DEBUG] attempt: proc=0 logical=160 value=38
+[STORE DEBUG] attempt: proc=0 logical=164 value=79
+[STORE DEBUG] attempt: proc=2 logical=252 value=90
+[STORE DEBUG] attempt: proc=0 logical=168 value=37
+[STORE DEBUG] attempt: proc=0 logical=172 value=80
+[STORE DEBUG] attempt: proc=2 logical=256 value=26
+[STORE DEBUG] attempt: proc=2 logical=260 value=91
+[STORE DEBUG] attempt: proc=2 logical=264 value=157
+[STORE DEBUG] attempt: proc=0 logical=176 value=36
+[STORE DEBUG] attempt: proc=0 logical=180 value=81
+[STORE DEBUG] attempt: proc=0 logical=184 value=35
+[STORE DEBUG] attempt: proc=0 logical=188 value=82
+[STORE DEBUG] attempt: proc=2 logical=268 value=224
+[STORE DEBUG] attempt: proc=0 logical=192 value=34
+[STORE DEBUG] attempt: proc=0 logical=196 value=83
+[STORE DEBUG] attempt: proc=2 logical=272 value=156
+[STORE DEBUG] attempt: proc=0 logical=200 value=33
+[STORE DEBUG] attempt: proc=0 logical=204 value=84
+[STORE DEBUG] attempt: proc=2 logical=276 value=225
+[STORE DEBUG] attempt: proc=0 logical=208 value=32
+[STORE DEBUG] attempt: proc=0 logical=212 value=85
+[STORE DEBUG] attempt: proc=2 logical=280 value=155
+[STORE DEBUG] attempt: proc=0 logical=216 value=31
+[STORE DEBUG] attempt: proc=0 logical=220 value=86
+[STORE DEBUG] attempt: proc=2 logical=284 value=226
+[STORE DEBUG] attempt: proc=0 logical=224 value=30
+[STORE DEBUG] attempt: proc=0 logical=228 value=87
+[STORE DEBUG] attempt: proc=0 logical=232 value=29
+[STORE DEBUG] attempt: proc=2 logical=288 value=154
+[STORE DEBUG] attempt: proc=0 logical=236 value=88
+[STORE DEBUG] attempt: proc=2 logical=292 value=227
+[STORE DEBUG] attempt: proc=0 logical=240 value=28
+[STORE DEBUG] attempt: proc=0 logical=244 value=89
+[STORE DEBUG] attempt: proc=2 logical=296 value=153
+[STORE DEBUG] attempt: proc=0 logical=248 value=27
+[STORE DEBUG] attempt: proc=0 logical=252 value=90
+[STORE DEBUG] attempt: proc=2 logical=300 value=228
+[STORE DEBUG] attempt: proc=0 logical=256 value=26
+[STORE DEBUG] attempt: proc=0 logical=260 value=91
+[STORE DEBUG] attempt: proc=0 logical=264 value=157
+[STORE DEBUG] attempt: proc=2 logical=304 value=152
+[STORE DEBUG] attempt: proc=0 logical=268 value=224
+[STORE DEBUG] attempt: proc=2 logical=308 value=75
+[STORE DEBUG] attempt: proc=2 logical=312 value=153
+[STORE DEBUG] attempt: proc=0 logical=272 value=156
+[STORE DEBUG] attempt: proc=2 logical=316 value=74
+[STORE DEBUG] attempt: proc=2 logical=320 value=154
+[STORE DEBUG] attempt: proc=0 logical=276 value=225
+[STORE DEBUG] attempt: proc=0 logical=280 value=155
+[STORE DEBUG] attempt: proc=2 logical=324 value=73
+[STORE DEBUG] attempt: proc=2 logical=328 value=155
+[STORE DEBUG] attempt: proc=0 logical=284 value=226
+[STORE DEBUG] attempt: proc=2 logical=332 value=72
+[STORE DEBUG] attempt: proc=2 logical=336 value=156
+[STORE DEBUG] attempt: proc=0 logical=288 value=154
+[STORE DEBUG] attempt: proc=0 logical=292 value=227
+[STORE DEBUG] attempt: proc=2 logical=340 value=71
+[STORE DEBUG] attempt: proc=2 logical=344 value=157
+[STORE DEBUG] attempt: proc=0 logical=296 value=153
+[STORE DEBUG] attempt: proc=2 logical=348 value=70
+[STORE DEBUG] attempt: proc=2 logical=352 value=158
+[STORE DEBUG] attempt: proc=0 logical=300 value=228
+[STORE DEBUG] attempt: proc=2 logical=356 value=69
+[STORE DEBUG] attempt: proc=2 logical=360 value=159
+[STORE DEBUG] attempt: proc=0 logical=304 value=152
+[STORE DEBUG] attempt: proc=0 logical=308 value=75
+[STORE DEBUG] attempt: proc=0 logical=312 value=153
+[STORE DEBUG] attempt: proc=2 logical=364 value=68
+[STORE DEBUG] attempt: proc=2 logical=368 value=160
+[STORE DEBUG] attempt: proc=0 logical=316 value=74
+[STORE DEBUG] attempt: proc=0 logical=320 value=154
+[STORE DEBUG] attempt: proc=2 logical=372 value=67
+[STORE DEBUG] attempt: proc=2 logical=376 value=161
+[STORE DEBUG] attempt: proc=0 logical=324 value=73
+[STORE DEBUG] attempt: proc=0 logical=328 value=155
+[STORE DEBUG] attempt: proc=2 logical=380 value=66
+[STORE DEBUG] attempt: proc=2 logical=384 value=162
+[STORE DEBUG] attempt: proc=0 logical=332 value=72
+[STORE DEBUG] attempt: proc=0 logical=336 value=156
+[STORE DEBUG] attempt: proc=2 logical=388 value=65
+[STORE DEBUG] attempt: proc=2 logical=392 value=163
+[STORE DEBUG] attempt: proc=0 logical=340 value=71
+[STORE DEBUG] attempt: proc=0 logical=344 value=157
+[STORE DEBUG] attempt: proc=2 logical=396 value=64
+[STORE DEBUG] attempt: proc=2 logical=400 value=164
+[STORE DEBUG] attempt: proc=0 logical=348 value=70
+[STORE DEBUG] attempt: proc=2 logical=404 value=265
+[STORE DEBUG] attempt: proc=0 logical=352 value=158
+[STORE DEBUG] attempt: proc=0 logical=356 value=69
+[STORE DEBUG] attempt: proc=0 logical=360 value=159
+[STORE DEBUG] attempt: proc=2 logical=408 value=367
+[STORE DEBUG] attempt: proc=0 logical=364 value=68
+[STORE DEBUG] attempt: proc=0 logical=368 value=160
+[STORE DEBUG] attempt: proc=2 logical=412 value=264
+[STORE DEBUG] attempt: proc=0 logical=372 value=67
+[STORE DEBUG] attempt: proc=0 logical=376 value=161
+[STORE DEBUG] attempt: proc=2 logical=416 value=368
+[STORE DEBUG] attempt: proc=0 logical=380 value=66
+[STORE DEBUG] attempt: proc=0 logical=384 value=162
+[STORE DEBUG] attempt: proc=2 logical=420 value=263
+[STORE DEBUG] attempt: proc=2 logical=424 value=369
+[STORE DEBUG] attempt: proc=0 logical=388 value=65
+[STORE DEBUG] attempt: proc=0 logical=392 value=163
+[STORE DEBUG] attempt: proc=2 logical=428 value=262
+[STORE DEBUG] attempt: proc=0 logical=396 value=64
+[STORE DEBUG] attempt: proc=0 logical=400 value=164
+[STORE DEBUG] attempt: proc=0 logical=404 value=265
+[STORE DEBUG] attempt: proc=2 logical=432 value=370
+[STORE DEBUG] attempt: proc=0 logical=408 value=367
+[STORE DEBUG] attempt: proc=2 logical=436 value=261
+[STORE DEBUG] attempt: proc=0 logical=412 value=264
+[STORE DEBUG] attempt: proc=2 logical=440 value=151
+[STORE DEBUG] attempt: proc=0 logical=416 value=368
+[STORE DEBUG] attempt: proc=2 logical=444 value=40
+[STORE DEBUG] attempt: proc=2 logical=448 value=152
+[STORE DEBUG] attempt: proc=0 logical=420 value=263
+[STORE DEBUG] attempt: proc=2 logical=452 value=265
+[STORE DEBUG] attempt: proc=0 logical=424 value=369
+[STORE DEBUG] attempt: proc=2 logical=456 value=379
+[STORE DEBUG] attempt: proc=0 logical=428 value=262
+[STORE DEBUG] attempt: proc=2 logical=460 value=494
+[STORE DEBUG] attempt: proc=0 logical=432 value=370
+[STORE DEBUG] attempt: proc=2 logical=464 value=378
+[STORE DEBUG] attempt: proc=0 logical=436 value=261
+[STORE DEBUG] attempt: proc=2 logical=468 value=495
+[STORE DEBUG] attempt: proc=0 logical=440 value=151
+[STORE DEBUG] attempt: proc=0 logical=444 value=40
+[STORE DEBUG] attempt: proc=2 logical=472 value=377
+[STORE DEBUG] attempt: proc=0 logical=448 value=152
+[STORE DEBUG] attempt: proc=0 logical=452 value=265
+[STORE DEBUG] attempt: proc=2 logical=476 value=258
+[STORE DEBUG] attempt: proc=0 logical=456 value=379
+[STORE DEBUG] attempt: proc=2 logical=480 value=138
+[STORE DEBUG] attempt: proc=0 logical=460 value=494
+[STORE DEBUG] attempt: proc=2 logical=484 value=259
+[STORE DEBUG] attempt: proc=0 logical=464 value=378
+[STORE DEBUG] attempt: proc=2 logical=488 value=137
+[STORE DEBUG] attempt: proc=2 logical=492 value=260
+[STORE DEBUG] attempt: proc=0 logical=468 value=495
+[STORE DEBUG] attempt: proc=2 logical=496 value=136
+[STORE DEBUG] attempt: proc=2 logical=500 value=261
+[STORE DEBUG] attempt: proc=0 logical=472 value=377
+[STORE DEBUG] attempt: proc=2 logical=504 value=135
+[STORE DEBUG] attempt: proc=2 logical=508 value=262
+0
+1
+3
+6
+2
+7
+13
+20
+12
+21
+11
+22
+10
+23
+9
+24
+8
+25
+43
+62
+42
+63
+41
+18
+42
+17
+43
+16
+44
+15
+45
+14
+46
+79
+113
+78
+114
+77
+39
+78
+38
+79
+37
+80
+36
+81
+35
+82
+34
+83
+33
+84
+32
+85
+31
+86
+30
+87
+29
+88
+28
+89
+27
+90
+26
+91
+157
+224
+156
+225
+155
+226
+154
+227
+153
+228
+152
+75
+153
+74
+154
+73
+155
+72
+156
+71
+157
+70
+158
+69
+159
+68
+160
+67
+161
+66
+162
+65
+163
+64
+164
+265
+367
+264
+368
+263
+369
+262
+370
+261
+151
+40
+152
+265
+379
+494
+378
+495
+377
+258
+138
+259
+137
+260
+136
+261
+135
+262
+[OS] PID 10 finished on processor 2
+[STORE DEBUG] attempt: proc=0 logical=476 value=258
+[STORE DEBUG] attempt: proc=0 logical=480 value=138
+[STORE DEBUG] attempt: proc=0 logical=484 value=259
+[STORE DEBUG] attempt: proc=0 logical=488 value=137
+[STORE DEBUG] attempt: proc=0 logical=492 value=260
+[STORE DEBUG] attempt: proc=0 logical=496 value=136
+[STORE DEBUG] attempt: proc=0 logical=500 value=261
+[STORE DEBUG] attempt: proc=0 logical=504 value=135
+[STORE DEBUG] attempt: proc=0 logical=508 value=262
+0
+1
+3
+6
+2
+7
+13
+20
+12
+21
+11
+22
+10
+23
+9
+24
+8
+25
+43
+62
+42
+63
+41
+18
+42
+17
+43
+16
+44
+15
+45
+14
+46
+79
+113
+78
+114
+77
+39
+78
+38
+79
+37
+80
+36
+81
+35
+82
+34
+83
+33
+84
+32
+85
+31
+86
+30
+87
+29
+88
+28
+89
+27
+90
+26
+91
+157
+224
+156
+225
+155
+226
+154
+227
+153
+228
+152
+75
+153
+74
+154
+73
+155
+72
+156
+71
+157
+70
+158
+69
+159
+68
+160
+67
+161
+66
+162
+65
+163
+64
+164
+265
+367
+264
+368
+263
+369
+262
+370
+261
+151
+40
+152
+265
+379
+494
+378
+495
+377
+258
+138
+259
+137
+260
+136
+261
+135
+262
+[OS] PID 34 finished on processor 0
+
+========== TLB STATISTICS ==========
+[TLB] proc=0: hits=214240, misses=184, hit rate=99.91%
+[TLB] proc=1: hits=25654, misses=18, hit rate=99.93%
+[TLB] proc=2: hits=194003, misses=169, hit rate=99.91%
+[TLB] proc=3: hits=27880, misses=20, hit rate=99.93%
+-------------------------------------
+[TLB] total: hits=461777, misses=391, hit rate=99.92%
+=====================================
+
+========================================
+ Cache Statistics
+========================================
+
+L1 Instruction Cache: 128 B/core
+----------------------------------------
+Core 0: hits=191002 misses=882 hit-rate=99.54%
+Core 1: hits=23690 misses=1058 hit-rate=95.72%
+Core 2: hits=172376 misses=68 hit-rate=99.96%
+Core 3: hits=26962 misses=538 hit-rate=98.04%
+Total: hits=414030 misses=2546 hit-rate=99.39%
+
+L1 Data Cache: 128 B/core
+----------------------------------------
+Core 0: hits=20540 misses=1354 hit-rate=93.82%
+Core 1: hits=626 misses=23 hit-rate=96.46%
+Core 2: hits=19896 misses=1340 hit-rate=93.69%
+Core 3: hits=308 misses=23 hit-rate=93.05%
+Total: hits=41370 misses=2740 hit-rate=93.79%
+
+Private L2 Cache: 256 B/core
+----------------------------------------
+Core 0: hits=735 misses=1501 hit-rate=32.87%
+Core 1: hits=304 misses=777 hit-rate=28.12%
+Core 2: hits=500 misses=908 hit-rate=35.51%
+Core 3: hits=77 misses=484 hit-rate=13.73%
+Total: hits=1616 misses=3670 hit-rate=30.57%
+
+Shared Unified L3 Cache: 512 B
+----------------------------------------
+Hits   : 869
+Misses : 2801
+Hit-rate: 23.68%
+========================================
+bumblebee@Chiranton:~/CS527/ASSIGNMENT_555$

@@ -1,0 +1,883 @@
+% Dijkstra shortest paths: 10 vertices, 35 undirected weighted edges
+% Source vertex = 0
+% Every graph parameter, initialization, loop, and algorithm step is hardcoded here.
+% Edge table: 35 records, each [u][v][weight], 12 bytes per record.
+% Edge table occupies bytes 0..419.
+% dist[0..9] occupies bytes 420..459.
+% visited[0..9] occupies bytes 460..499.
+% All immediates obey the simulator ISA limits.
+
+% ---- Constants and base addresses ----
+x32 = 0
+x31 = 4
+x30 = 12
+x27 = 100
+x35 = 0
+% 420 = 255 + 127 + 38
+x33 = 255
+x33 = x33 + 127
+x33 = x33 + 38
+% 460 = 420 + 40
+x34 = x33 + 40
+
+% ---- Hardcoded 35-edge graph ----
+% edge 0: 0 -- 1, weight 4
+x24 = 0
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 0
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 1
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 4
+x16 = x26
+[x15] = x16
+% edge 1: 0 -- 2, weight 8
+x24 = 1
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 0
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 2
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 8
+x16 = x26
+[x15] = x16
+% edge 2: 0 -- 3, weight 6
+x24 = 2
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 0
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 3
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 6
+x16 = x26
+[x15] = x16
+% edge 3: 0 -- 4, weight 12
+x24 = 3
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 0
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 4
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 12
+x16 = x26
+[x15] = x16
+% edge 4: 0 -- 5, weight 9
+x24 = 4
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 0
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 5
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 9
+x16 = x26
+[x15] = x16
+% edge 5: 0 -- 6, weight 15
+x24 = 5
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 0
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 6
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 15
+x16 = x26
+[x15] = x16
+% edge 6: 0 -- 7, weight 7
+x24 = 6
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 0
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 7
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 7
+x16 = x26
+[x15] = x16
+% edge 7: 0 -- 8, weight 14
+x24 = 7
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 0
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 8
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 14
+x16 = x26
+[x15] = x16
+% edge 8: 0 -- 9, weight 11
+x24 = 8
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 0
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 9
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 11
+x16 = x26
+[x15] = x16
+% edge 9: 1 -- 2, weight 5
+x24 = 9
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 1
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 2
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 5
+x16 = x26
+[x15] = x16
+% edge 10: 1 -- 3, weight 7
+x24 = 10
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 1
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 3
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 7
+x16 = x26
+[x15] = x16
+% edge 11: 1 -- 4, weight 3
+x24 = 11
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 1
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 4
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 3
+x16 = x26
+[x15] = x16
+% edge 12: 1 -- 5, weight 10
+x24 = 12
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 1
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 5
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 10
+x16 = x26
+[x15] = x16
+% edge 13: 1 -- 6, weight 13
+x24 = 13
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 1
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 6
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 13
+x16 = x26
+[x15] = x16
+% edge 14: 1 -- 7, weight 6
+x24 = 14
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 1
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 7
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 6
+x16 = x26
+[x15] = x16
+% edge 15: 1 -- 8, weight 12
+x24 = 15
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 1
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 8
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 12
+x16 = x26
+[x15] = x16
+% edge 16: 2 -- 3, weight 4
+x24 = 16
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 2
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 3
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 4
+x16 = x26
+[x15] = x16
+% edge 17: 2 -- 4, weight 9
+x24 = 17
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 2
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 4
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 9
+x16 = x26
+[x15] = x16
+% edge 18: 2 -- 5, weight 2
+x24 = 18
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 2
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 5
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 2
+x16 = x26
+[x15] = x16
+% edge 19: 2 -- 6, weight 11
+x24 = 19
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 2
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 6
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 11
+x16 = x26
+[x15] = x16
+% edge 20: 2 -- 9, weight 8
+x24 = 20
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 2
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 9
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 8
+x16 = x26
+[x15] = x16
+% edge 21: 3 -- 4, weight 5
+x24 = 21
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 3
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 4
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 5
+x16 = x26
+[x15] = x16
+% edge 22: 3 -- 5, weight 6
+x24 = 22
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 3
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 5
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 6
+x16 = x26
+[x15] = x16
+% edge 23: 3 -- 7, weight 10
+x24 = 23
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 3
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 7
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 10
+x16 = x26
+[x15] = x16
+% edge 24: 3 -- 8, weight 3
+x24 = 24
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 3
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 8
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 3
+x16 = x26
+[x15] = x16
+% edge 25: 3 -- 9, weight 9
+x24 = 25
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 3
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 9
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 9
+x16 = x26
+[x15] = x16
+% edge 26: 4 -- 5, weight 7
+x24 = 26
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 4
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 5
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 7
+x16 = x26
+[x15] = x16
+% edge 27: 4 -- 6, weight 4
+x24 = 27
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 4
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 6
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 4
+x16 = x26
+[x15] = x16
+% edge 28: 4 -- 8, weight 8
+x24 = 28
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 4
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 8
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 8
+x16 = x26
+[x15] = x16
+% edge 29: 4 -- 9, weight 6
+x24 = 29
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 4
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 9
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 6
+x16 = x26
+[x15] = x16
+% edge 30: 5 -- 6, weight 3
+x24 = 30
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 5
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 6
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 3
+x16 = x26
+[x15] = x16
+% edge 31: 5 -- 7, weight 9
+x24 = 31
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 5
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 7
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 9
+x16 = x26
+[x15] = x16
+% edge 32: 5 -- 8, weight 5
+x24 = 32
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 5
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 8
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 5
+x16 = x26
+[x15] = x16
+% edge 33: 6 -- 7, weight 4
+x24 = 33
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 6
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 7
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 4
+x16 = x26
+[x15] = x16
+% edge 34: 7 -- 9, weight 2
+x24 = 34
+x25 = x24 * x30
+x25 = x25 + x35
+x26 = 7
+x15 = x25
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 4
+x26 = 9
+x16 = x26
+[x15] = x16
+x15 = x25
+x15 = x15 + 8
+x26 = 2
+x16 = x26
+[x15] = x16
+
+% ---- Initialize dist[0..9] = 100, then dist[0] = 0 ----
+x15 = x33
+x16 = x27
+[x15] = x16
+x15 = x33
+x24 = 1
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x27
+[x15] = x16
+x15 = x33
+x24 = 2
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x27
+[x15] = x16
+x15 = x33
+x24 = 3
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x27
+[x15] = x16
+x15 = x33
+x24 = 4
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x27
+[x15] = x16
+x15 = x33
+x24 = 5
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x27
+[x15] = x16
+x15 = x33
+x24 = 6
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x27
+[x15] = x16
+x15 = x33
+x24 = 7
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x27
+[x15] = x16
+x15 = x33
+x24 = 8
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x27
+[x15] = x16
+x15 = x33
+x24 = 9
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x27
+[x15] = x16
+x15 = x33
+x16 = x32
+[x15] = x16
+
+% ---- Initialize visited[0..9] = 0 ----
+x15 = x34
+x16 = x32
+[x15] = x16
+x15 = x34
+x24 = 1
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x32
+[x15] = x16
+x15 = x34
+x24 = 2
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x32
+[x15] = x16
+x15 = x34
+x24 = 3
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x32
+[x15] = x16
+x15 = x34
+x24 = 4
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x32
+[x15] = x16
+x15 = x34
+x24 = 5
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x32
+[x15] = x16
+x15 = x34
+x24 = 6
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x32
+[x15] = x16
+x15 = x34
+x24 = 7
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x32
+[x15] = x16
+x15 = x34
+x24 = 8
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x32
+[x15] = x16
+x15 = x34
+x24 = 9
+x26 = x24 * x31
+x15 = x15 + x26
+x16 = x32
+[x15] = x16
+
+% ---- Dijkstra main loop ----
+x11 = 0
+.OUTER
+% Find unvisited vertex with smallest dist.
+x13 = x27
+x12 = 255
+x14 = 0
+.FINDMIN
+x26 = x14 * x31
+x15 = x34
+x15 = x15 + x26
+x29 = [x15]
+x29 = x29 - 0
+BNE .NEXTMIN
+x15 = x33
+x15 = x15 + x26
+x28 = [x15]
+x28 = x28 - x13
+BGE .NEXTMIN
+x13 = [x15]
+x12 = x14
+.NEXTMIN
+x14 = x14 + 1
+x14 = x14 - 10
+BLT .FINDMIN
+% Mark u visited.
+x10 = x12
+x26 = x10 * x31
+x15 = x34
+x15 = x15 + x26
+x16 = 1
+[x15] = x16
+% Load dist[u].
+x15 = x33
+x15 = x15 + x26
+x19 = [x15]
+% ---- Scan all 35 edges ----
+x24 = 0
+.EDGELOOP
+% Address of edge record.
+x25 = x24 * x30
+x25 = x25 + x35
+% Load edge endpoints and weight.
+x15 = x25
+x21 = [x15]
+x15 = x25
+x15 = x15 + 4
+x22 = [x15]
+x15 = x25
+x15 = x15 + 8
+x20 = [x15]
+% Is edge.u == u?
+x21 = x21 - x10
+BEQ .EDGEUMATCH
+% Is edge.v == u?
+x22 = x22 - x10
+BEQ .EDGEVMATCH
+BAL .EDGENEXT
+.EDGEUMATCH
+% Neighbor is edge.v.
+x23 = x22
+BAL .RELAX
+.EDGEVMATCH
+% Neighbor is edge.u; reload it because x21 was changed above.
+x15 = x25
+x23 = [x15]
+BAL .RELAX
+.RELAX
+% Skip already visited neighbor.
+x26 = x23 * x31
+x15 = x34
+x15 = x15 + x26
+x29 = [x15]
+x29 = x29 - 0
+BNE .EDGENEXT
+% nd = dist[u] + weight.
+x37 = x19 + x20
+% Compare dist[v] - nd; update when <= 0.
+x15 = x33
+x15 = x15 + x26
+x28 = [x15]
+x28 = x28 - x37
+BLE .UPDATEDIST
+BAL .EDGENEXT
+.UPDATEDIST
+x16 = x37
+[x15] = x16
+.EDGENEXT
+x24 = x24 + 1
+x24 = x24 - 35
+BLT .EDGELOOP
+% One vertex has now been selected.
+x11 = x11 + 1
+x11 = x11 - 10
+BLT .OUTER
+
+% ---- Print final distances ----
+x38 = 0
+.PRINTLOOP
+x39 = x38 * x31
+x15 = x33
+x15 = x15 + x39
+x16 = [x15]
+x16 = x16 + 0
+Print x16
+x38 = x38 + 1
+x38 = x38 - 10
+BLT .PRINTLOOP

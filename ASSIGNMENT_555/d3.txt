@@ -1,0 +1,221 @@
+% Dijkstra: 10 vertices, exactly 35 undirected weighted edges
+% Source vertex 0. Compact undirected edge list.
+% Each stored edge is grouped by its smaller endpoint.
+% Entry = (neighbor << 4) | weight. Zero means unused slot.
+% Each vertex has 9 slots, so group stride = 9 words = 36 bytes.
+x30 = 4
+x32 = 36
+% Build legal data bases: dist=400, visited=440.
+x35 = 255
+x35 = x35 + 127
+x35 = x35 + 18
+x36 = x35 + 40
+x37 = 0
+% Hardcoded graph
+x15 = 0
+x15 = x15 * x32
+x16 = 20
+[x15] = x16
+x15 = x15 + 4
+x16 = 40
+[x15] = x16
+x15 = x15 + 4
+x16 = 54
+[x15] = x16
+x15 = x15 + 4
+x16 = 76
+[x15] = x16
+x15 = x15 + 4
+x16 = 89
+[x15] = x16
+x15 = x15 + 4
+x16 = 111
+[x15] = x16
+x15 = x15 + 4
+x16 = 119
+[x15] = x16
+x15 = x15 + 4
+x16 = 142
+[x15] = x16
+x15 = x15 + 4
+x16 = 155
+[x15] = x16
+x15 = 1
+x15 = x15 * x32
+x16 = 37
+[x15] = x16
+x15 = x15 + 4
+x16 = 55
+[x15] = x16
+x15 = x15 + 4
+x16 = 67
+[x15] = x16
+x15 = x15 + 4
+x16 = 90
+[x15] = x16
+x15 = x15 + 4
+x16 = 109
+[x15] = x16
+x15 = x15 + 4
+x16 = 118
+[x15] = x16
+x15 = x15 + 4
+x16 = 140
+[x15] = x16
+x15 = 2
+x15 = x15 * x32
+x16 = 52
+[x15] = x16
+x15 = x15 + 4
+x16 = 73
+[x15] = x16
+x15 = x15 + 4
+x16 = 82
+[x15] = x16
+x15 = x15 + 4
+x16 = 107
+[x15] = x16
+x15 = x15 + 4
+x16 = 152
+[x15] = x16
+x15 = 3
+x15 = x15 * x32
+x16 = 69
+[x15] = x16
+x15 = x15 + 4
+x16 = 86
+[x15] = x16
+x15 = x15 + 4
+x16 = 122
+[x15] = x16
+x15 = x15 + 4
+x16 = 131
+[x15] = x16
+x15 = x15 + 4
+x16 = 153
+[x15] = x16
+x15 = 4
+x15 = x15 * x32
+x16 = 87
+[x15] = x16
+x15 = x15 + 4
+x16 = 100
+[x15] = x16
+x15 = x15 + 4
+x16 = 136
+[x15] = x16
+x15 = x15 + 4
+x16 = 150
+[x15] = x16
+x15 = 5
+x15 = x15 * x32
+x16 = 99
+[x15] = x16
+x15 = x15 + 4
+x16 = 121
+[x15] = x16
+x15 = x15 + 4
+x16 = 133
+[x15] = x16
+x15 = 6
+x15 = x15 * x32
+x16 = 116
+[x15] = x16
+x15 = 7
+x15 = x15 * x32
+x16 = 146
+[x15] = x16
+% Initialize dist and visited
+x14 = 0
+.INIT
+x19 = x14 * x30
+x15 = x35 + x19
+x16 = 100
+[x15] = x16
+x15 = x36 + x19
+x16 = 0
+[x15] = x16
+x14 = x14 + 1
+x14 = x14 - 10
+BLT .INIT
+x15 = x35 + 0
+x16 = 0
+[x15] = x16
+% Main Dijkstra loop
+x26 = 0
+.OUTER
+x13 = 100
+x12 = 255
+x14 = 0
+.FINDMIN
+x19 = x14 * x30
+x15 = x36 + x19
+x18 = [x15]
+x18 = x18 - 0
+BNE .MINNEXT
+x15 = x35 + x19
+x20 = [x15]
+x20 = x20 - x13
+BGE .MINNEXT
+x13 = [x15]
+x12 = x14 + 0
+.MINNEXT
+x14 = x14 + 1
+x14 = x14 - 10
+BLT .FINDMIN
+% Visit u and load dist[u]
+x10 = x12 + 0
+x19 = x10 * x30
+x15 = x36 + x19
+x16 = 1
+[x15] = x16
+x15 = x35 + x19
+x21 = [x15]
+% Scan all edge groups. Each edge is undirected.
+x13 = 0
+.GROUP
+x22 = x13 * x32
+x15 = x37 + x22
+x14 = 0
+.SLOT
+x20 = [x15]
+x20 = x20 - 0
+BEQ .NEXTSLOT
+x18 = x20 >> 4
+x17 = x20 & 15
+x16 = x13 - x10
+BEQ .FORWARD
+x16 = x18 - x10
+BNE .NEXTSLOT
+x16 = x18 + 0
+.FORWARD
+x23 = x21 + x17
+x25 = x16 * x30
+x25 = x35 + x25
+x24 = [x25]
+x24 = x24 - x23
+BGE .NEXTSLOT
+x24 = x23 + 0
+[x25] = x24
+.NEXTSLOT
+x15 = x15 + 4
+x14 = x14 + 1
+x14 = x14 - 9
+BLT .SLOT
+x13 = x13 + 1
+x13 = x13 - 10
+BLT .GROUP
+x26 = x26 + 1
+x26 = x26 - 10
+BLT .OUTER
+% Print distances
+x14 = 0
+.PRINTLOOP
+x19 = x14 * x30
+x15 = x35 + x19
+x16 = [x15]
+x16 = x16 + 0
+Print x16
+x14 = x14 + 1
+x14 = x14 - 10
+BLT .PRINTLOOP

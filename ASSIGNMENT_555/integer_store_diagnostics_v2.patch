@@ -1,0 +1,13 @@
+--- processor_v2_base.c	2026-09-14 17:37:55.729424311 +0000
++++ processor.c	2026-09-14 17:37:56.185275644 +0000
+@@ -218,6 +218,10 @@
+ if (!valid_proc(proc_id))
+ return -1;
+ 
++fprintf(stderr,
++        "[STORE DEBUG] attempt: proc=%d logical=%d value=%d\n",
++        proc_id, logical_address, value);
++
+ // ```
+ if (logical_address < 0 ||
+     logical_address + 3 >= DATA_SIZE) {

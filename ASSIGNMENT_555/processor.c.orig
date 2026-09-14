@@ -216,10 +216,6 @@ int32_t value)
 if (!valid_proc(proc_id))
 return -1;
 
-fprintf(stderr,
-        "[STORE DEBUG] attempt: proc=%d logical=%d value=%d\n",
-        proc_id, logical_address, value);
-
 // ```
 if (logical_address < 0 ||
     logical_address + 3 >= DATA_SIZE) {

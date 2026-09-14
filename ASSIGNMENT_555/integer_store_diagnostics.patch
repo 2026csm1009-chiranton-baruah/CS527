@@ -1,0 +1,103 @@
+--- memory.c	2026-09-14 17:32:52.540859459 +0000
++++ memory.c	2026-09-14 17:32:39.710864502 +0000
+@@ -452,14 +452,31 @@
+                        uint8_t value)
+ {
+     int physical = getPhysicallAddress(proc_id, 0, logical_address);
+-    if (physical < 0)
++    if (physical < 0) {
++        fprintf(stderr,
++                "[MEM DEBUG] translation failed: proc=%d logical=%d\n",
++                proc_id, logical_address);
+         return -1;
++    }
+ 
+     int page = logical_address / PAGESIZE + INSTRUCTION_SIZE / PAGESIZE;
+     if (valid_logical_page(page))
+         pageDirty[proc_id][page] = 1;
++    else {
++        fprintf(stderr,
++                "[MEM DEBUG] invalid data page: proc=%d logical=%d page=%d\n",
++                proc_id, logical_address, page);
++        return -1;
++    }
+ 
+-    return cache_write(proc_id, physical, value);
++    int result = cache_write(proc_id, physical, value);
++    if (result != 0) {
++        fprintf(stderr,
++                "[MEM DEBUG] cache_write failed: proc=%d logical=%d physical=%d page=%d offset=%d value=%u\n",
++                proc_id, logical_address, physical, page,
++                logical_address % PAGESIZE, (unsigned)value);
++    }
++    return result;
+ }
+ 
+ static int store_logical_page(int proc_id,
+--- processor.c	2026-09-14 17:32:52.676862007 +0000
++++ processor.c	2026-09-14 17:32:39.711075809 +0000
+@@ -232,7 +232,10 @@
+                logical_address,
+                (uint8_t)
+                (word & 0xFF)) != 0) {
+-
++    fprintf(stderr,
++            "[STORE DEBUG] byte 0 failed: proc=%d logical=%d value=%u\n",
++            proc_id, logical_address,
++            (unsigned)(word & 0xFF));
+     return -1;
+ }
+ 
+@@ -241,7 +244,10 @@
+                logical_address + 1,
+                (uint8_t)
+                ((word >> 8) & 0xFF)) != 0) {
+-
++    fprintf(stderr,
++            "[STORE DEBUG] byte 1 failed: proc=%d logical=%d value=%u\n",
++            proc_id, logical_address + 1,
++            (unsigned)((word >> 8) & 0xFF));
+     return -1;
+ }
+ 
+@@ -250,7 +256,10 @@
+                logical_address + 2,
+                (uint8_t)
+                ((word >> 16) & 0xFF)) != 0) {
+-
++    fprintf(stderr,
++            "[STORE DEBUG] byte 2 failed: proc=%d logical=%d value=%u\n",
++            proc_id, logical_address + 2,
++            (unsigned)((word >> 16) & 0xFF));
+     return -1;
+ }
+ 
+@@ -259,7 +268,10 @@
+                logical_address + 3,
+                (uint8_t)
+                ((word >> 24) & 0xFF)) != 0) {
+-
++    fprintf(stderr,
++            "[STORE DEBUG] byte 3 failed: proc=%d logical=%d value=%u\n",
++            proc_id, logical_address + 3,
++            (unsigned)((word >> 24) & 0xFF));
+     return -1;
+ }
+ 
+--- cache.c	2026-09-14 17:32:52.392856690 +0000
++++ cache.c	2026-09-14 17:32:39.711147126 +0000
+@@ -429,8 +429,13 @@
+     /* Write-allocate through the normal L1-D -> L2 -> L3 path. */
+     if (!line->valid || line->tag != cache_tag(line_no, L1_DATA_LINES)) {
+         uint8_t ignored[CACHE_LINE_SIZE];
+-        if (l1_get_line(proc_id, 0, line_no, ignored) != 0)
++        if (l1_get_line(proc_id, 0, line_no, ignored) != 0) {
++            fprintf(stderr,
++                    "[CACHE DEBUG] L1-D write-allocate failed: proc=%d physical=%d line=%d index=%d tag=%d\n",
++                    proc_id, physical_address, line_no, index,
++                    cache_tag(line_no, L1_DATA_LINES));
+             return -1;
++        }
+         line = &l1_data[proc_id][index];
+     }
+ 

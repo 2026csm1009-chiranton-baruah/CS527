@@ -41,7 +41,7 @@ test: $(TARGET)
 	@echo "========================================"
 	@echo " Running a few programs simultaneously"
 	@echo "========================================"
-	@printf 'crc_test_fixed.txt data.byte\nfib.txt\nrs64_compact.txt data.byte\nr2.txt data.byte\nldpc126_new.txt data.byte\ncrc16_test.txt data.byte\nnrd2.txt data.byte\nbooth2.txt data.byte\nrecurring_division.txt\nhamming_code_2.txt data.byte\na3.txt data.byte\nsod.txt data.byte\nf2.txt data.byte\na4.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\neitch.txt data.byte\nexit\n' | ./$(TARGET)
+	@printf 'crc_test_fixed.txt data.byte\nfib.txt\nrs64_compact.txt data.byte\nr2.txt data.byte\ntlb-stress-2.txt data.byte\nldpc126_new.txt data.byte\ncrc16_test.txt data.byte\nnrd2.txt data.byte\nbooth2.txt data.byte\nrecurring_division.txt\nhamming_code_2.txt data.byte\na3.txt data.byte\nsod.txt data.byte\nf2.txt data.byte\na4.txt data.byte\ncross.txt data.byte\nmatmul.txt data.byte\neitch.txt data.byte\nexit\n' | ./$(TARGET)
 
 TEST_PROGRAMS = \
 	matmul.txt \
@@ -51,6 +51,7 @@ TEST_PROGRAMS = \
 	a4.txt \
 	rs64_compact.txt \
 	crc_test_fixed.txt \
+	tlb-stress-2.txt \
 	fib.txt \
 	r4.txt \
 	eitch.txt \
@@ -61,14 +62,15 @@ TEST_PROGRAMS = \
 	recurring_division.txt \
 	cross.txt \
 	sod.txt \
-	f2.txt \
+	hamming_code_2.txt \
 	eitch.txt \
 	crc16_test.txt \
 	cross.txt \
 	nrd2.txt \
-	hamming_code_2.txt \
+	f2.txt \
 	matmul.txt \
 	f2.txt \
+	tlb-stress-2.txt \
 	fib.txt \
 	crc_test_fixed.txt \
 	a3.txt \
@@ -92,6 +94,7 @@ TEST_PROGRAMS_2 = \
 	eitch.txt \
 	ldpc126_new.txt \
 	hamming_code_2.txt \
+	tlb-stress-2.txt \
 	crc16_test.txt \
 	nrd2.txt \
 	recurring_division.txt \
@@ -111,7 +114,8 @@ TEST_PROGRAMS_2 = \
 	ldpc126_new.txt \
 	booth2.txt \
 	rs64_compact.txt \
-	cross.txt \
+	tlb-stress-2.txt \
+	r3.txt \
 	crc_test_fixed.txt \
 	recurring_division.txt \
 	matmul.txt \
@@ -125,6 +129,7 @@ TEST_PROGRAMS_2 = \
 	r4.txt \
 	cross.txt \
 	ldpc126_new.txt \
+	tlb-stress-2.txt \
 	hamming_code_2.txt \
 	crc16_test.txt \
 	nrd2.txt \
@@ -144,6 +149,7 @@ TEST_PROGRAMS_2 = \
 	a3.txt \
 	ldpc126_new.txt \
 	booth2.txt \
+	tlb-stress-2.txt \
 	cross.txt \
 	r4.txt \
 	a4.txt \

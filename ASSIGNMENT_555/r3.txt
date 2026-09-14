@@ -1,0 +1,119 @@
+% Recaman sequence - first 500 terms
+%
+% x1 = current Recaman term
+% x2 = n
+% x3 = candidate
+% x4 = scan index
+% x5 = scan address
+% x6 = scanned sequence value
+% x7 = candidate-scanned value
+% x8 = current sequence address
+% x9 = temporary
+% x10 = maximum n (499)
+% x11 = temporary for constructing 499
+%
+% Sequence values are stored at:
+%   address = n * 4
+%
+% We cannot use 499 as an immediate because immediates are 8-bit.
+% Construct 499 as 255 + 244.
+
+% -------------------- BUILD LIMIT --------------------
+
+x10 = 255
+x11 = 244
+x10 = x10 + x11          % x10 = 499
+
+% -------------------- INITIAL TERM --------------------
+
+x1 = 0
+x2 = 0
+x8 = 0
+
+[x8] = x1
+Print x1
+
+% -------------------- MAIN LOOP --------------------
+
+.main
+
+% n = n + 1
+x2 = x2 + 1
+
+% candidate = previous term - n
+x3 = x1 - x2
+
+% If candidate <= 0, use fallback
+x3 = x3 - 0
+BLE .fallback
+
+% Scan previous sequence terms for candidate.
+x4 = 0
+
+.scan
+
+% If scan index == n, candidate is unused.
+x9 = x4 - x2
+BEQ .accept
+
+% scan address = scan index * 4
+x5 = x4 << 2
+
+% load sequence[scan index]
+x6 = [x5]
+
+% candidate - sequence[scan index]
+x7 = x3 - x6
+BEQ .fallback
+
+% scan index++
+x4 = x4 + 1
+BAL .scan
+
+% -------------------- ACCEPT CANDIDATE --------------------
+
+.accept
+
+x1 = x3 + 0
+
+% address = n * 4
+x8 = x2 << 2
+
+% store accepted term
+[x8] = x1
+
+Print x1
+
+BAL .checkdoneness
+
+% -------------------- FALLBACK --------------------
+
+.fallback
+
+% candidate = previous term + n
+x3 = x1 + x2
+
+% No need to scan fallback value:
+% by definition, fallback is previous term + n.
+
+x1 = x3 + 0
+
+% address = n * 4
+x8 = x2 << 2
+
+[x8] = x1
+
+Print x1
+
+% -------------------- TERMINATION CHECK --------------------
+
+.checkdoneness
+
+% Stop after n = 499.
+% x10 contains 499 because 255 + 244 = 499.
+x9 = x2 - x10
+BEQ .done
+
+BAL .main
+
+.done

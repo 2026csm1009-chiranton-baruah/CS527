@@ -1,0 +1,1449 @@
+========================================
+ Running 34 programs
+========================================
+Mini OS started with 4 processors.
+$ [Compiler] compiling matmul.txt
+[MEM] proc=0: instruction=796 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 1 loaded on processor 0
+[Compiler] compiling a3.txt
+[MEM] proc=1: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 2 loaded on processor 1
+[Compiler] compiling sod.txt
+[MEM] proc=2: instruction=104 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 3 loaded on processor 2
+[Compiler] compiling booth2.txt
+[MEM] proc=3: instruction=656 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 4 loaded on processor 3
+[Compiler] compiling a4.txt
+[OS] PID 5 placed in waiting queue
+[Compiler] compiling rs64_compact.txt
+[OS] PID 6 placed in waiting queue
+[Compiler] compiling crc_test_fixed.txt
+[OS] PID 7 placed in waiting queue
+[Compiler] compiling fib.txt
+[OS] PID 8 placed in waiting queue
+[Compiler] compiling r3.txt
+[OS] PID 9 placed in waiting queue
+45
+[OS] PID 3 finished on processor 2
+[MEM] proc=2: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 5 dispatched to processor 2
+[Compiler] compiling eitch.txt
+[OS] PID 10 placed in waiting queue
+[Compiler] compiling ldpc126_new.txt
+[OS] PID 11 placed in waiting queue
+[Compiler] compiling hamming_code_2.txt
+[OS] PID 12 placed in waiting queue
+[Compiler] compiling crc16_test.txt
+[OS] PID 13 placed in waiting queue
+[Compiler] compiling nrd2.txt
+[OS] PID 14 placed in waiting queue
+[Compiler] compiling recurring_division.txt
+[OS] PID 15 placed in waiting queue
+[Compiler] compiling cross.txt
+[OS] PID 16 placed in waiting queue
+[Compiler] compiling sod.txt
+[OS] PID 17 placed in waiting queue
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 2 finished on processor 1
+[MEM] proc=1: instruction=816 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 6 dispatched to processor 1
+[Compiler] compiling f2.txt
+[OS] PID 18 placed in waiting queue
+[Compiler] compiling eitch.txt
+[OS] PID 19 placed in waiting queue
+[Compiler] compiling crc16_test.txt
+[OS] PID 20 placed in waiting queue
+125
+136
+133
+162
+174
+151
+279
+300
+265
+[OS] PID 1 finished on processor 0
+[MEM] proc=0: instruction=320 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 7 dispatched to processor 0
+[Compiler] compiling cross.txt
+[OS] PID 21 placed in waiting queue
+[Compiler] compiling nrd2.txt
+[OS] PID 22 placed in waiting queue
+[Compiler] compiling hamming_code_2.txt
+[OS] PID 23 placed in waiting queue
+[Compiler] compiling matmul.txt
+[OS] PID 24 placed in waiting queue
+[Compiler] compiling f2.txt
+[OS] PID 25 placed in waiting queue
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+[OS] PID 5 finished on processor 2
+[MEM] proc=2: instruction=216 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 8 dispatched to processor 2
+[Compiler] compiling fib.txt
+[OS] PID 26 placed in waiting queue
+[Compiler] compiling crc_test_fixed.txt
+[OS] PID 27 placed in waiting queue
+[Compiler] compiling a3.txt
+[OS] PID 28 placed in waiting queue
+[Compiler] compiling ldpc126_new.txt
+[OS] PID 29 placed in waiting queue
+[Compiler] compiling booth2.txt
+[OS] PID 30 placed in waiting queue
+[Compiler] compiling rs64_compact.txt
+[OS] PID 31 placed in waiting queue
+[Compiler] compiling r3.txt
+[OS] PID 32 placed in waiting queue
+[Compiler] compiling a4.txt
+[OS] PID 33 placed in waiting queue
+[Compiler] compiling recurring_division.txt
+[OS] PID 34 placed in waiting queue
+[Shell] exiting; existing tasks will continue
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+[OS] PID 8 finished on processor 2
+[MEM] proc=2: instruction=140 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 9 dispatched to processor 2
+120
+[OS] PID 7 finished on processor 0
+[MEM] proc=0: instruction=160 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 10 dispatched to processor 0
+287454020
+0
+287454020
+1
+287454020
+2
+287454020
+3
+287454020
+4
+287454020
+5
+287454020
+[OS] PID 6 finished on processor 1
+[MEM] proc=1: instruction=612 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 11 dispatched to processor 1
+1
+2
+4
+7
+12
+20
+33
+54
+88
+143
+232
+376
+609
+986
+1596
+2583
+[OS] PID 10 finished on processor 0
+[MEM] proc=0: instruction=1016 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 12 dispatched to processor 0
+143
+-143
+-143
+143
+[OS] PID 4 finished on processor 3
+[MEM] proc=3: instruction=332 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 13 dispatched to processor 3
+30488
+[OS] PID 13 finished on processor 3
+[MEM] proc=3: instruction=544 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 14 dispatched to processor 3
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+[OS] PID 11 finished on processor 1
+[MEM] proc=1: instruction=352 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 15 dispatched to processor 1
+4
+1
+5
+1
+10
+0
+36
+3
+[OS] PID 14 finished on processor 3
+[MEM] proc=3: instruction=172 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 16 dispatched to processor 3
+-3
+6
+-3
+[OS] PID 16 finished on processor 3
+[MEM] proc=3: instruction=104 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 17 dispatched to processor 3
+45
+[OS] PID 17 finished on processor 3
+[MEM] proc=3: instruction=64 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 18 dispatched to processor 3
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+[OS] PID 12 finished on processor 0
+[MEM] proc=0: instruction=160 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 19 dispatched to processor 0
+528
+[OS] PID 18 finished on processor 3
+[MEM] proc=3: instruction=332 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 20 dispatched to processor 3
+1
+2
+4
+7
+12
+20
+33
+54
+88
+143
+232
+376
+609
+986
+1596
+2583
+[OS] PID 19 finished on processor 0
+[MEM] proc=0: instruction=172 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 21 dispatched to processor 0
+30488
+[OS] PID 20 finished on processor 3
+[MEM] proc=3: instruction=544 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 22 dispatched to processor 3
+4
+1
+5
+1
+10
+0
+36
+3
+[OS] PID 15 finished on processor 1
+[MEM] proc=1: instruction=1016 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 23 dispatched to processor 1
+-3
+6
+-3
+[OS] PID 21 finished on processor 0
+[MEM] proc=0: instruction=796 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 24 dispatched to processor 0
+125
+136
+133
+162
+174
+151
+279
+300
+265
+[OS] PID 24 finished on processor 0
+[MEM] proc=0: instruction=64 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 25 dispatched to processor 0
+528
+[OS] PID 25 finished on processor 0
+[MEM] proc=0: instruction=216 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 26 dispatched to processor 0
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+[OS] PID 26 finished on processor 0
+[MEM] proc=0: instruction=320 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 27 dispatched to processor 0
+4
+1
+5
+1
+10
+0
+36
+3
+[OS] PID 22 finished on processor 3
+[MEM] proc=3: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 28 dispatched to processor 3
+120
+[OS] PID 27 finished on processor 0
+[MEM] proc=0: instruction=612 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 29 dispatched to processor 0
+11
+13
+15
+17
+19
+21
+23
+25
+[OS] PID 28 finished on processor 3
+[MEM] proc=3: instruction=656 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 30 dispatched to processor 3
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+165
+[OS] PID 23 finished on processor 1
+[MEM] proc=1: instruction=816 bytes (2 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 31 dispatched to processor 1
+143
+-143
+-143
+143
+[OS] PID 30 finished on processor 3
+[MEM] proc=3: instruction=140 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 32 dispatched to processor 3
+287454020
+0
+287454020
+1
+287454020
+2
+287454020
+3
+287454020
+4
+287454020
+5
+287454020
+[OS] PID 31 finished on processor 1
+[MEM] proc=1: instruction=120 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 33 dispatched to processor 1
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+43
+[OS] PID 29 finished on processor 0
+[MEM] proc=0: instruction=352 bytes (1 pages), data=2797 bytes (6 pages) [disk-backed]
+[OS] PID 34 dispatched to processor 0
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+-9
+[OS] PID 33 finished on processor 1
+4
+1
+5
+1
+10
+0
+36
+3
+[OS] PID 34 finished on processor 0
+0
+1
+3
+6
+2
+7
+13
+20
+12
+21
+11
+22
+10
+23
+9
+24
+8
+25
+43
+62
+42
+63
+41
+18
+42
+17
+43
+16
+44
+15
+45
+14
+46
+79
+113
+78
+114
+77
+39
+78
+38
+79
+37
+80
+36
+81
+35
+82
+34
+83
+33
+84
+32
+85
+31
+86
+30
+87
+29
+88
+28
+89
+27
+90
+26
+91
+157
+224
+156
+225
+155
+226
+154
+227
+153
+228
+152
+75
+153
+74
+154
+73
+155
+72
+156
+71
+157
+70
+158
+69
+159
+68
+160
+67
+161
+66
+162
+65
+163
+64
+164
+265
+367
+264
+368
+263
+369
+262
+370
+261
+151
+40
+152
+265
+379
+494
+378
+495
+377
+258
+138
+259
+137
+260
+136
+261
+135
+262
+134
+5
+135
+4
+136
+269
+403
+268
+132
+269
+131
+270
+130
+271
+129
+272
+128
+273
+127
+274
+126
+275
+125
+276
+124
+277
+123
+278
+122
+279
+121
+280
+120
+281
+119
+282
+118
+283
+117
+284
+116
+285
+115
+286
+458
+631
+457
+632
+456
+633
+455
+634
+454
+635
+453
+636
+452
+267
+453
+266
+454
+643
+833
+642
+450
+257
+451
+256
+60
+257
+59
+258
+58
+259
+57
+260
+56
+261
+55
+262
+54
+263
+53
+264
+52
+265
+51
+266
+50
+267
+49
+268
+48
+269
+47
+270
+494
+719
+493
+720
+492
+721
+491
+722
+490
+723
+489
+254
+490
+253
+491
+252
+492
+251
+493
+250
+494
+249
+495
+248
+496
+247
+497
+246
+498
+245
+499
+244
+500
+243
+501
+242
+502
+241
+503
+240
+504
+239
+505
+238
+506
+237
+507
+236
+508
+235
+509
+234
+510
+233
+511
+232
+512
+231
+513
+230
+514
+229
+515
+802
+1090
+801
+1091
+800
+1092
+799
+1093
+798
+1094
+797
+1095
+796
+1096
+795
+1097
+794
+1098
+793
+487
+180
+488
+179
+489
+178
+490
+177
+491
+176
+492
+175
+493
+174
+494
+173
+495
+172
+496
+171
+497
+170
+498
+169
+499
+168
+500
+167
+501
+166
+502
+165
+503
+842
+1182
+841
+1183
+840
+1184
+839
+1185
+838
+1186
+837
+1187
+836
+484
+837
+483
+838
+482
+839
+481
+840
+480
+841
+479
+842
+478
+843
+477
+110
+478
+109
+479
+108
+480
+107
+481
+106
+482
+105
+483
+104
+484
+103
+485
+102
+486
+101
+487
+100
+488
+99
+489
+98
+490
+97
+491
+96
+492
+95
+493
+94
+494
+93
+495
+92
+496
+901
+1307
+900
+1308
+899
+1309
+898
+1310
+897
+1311
+896
+1312
+895
+1313
+894
+474
+895
+473
+896
+472
+897
+471
+898
+470
+899
+469
+900
+468
+901
+467
+902
+466
+903
+465
+904
+464
+905
+463
+906
+462
+907
+461
+908
+460
+909
+459
+910
+1362
+1815
+1361
+1816
+1360
+1817
+1359
+1818
+1358
+1819
+1357
+1820
+1356
+891
+425
+892
+424
+893
+423
+894
+422
+895
+421
+896
+420
+897
+419
+898
+418
+899
+417
+900
+416
+901
+415
+902
+414
+903
+413
+904
+412
+905
+411
+906
+410
+907
+409
+908
+[OS] PID 9 finished on processor 2
+0
+1
+3
+6
+2
+7
+13
+20
+12
+21
+11
+22
+10
+23
+9
+24
+8
+25
+43
+62
+42
+63
+41
+18
+42
+17
+43
+16
+44
+15
+45
+14
+46
+79
+113
+78
+114
+77
+39
+78
+38
+79
+37
+80
+36
+81
+35
+82
+34
+83
+33
+84
+32
+85
+31
+86
+30
+87
+29
+88
+28
+89
+27
+90
+26
+91
+157
+224
+156
+225
+155
+226
+154
+227
+153
+228
+152
+75
+153
+74
+154
+73
+155
+72
+156
+71
+157
+70
+158
+69
+159
+68
+160
+67
+161
+66
+162
+65
+163
+64
+164
+265
+367
+264
+368
+263
+369
+262
+370
+261
+151
+40
+152
+265
+379
+494
+378
+495
+377
+258
+138
+259
+137
+260
+136
+261
+135
+262
+134
+5
+135
+4
+136
+269
+403
+268
+132
+269
+131
+270
+130
+271
+129
+272
+128
+273
+127
+274
+126
+275
+125
+276
+124
+277
+123
+278
+122
+279
+121
+280
+120
+281
+119
+282
+118
+283
+117
+284
+116
+285
+115
+286
+458
+631
+457
+632
+456
+633
+455
+634
+454
+635
+453
+636
+452
+267
+453
+266
+454
+643
+833
+642
+450
+257
+451
+256
+60
+257
+59
+258
+58
+259
+57
+260
+56
+261
+55
+262
+54
+263
+53
+264
+52
+265
+51
+266
+50
+267
+49
+268
+48
+269
+47
+270
+494
+719
+493
+720
+492
+721
+491
+722
+490
+723
+489
+254
+490
+253
+491
+252
+492
+251
+493
+250
+494
+249
+495
+248
+496
+247
+497
+246
+498
+245
+499
+244
+500
+243
+501
+242
+502
+241
+503
+240
+504
+239
+505
+238
+506
+237
+507
+236
+508
+235
+509
+234
+510
+233
+511
+232
+512
+231
+513
+230
+514
+229
+515
+802
+1090
+801
+1091
+800
+1092
+799
+1093
+798
+1094
+797
+1095
+796
+1096
+795
+1097
+794
+1098
+793
+487
+180
+488
+179
+489
+178
+490
+177
+491
+176
+492
+175
+493
+174
+494
+173
+495
+172
+496
+171
+497
+170
+498
+169
+499
+168
+500
+167
+501
+166
+502
+165
+503
+842
+1182
+841
+1183
+840
+1184
+839
+1185
+838
+1186
+837
+1187
+836
+484
+837
+483
+838
+482
+839
+481
+840
+480
+841
+479
+842
+478
+843
+477
+110
+478
+109
+479
+108
+480
+107
+481
+106
+482
+105
+483
+104
+484
+103
+485
+102
+486
+101
+487
+100
+488
+99
+489
+98
+490
+97
+491
+96
+492
+95
+493
+94
+494
+93
+495
+92
+496
+901
+1307
+900
+1308
+899
+1309
+898
+1310
+897
+1311
+896
+1312
+895
+1313
+894
+474
+895
+473
+896
+472
+897
+471
+898
+470
+899
+469
+900
+468
+901
+467
+902
+466
+903
+465
+904
+464
+905
+463
+906
+462
+907
+461
+908
+460
+909
+459
+910
+1362
+1815
+1361
+1816
+1360
+1817
+1359
+1818
+1358
+1819
+1357
+1820
+1356
+891
+425
+892
+424
+893
+423
+894
+422
+895
+421
+896
+420
+897
+419
+898
+418
+899
+417
+900
+416
+901
+415
+902
+414
+903
+413
+904
+412
+905
+411
+906
+410
+907
+409
+908
+[OS] PID 32 finished on processor 3
+
+========== TLB STATISTICS ==========
+[TLB] proc=0: hits=27773, misses=23, hit rate=99.92%
+[TLB] proc=1: hits=23507, misses=13, hit rate=99.94%
+[TLB] proc=2: hits=2780426, misses=10, hit rate=100.00%
+[TLB] proc=3: hits=2800792, misses=24, hit rate=100.00%
+-------------------------------------
+[TLB] total: hits=5632498, misses=70, hit rate=100.00%
+=====================================
+
+========================================
+ Cache Statistics
+========================================
+
+L1 Instruction Cache: 128 B/core
+----------------------------------------
+Core 0: hits=25355 misses=1009 hit-rate=96.17%
+Core 1: hits=22074 misses=1182 hit-rate=94.92%
+Core 2: hits=2472486 misses=38 hit-rate=100.00%
+Core 3: hits=2492713 misses=231 hit-rate=99.99%
+Total: hits=5012628 misses=2460 hit-rate=99.95%
+
+L1 Data Cache: 128 B/core
+----------------------------------------
+Core 0: hits=1085 misses=35 hit-rate=96.88%
+Core 1: hits=192 misses=14 hit-rate=93.20%
+Core 2: hits=286824 misses=19141 hit-rate=93.74%
+Core 3: hits=286879 misses=19152 hit-rate=93.74%
+Total: hits=574980 misses=38342 hit-rate=93.75%
+
+Private L2 Cache: 256 B/core
+----------------------------------------
+Core 0: hits=280 misses=764 hit-rate=26.82%
+Core 1: hits=328 misses=868 hit-rate=27.42%
+Core 2: hits=645 misses=18534 hit-rate=3.36%
+Core 3: hits=645 misses=18738 hit-rate=3.33%
+Total: hits=1898 misses=38904 hit-rate=4.65%
+
+Shared Unified L3 Cache: 512 B
+----------------------------------------
+Hits   : 881
+Misses : 38023
+Hit-rate: 2.26%
+========================================

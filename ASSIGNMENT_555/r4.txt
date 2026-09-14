@@ -1,0 +1,91 @@
+% Recaman sequence: first 20 terms
+% a(0) = 0
+% a(n) = a(n-1)-n if positive and unused
+% otherwise a(n) = a(n-1)+n
+
+% Registers:
+% x1  = current term
+% x2  = n
+% x3  = candidate
+% x4  = scan index
+% x5  = scan address
+% x6  = scanned value
+% x7  = candidate - scanned value
+% x8  = current sequence address
+% x9  = temporary
+
+x1 = 0
+x2 = 0
+x8 = 0
+
+% Store and print a(0)
+[x8] = x1
+Print x1
+
+% Move to a(1)
+x2 = x2 + 1
+
+.loop
+% Candidate = previous term - n
+x3 = x1 - x2
+
+% Candidate must be positive
+x3 = x3 - 0
+BLE .fallback
+
+% Start scanning previously generated terms
+x4 = 0
+x5 = 0
+
+.check
+% Stop scanning when scan index == n
+x7 = x4 - x2
+BEQ .accept
+
+% Load previous sequence element
+x6 = [x5]
+
+% Compare candidate with previous element
+x7 = x3 - x6
+BEQ .fallback
+
+% Next element
+x4 = x4 + 1
+x5 = x5 + 4
+BAL .check
+
+.accept
+% Accept candidate
+x1 = x3 + 0
+
+% Store at address n*4
+x8 = x2 * 4
+[x8] = x1
+Print x1
+
+% Stop after a(127)
+x7 = x2 - 127
+BEQ .done
+
+x2 = x2 + 1
+BAL .loop
+
+.fallback
+% Candidate was invalid or already used.
+% Use previous term + n instead.
+x1 = x1 + x2
+
+% Store at address n*4
+x8 = x2 * 4
+[x8] = x1
+Print x1
+
+% Stop after a(127)
+x7 = x2 - 127
+BEQ .done
+
+x2 = x2 + 1
+BAL .loop
+
+.done
+% Print x1
